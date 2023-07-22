@@ -24,8 +24,7 @@ if(isset($_POST['notaken'])){
 <?php @include("includes/head.php");?>
 <body>
   <div class="container-scroller">
-    <!-- partial:../../partials/_navbar.html -->
-    <?php @include("includes/header.php");?>
+     <?php @include("includes/header.php");?>
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
       <!-- partial:../../partials/_sidebar.html -->
