@@ -7,13 +7,13 @@ check_login();
 <?php @include("includes/head.php");?>
 <body>
   <div class="container-scroller">
-    <!-- partial:partials/_navbar.html -->
+
     <?php @include("includes/header.php");?>
-    <!-- partial -->
+
     <div class="container-fluid page-body-wrapper">
-      <!-- partial:partials/_sidebar.html -->
+
       <?php @include("includes/sidebar.php");?>
-      <!-- partial -->
+
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
