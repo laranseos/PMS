@@ -8,11 +8,11 @@ header('Expires: 0');
 
 $category=$_SESSION['cate'];
 
-if(isset($_POST['insertss']))
+if(isset($_POST['inserts']))
 {
     $fowlrun=$_POST['fowlrun'];
     $eid = $_SESSION['editbid'];
-    $code=$_POST['code'] +  $_SESSION['current_count'];
+    $code=$_SESSION['current_count'] - $_POST['codes'];
 
     $sql4="update tblcategory set tblcategory.CategoryCode=:code where id=:eid";
     $query=$dbh->prepare($sql4);
@@ -22,7 +22,7 @@ if(isset($_POST['insertss']))
 
     if ($query->execute())
     {
-        echo '<script>alert("Added '.$_POST['code'].'chickens to '.$fowlrun.'")</script>';
+        echo '<script>alert("Removed '.$_POST['codes'].'chickens from '.$fowlrun.'")</script>';
         echo "<script>window.location.href ='category.php?cate_id=$category'</script>";
     }else{
         echo '<script>alert("Addition failed! try again later")</script>';
@@ -32,7 +32,7 @@ if(isset($_POST['insertss']))
 ?>
 <div class="card-body">
     <?php
-    $eid=$_POST['edit_id6'];
+    $eid=$_POST['edit_id7'];
     $sql2="SELECT * from tblcategory  where tblcategory.id=:eid";
     $query2 = $dbh -> prepare($sql2);
     $query2-> bindParam(':eid', $eid, PDO::PARAM_STR);
@@ -70,7 +70,7 @@ if(isset($_POST['insertss']))
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">Quantity</label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <input type="text" style="border-radius: 8px;" name="code" placeholder="Enter chicken count..." style="min-width:160px;" class="form-control" required>
+                                    <input type="text" style="border-radius: 8px;" name="codes" placeholder="Enter chicken count..." style="min-width:160px;" class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +78,7 @@ if(isset($_POST['insertss']))
                     </div>
                   
                 </div>
-                <button type="submit" name="insertss" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Add</button>
+                <button type="submit" name="inserts" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Remove</button>
             </form>
             <?php 
         }

@@ -13,7 +13,7 @@ $_SESSION['cate']=$category;
 if(isset($_POST['save']))
 {
   $frcode=$_POST['frcode'];
-  $code=$_POST['code'];
+  $code=0;
   $birth=$_POST['birth'];
   $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate)values(:category,:frcode,:code,:birth)";
   $query=$dbh->prepare($sql);
@@ -92,6 +92,10 @@ if(isset($_GET['del'])){
               {
                 foreach($results as $row)
                 { 
+                  $postingDate = new DateTime($row->PostingDate);
+                  $today = new DateTime('today');
+                  $diff = $postingDate->diff($today);
+                  $fdays = $diff->format('%a');
                   ?>
                   <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
                     <div class="card card1" style="min-height: 35vh;">
@@ -100,10 +104,12 @@ if(isset($_GET['del'])){
                       </div>
                       <div class="card-body">
                           <label for="code" style="color: #aaaaaa;">Chicken Quantity</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <label for="fpd" style="color: #aaaaaa;">Birth of Date</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px;">Manage Deaths</button></a><hr>
+                          <label for="fpd" style="color: #aaaaaa;">Date of Birth</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px;">Record Mortality</button></a><hr>
                           <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px;">Add Chickens</button></a><hr>
-                          <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px;">Remove</button></a>
+                          <a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px;">Remove Chickens</button></a><hr>
+                          <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px;">Remove Fowl</button></a>
                       </div>
                     </div>
                   </div>
@@ -137,19 +143,19 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                                <div class="row ">
+                                <!-- <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Chicken Count</label>
                                     <input type="text" style="border-radius: 10px;" name="code" value="" placeholder="Enter count..." class="form-control" id="code" required>
                                   </div>
-                                </div>
+                                </div> -->
                                 <div class="row ">
                                   <div class="form-group col-md-12">
-                                    <label for="exampleInputName1">Birth of Date</label>
-                                    <input type="date" style="border-radius: 10px;" name="birth" placeholder="Enter Birth of Date..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
+                                    <label for="exampleInputName1">Date of Birth</label>
+                                    <input type="date" style="border-radius: 10px;" name="birth" placeholder="Enter Date of Birth..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
                                   </div>
                                 </div>
-                                <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Save</button>
+                                <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
                               </form>
                             </div>
                           </div>
@@ -168,7 +174,7 @@ if(isset($_GET['del'])){
                 <div class="modal-dialog modal-md">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Manage Deaths</h5>
+                      <h5 class="modal-title">Record Mortality</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -205,6 +211,36 @@ if(isset($_GET['del'])){
                     </div>
                     <div class="modal-body" id="info_update6">
                       <?php @include("add_category.php");?>
+                    </div>
+                    <div class="modal-footer ">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+              </div>
+              <!--   end modal -->
+              <!--  start  modal -->
+            </div>
+          </div>
+          
+
+          <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <!--  start  modal -->
+              <div id="editData7" class="modal fade">
+                <div class="modal-dialog modal-md">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Remove Chickens</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="info_update7">
+                      <?php @include("remove_category.php");?>
                     </div>
                     <div class="modal-footer ">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -261,6 +297,22 @@ if(isset($_GET['del'])){
         success:function(data){
           $("#info_update6").html(data);
           $("#editData6").modal('show');
+        }
+      });
+    });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(document).on('click','.edit_data7',function(){
+      var edit_id7=$(this).attr('id');
+      $.ajax({
+        url:"remove_category.php",
+        type:"post",
+        data:{edit_id7:edit_id7},
+        success:function(data){
+          $("#info_update7").html(data);
+          $("#editData7").modal('show');
         }
       });
     });

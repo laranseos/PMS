@@ -152,8 +152,8 @@ if(isset($_GET['del'])){
                         <input type="text" name="code" readonly="readonly" value="<?php echo $c_code; ?>" placeholder="Enter count..." class="form-control" id="code" required>
                       </div>
                       <div class="form-group col-md-6">
-                        <label for="exampleInputName1">Birth of Date</label>
-                        <input type="date" name="birth" readonly="readonly" placeholder="Enter Birth of Date..." class="form-control" id="birth" value="<?php echo $c_date;?>" required>
+                        <label for="exampleInputName1">Date of Birth</label>
+                        <input type="date" name="birth" readonly="readonly" placeholder="Enter Date of Birth..." class="form-control" id="birth" value="<?php echo $c_date;?>" required>
                       </div>
                     </div>
                     <div class="row ">
