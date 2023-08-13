@@ -143,12 +143,54 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                                <!-- <div class="row ">
+                                <div class="row">
                                   <div class="form-group col-md-12">
-                                    <label for="exampleInputName1">Chicken Count</label>
-                                    <input type="text" style="border-radius: 10px;" name="code" value="" placeholder="Enter count..." class="form-control" id="code" required>
+                                    <label for="breed">Breed</label>
+                                    <select id="breed" name="breed" style="border-radius: 8px;" class="form-control" required>
+                                        <option value="" selected disabled hidden>Select Breed</option>
+                                        <option value="Boschveld">Boschveld</option>
+                                        <option value="Black australorp">Black australorp</option>
+                                        <option value="Potchefstroom koekoek">Potchefstroom koekoek</option>
+                                        <option value="Sasso">Sasso</option>
+                                        <option value="Blue orpington">Blue orpington</option>
+                                        <option value="Black (swat) orpington">Black (swat) orpington</option>
+                                        <option value="Orpington koekoek">Orpington koekoek</option>
+                                        <option value="Silver laced wyandotte">Silver laced wyandotte</option>
+                                        <option value="Gold laced wyandotte">Gold laced wyandotte</option>
+                                        <option value="Blue laced wyandotte">Blue laced wyandotte</option>
+                                        <option value="Buff orpington">Buff orpington</option>
+                                        <option value="Light sussex">Light sussex</option>
+                                        <option value="Speckled sussex">Speckled sussex</option>
+                                        <option value="Ayam cemani">Ayam cemani</option>
+                                        <option value="Perkin bantam">Perkin bantam</option>
+                                        <option value="Venda motle">Venda motle</option>
+                                        <option value="Gold partridge brahma">Gold partridge brahma</option>
+                                        <option value="Columbian light brahma">Columbian light brahma</option>
+                                        <option value="Rhode Island red">Rhode Island red</option>
+                                        <option value="Rhode island white">Rhode island white</option>
+                                        <option value="White leghorn">White leghorn</option>
+                                        <option value="Barred Plymouth rock">Barred Plymouth rock </option>
+                                        <option value="Mixed breed">Mixed breed</option>
+                                        <option value="Silver patridge brahma">Silver patridge brahma</option>
+                                        <option value="Gold laced Orpington">Gold laced Orpington</option>
+                                        <option value="Lavender orpington">Lavender orpington</option>
+                                        <option value="White Plymouth Rock">White Plymouth Rock</option>
+                                        <option value="Crested Legbar">Crested Legbar</option>
+                                        <option value="Frizzle">Frizzle</option>
+                                        <option value="Naked Neck">Naked Neck</option>
+                                        <option value="Splash Orpington">Splash Orpington</option>
+                                        <option value="Jubilee Orpington">Jubilee Orpington</option>
+                                        <option value="Golden Laced Orpington">Golden Laced Orpington</option>
+                                        <option value="Buff Columbia Brahma">Buff Columbia Brahma</option>
+                                        <option value="Blue Buff Brahma">Blue Buff Brahma</option>
+                                        <option value="Lemon Pyle Brahma">Lemon Pyle Brahma</option>
+                                        <option value="Light Columbia Bra">Light Columbia Bra</option>hma bantam
+                                        <option value="Buff Orpington bantam">Buff Orpington bantam</option>
+                                        <option value="Polish bantam">Polish bantam</option>
+                                        <option value="Light Columbia wyandotte">Light Columbia wyandotte</option>
+                                    </select>
                                   </div>
-                                </div> -->
+                                </div>
                                 <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
@@ -322,6 +364,17 @@ if(isset($_GET['del'])){
     if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
     }
+</script>
+<script>
+    const selects = document.getElementById("breed");
+
+    selects.addEventListener("change", function() {
+    if (selects.selectedIndex === 0) {
+        selects.style.color = "gray";  
+    } else {
+        selects.style.color = "#495057";
+    }
+    });
 </script>
 </body>
 </html>

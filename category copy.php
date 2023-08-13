@@ -144,27 +144,27 @@ if(isset($_GET['del'])){
                                   </div>
                                 </div>
                                 <div class="mt-4">
-                                        <label for="country">Country</label>
-                                        <select id="country" name="country" style="border-radius: 8px;" class="form-control" required>
-                                            <option value="" selected disabled hidden>Select Country</option>
-                                            <option value="Afghanistan">Afghanistan</option>
-                                            <option value="Åland Islands">Åland Islands</option>
-                                            <option value="Albania">Albania</option>
-                                            <option value="Algeria">Algeria</option>
-                                            <option value="American Samoa">American Samoa</option>
-                                            <option value="Andorra">Andorra</option>
-                                            <option value="Angola">Angola</option>
-                                            <option value="Anguilla">Anguilla</option>
-                                            <option value="Antarctica">Antarctica</option>
-                                            <option value="Antigua and Barbuda">Antigua and Barbuda</option>
-                                            <option value="Argentina">Argentina</option>
-                                            <option value="Armenia">Armenia</option>
-                                            <option value="Aruba">Aruba</option>
-                                            <option value="Australia">Australia</option>
-                                            <option value="Austria">Austria</option>
-                                            <option value="Azerbaijan">Azerbaijan</option>
-                                        </select>
-                                    </div>
+                                    <label for="country">Country</label>
+                                    <select id="country" name="country" style="border-radius: 8px;" class="form-control" required>
+                                        <option value="" selected disabled hidden>Select Country</option>
+                                        <option value="Afghanistan">Afghanistan</option>
+                                        <option value="Åland Islands">Åland Islands</option>
+                                        <option value="Albania">Albania</option>
+                                        <option value="Algeria">Algeria</option>
+                                        <option value="American Samoa">American Samoa</option>
+                                        <option value="Andorra">Andorra</option>
+                                        <option value="Angola">Angola</option>
+                                        <option value="Anguilla">Anguilla</option>
+                                        <option value="Antarctica">Antarctica</option>
+                                        <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+                                        <option value="Argentina">Argentina</option>
+                                        <option value="Armenia">Armenia</option>
+                                        <option value="Aruba">Aruba</option>
+                                        <option value="Australia">Australia</option>
+                                        <option value="Austria">Austria</option>
+                                        <option value="Azerbaijan">Azerbaijan</option>
+                                    </select>
+                                </div>
                                 <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
