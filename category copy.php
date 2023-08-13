@@ -143,12 +143,7 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                                <div class="row ">
-                                  <div class="form-group col-md-12">
-                                    <label for="exampleInputName1">Chicken Count</label>
-                                    <input type="text" style="border-radius: 10px;" name="code" value="" placeholder="Enter count..." class="form-control" id="code" required>
-                                  </div>
-                                </div>
+                                Hello world
                                 <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
