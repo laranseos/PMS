@@ -107,7 +107,7 @@ if(isset($_POST['insert']))
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12 ">
-                                <label class="col-sm-12 pl-0 pr-0">Cause of Death<?php echo $category ?></label>
+                                <label class="col-sm-12 pl-0 pr-0">Cause of Death</label>
                                 <div class="col-sm-12 pl-0 pr-0">
                                     <select id="reason" style="border-radius: 8px;" name="reason" style="color: #495057;" class="form-control" required>
                                         <option value="" selected disabled hidden>Select Reason</option>

@@ -66,6 +66,16 @@ if(isset($_POST['insertsa']))
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12 ">
+                                <label class="col-sm-12 pl-0 pr-0">Weight(Kg)</label>
+                                <div class="col-sm-12 pl-0 pr-0">
+                                    <input type="text" style="border-radius: 8px;" name="weight" placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">Quantity</label>
