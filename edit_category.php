@@ -107,25 +107,66 @@ if(isset($_POST['insert']))
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12 ">
-                                <label class="col-sm-12 pl-0 pr-0">Cause of Death</label>
+                                <label class="col-sm-12 pl-0 pr-0">Cause of Death<?php echo $category ?></label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <select id="description" style="border-radius: 8px;" name="description" style="color: #495057;" class="form-control" required>
+                                    <select id="reason" style="border-radius: 8px;" name="reason" style="color: #495057;" class="form-control" required>
+                                        <option value="" selected disabled hidden>Select Reason</option>
                                         <option value="disease">Disease</option>
                                         <option value="parasites">Parasites</option>
                                         <option value="heatstress">Heat stress</option>
-                                        <option value="poornutrition">Poor nutrition</option>
                                         <option value="predation">Predation</option>
-                                        <option value="envfactors">Environmental factors</option>
                                         <option value="accidents">Accidents</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+                        <?php 
+                            if($row->CategoryName=='Layer'||$row->CategoryName=='Free_Range') {
+                        ?>
+                            <div class="row b_detail-row" style="display: none;">
+                                <div class="form-group col-md-12 ">
+                                    <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
+                                    <div class="col-sm-12 pl-0 pr-0">
+                                        <select style="border-radius: 8px;" name="f_detail" style="color: #495057;" class="form-control" required>
+                                            <option value="Egg peritonitis/egg bound">Egg peritonitis/egg bound</option>
+                                            <option value="Fowl coryza">Fowl coryza</option>
+                                            <option value="Fowl pox">Fowl pox</option>
+                                            <option value="Newcastle disease">Newcastle disease</option>
+                                            <option value="Malnutrition">Malnutrition</option>
+                                            <option value="Coccidiosis">Coccidiosis</option>
+                                            <option value="Worm infestation">Worm infestation</option>
+                                            <option value="Gumboro disease">Gumboro disease</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        <?php
+                            }
+                            if($row->CategoryName=='Broiler') {
+                        ?>
+                       
+                        <div class="row b_detail-row" style="display: none;">
+                            <div class="form-group col-md-12 ">
+                                <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
+                                <div class="col-sm-12 pl-0 pr-0">
+                                    <select style="border-radius: 8px;" name="b_detail" style="color: #495057;" class="form-control" required>
+                                        <option value=" Yolk sac infection"> Yolk sac infection</option>
+                                        <option value="Respiratory disease">Respiratory disease</option>
+                                        <option value="Ascites">Ascites</option>
+                                        <option value="Newcastle disease">Newcastle disease</option>
+                                        <option value="Enteritis/ E coli infection">Enteritis/ E coli infection</option>
+                                        <option value="Malnutrition">Malnutrition</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <?php } ?>
                     </div>
                     <!-- <div class="col-6">
                         <div class="row">
                             <label class="col-sm-12 pl-0 pr-0">Cause of Death</label>
-                            <textarea type="text" name="description" id="description" class="form-control" rows="22" required/>
+                            <textarea type="text" name="reason" id="reason" class="form-control" rows="22" required/>
                         </div>
                     </div> -->
                 </div>
@@ -135,3 +176,34 @@ if(isset($_POST['insert']))
         }
     } ?>
 </div>
+
+<script>
+    // Get the select elements
+var reasonSelect = document.getElementById("reason");
+var fDetailRow = document.querySelector(".f_detail-row");
+var bDetailRow = document.querySelector(".b_detail-row");
+console.log(bDetailRow);
+// Add event listener to the reason select element
+reasonSelect.addEventListener("change", function() {
+  // Check if "reason" disease is selected
+  if (this.value === "disease") {
+    // Show the f_detail and b_detail rows
+    bDetailRow.style.display = "block";
+  } else {
+    // Hide the f_detail and b_detail rows
+    bDetailRow.style.display = "none";
+  }
+});
+</script>
+
+<script>
+    var dec_id = document.getElementById("reason");
+    console.log(dec_id.value);
+    dec_id.addEventListener("change", function() {
+    if (dec_id.selectedIndex === 0) {
+        dec_id.style.color = "gray";  
+    } else {
+        dec_id.style.color = "#495057";
+    }
+    });
+</script>

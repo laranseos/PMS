@@ -8,7 +8,7 @@ header('Expires: 0');
 
 $category=$_SESSION['cate'];
 
-if(isset($_POST['inserts']))
+if(isset($_POST['insertsa']))
 {
     $fowlrun=$_POST['fowlrun'];
     $eid = $_SESSION['editbid'];
@@ -32,7 +32,7 @@ if(isset($_POST['inserts']))
 ?>
 <div class="card-body">
     <?php
-    $eid=$_POST['edit_id7'];
+    $eid=$_POST['edit_id8'];
     $sql2="SELECT * from tblcategory  where tblcategory.id=:eid";
     $query2 = $dbh -> prepare($sql2);
     $query2-> bindParam(':eid', $eid, PDO::PARAM_STR);
@@ -75,11 +75,10 @@ if(isset($_POST['inserts']))
                             </div>
                         </div>
                         
-                        
                     </div>
                   
                 </div>
-                <button type="submit" name="inserts" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Remove</button>
+                <button type="submit" name="insertsa" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Remove</button>
             </form>
             <?php 
         }

@@ -56,15 +56,15 @@ if(isset($_GET['del'])){
        <div class="container">
         <div class="row">
             <?php if($_SESSION['Broiler']==1) {?>
-            <div class="col-4">
+            <div class="col-4" style="padding-right:0px; padding-left:0px;">
               <a href="category.php?cate_id=Broiler"><button class="btn btn-info btn-block custom-blue">Broiler</button></a>
             </div>
             <?php } ?> <?php if($_SESSION['Layer']==1) {?>
-            <div class="col-4">
+            <div class="col-4" style="padding-right:0px; padding-left:0px;">
               <a href="category.php?cate_id=Layer"><button class="btn btn-success btn-block custom-green">Layer</button></a>
             </div><?php } ?> <?php if($_SESSION['Free_Range']==1) {?>
-            <div class="col-4">
-              <a href="category.php?cate_id=Free_Range"><button class="btn btn-danger btn-block custom-red">Free Range</button></a>
+            <div class="col-4" style="padding-right:0px; padding-left:0px;">
+              <a href="category.php?cate_id=Free_Range"><button class="btn btn-danger btn-block custom-red" style="padding-right:2px; padding-left:2px;">Free Range</button></a>
             </div><?php } ?> 
           </div>
         </div>
@@ -106,10 +106,13 @@ if(isset($_GET['del'])){
                           <label for="code" style="color: #aaaaaa;">Chicken Quantity</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                           <label for="fpd" style="color: #aaaaaa;">Date of Birth</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                           <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px;">Record Mortality</button></a><hr>
-                          <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px;">Add Chickens</button></a><hr>
-                          <a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px;">Remove Chickens</button></a><hr>
-                          <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px;">Remove Fowl</button></a>
+                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Record Mortality</button></a><hr>
+                          <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr>
+                          <div class="row">
+                            <div class="col-md-6"><a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a><hr></div>
+                            <div class="col-md-6"><a href="#"  class=" edit_data8" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Sale</button></a><hr></div>
+                          </div>
+                          <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Remove Fowl</button></a>
                       </div>
                     </div>
                   </div>
@@ -204,7 +207,7 @@ if(isset($_GET['del'])){
                                   </select>                                  </div>
                                   <div class="form-group col-md-4">
                                     <label for="exampleInputName1"> </label>
-                                    <div class="row align-items-center mt-2"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                                    <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
                                   </div>
                                 </div>
                                 <div class="row ">
@@ -306,13 +309,41 @@ if(isset($_GET['del'])){
                 <div class="modal-dialog modal-md">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Remove Chickens</h5>
+                      <h5 class="modal-title">Culling Chickens</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
                     <div class="modal-body" id="info_update7">
                       <?php @include("remove_category.php");?>
+                    </div>
+                    <div class="modal-footer ">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+              </div>
+              <!--   end modal -->
+              <!--  start  modal -->
+            </div>
+          </div>
+          <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <!--  start  modal -->
+              <div id="editData8" class="modal fade">
+                <div class="modal-dialog modal-md">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Sale Chickens</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="info_update8">
+                      <?php @include("sale_category.php");?>
                     </div>
                     <div class="modal-footer ">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -390,6 +421,25 @@ if(isset($_GET['del'])){
     });
   });
 </script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(document).on('click','.edit_data8',function(){
+      var edit_id8=$(this).attr('id');
+      $.ajax({
+        url:"sale_category.php",
+        type:"post",
+        data:{edit_id8:edit_id8},
+        success:function(data){
+          $("#info_update7").html(data);
+          $("#editData7").modal('show');
+        }
+      });
+    });
+  });
+</script>
+
+
 <script>
     if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
@@ -444,5 +494,7 @@ checkbox.addEventListener("change", function() {
   unitSelect.disabled = this.checked;
 });
 </script>
+
+
 </body>
 </html>
