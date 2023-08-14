@@ -143,16 +143,88 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                                <!-- <div class="row ">
+                                <div class="row">
                                   <div class="form-group col-md-12">
-                                    <label for="exampleInputName1">Chicken Count</label>
-                                    <input type="text" style="border-radius: 10px;" name="code" value="" placeholder="Enter count..." class="form-control" id="code" required>
+                                    <label for="breed">Breed</label>
+                                    <select id="breed" name="breed" style="border-radius: 8px;" class="form-control" required>
+                                        <option value="" selected disabled hidden>Select Breed</option>
+                                        <option value="Boschveld">Boschveld</option>
+                                        <option value="Black australorp">Black australorp</option>
+                                        <option value="Potchefstroom koekoek">Potchefstroom koekoek</option>
+                                        <option value="Sasso">Sasso</option>
+                                        <option value="Blue orpington">Blue orpington</option>
+                                        <option value="Black (swat) orpington">Black (swat) orpington</option>
+                                        <option value="Orpington koekoek">Orpington koekoek</option>
+                                        <option value="Silver laced wyandotte">Silver laced wyandotte</option>
+                                        <option value="Gold laced wyandotte">Gold laced wyandotte</option>
+                                        <option value="Blue laced wyandotte">Blue laced wyandotte</option>
+                                        <option value="Buff orpington">Buff orpington</option>
+                                        <option value="Light sussex">Light sussex</option>
+                                        <option value="Speckled sussex">Speckled sussex</option>
+                                        <option value="Ayam cemani">Ayam cemani</option>
+                                        <option value="Perkin bantam">Perkin bantam</option>
+                                        <option value="Venda motle">Venda motle</option>
+                                        <option value="Gold partridge brahma">Gold partridge brahma</option>
+                                        <option value="Columbian light brahma">Columbian light brahma</option>
+                                        <option value="Rhode Island red">Rhode Island red</option>
+                                        <option value="Rhode island white">Rhode island white</option>
+                                        <option value="White leghorn">White leghorn</option>
+                                        <option value="Barred Plymouth rock">Barred Plymouth rock </option>
+                                        <option value="Mixed breed">Mixed breed</option>
+                                        <option value="Silver patridge brahma">Silver patridge brahma</option>
+                                        <option value="Gold laced Orpington">Gold laced Orpington</option>
+                                        <option value="Lavender orpington">Lavender orpington</option>
+                                        <option value="White Plymouth Rock">White Plymouth Rock</option>
+                                        <option value="Crested Legbar">Crested Legbar</option>
+                                        <option value="Frizzle">Frizzle</option>
+                                        <option value="Naked Neck">Naked Neck</option>
+                                        <option value="Splash Orpington">Splash Orpington</option>
+                                        <option value="Jubilee Orpington">Jubilee Orpington</option>
+                                        <option value="Golden Laced Orpington">Golden Laced Orpington</option>
+                                        <option value="Buff Columbia Brahma">Buff Columbia Brahma</option>
+                                        <option value="Blue Buff Brahma">Blue Buff Brahma</option>
+                                        <option value="Lemon Pyle Brahma">Lemon Pyle Brahma</option>
+                                        <option value="Light Columbia Bra">Light Columbia Bra</option>hma bantam
+                                        <option value="Buff Orpington bantam">Buff Orpington bantam</option>
+                                        <option value="Polish bantam">Polish bantam</option>
+                                        <option value="Light Columbia wyandotte">Light Columbia wyandotte</option>
+                                    </select>
                                   </div>
-                                </div> -->
+                                </div>
+                                <div class="row ">
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Age</label>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                  <label for="unit"></label>
+                                  <select id="unit" name="unit" style="border-radius: 8px; color:black;" class="form-control mt-1" required disabled>
+                                      <option value="days" selected>days</option>
+                                      <option value="weeks">weeks</option>
+                                  </select>                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <div class="row align-items-center mt-2"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                                  </div>
+                                </div>
                                 <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
                                     <input type="date" style="border-radius: 10px;" name="birth" placeholder="Enter Date of Birth..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
+                                  </div>
+                                </div>
+                                <div class="row ">
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Quantity</label>
+                                    <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hews" class="form-control" id="hews"required>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks"required>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Total</label>
+                                    <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
                                   </div>
                                 </div>
                                 <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
@@ -322,6 +394,55 @@ if(isset($_GET['del'])){
     if ( window.history.replaceState ) {
         window.history.replaceState( null, null, window.location.href );
     }
+</script>
+<script>
+    const selects = document.getElementById("breed");
+
+    selects.addEventListener("change", function() {
+    if (selects.selectedIndex === 0) {
+        selects.style.color = "gray";  
+    } else {
+        selects.style.color = "#495057";
+    }
+    });
+</script>
+<script>
+  const hewsInput = document.getElementById("hews");
+  const cocksInput = document.getElementById("cocks");
+  const totalInput = document.getElementById("total");
+
+  // Add event listeners to the input fields
+  hewsInput.addEventListener("input", calculateTotal);
+  cocksInput.addEventListener("input", calculateTotal);
+
+  // Define the calculateTotal function
+  function calculateTotal() {
+    // Get the values of the hews and cocks inputs
+    const hewsValue = parseInt(hewsInput.value) || 0;
+    const cocksValue = parseInt(cocksInput.value) || 0;
+
+    // Calculate the total value
+    const totalValue = hewsValue + cocksValue;
+
+    // Set the value of the total input
+    totalInput.value = totalValue;
+  }
+</script>
+<script>
+  // Get the checkbox element
+const checkbox = document.getElementById("dayold");
+
+// Get the age and unit elements
+const ageInput = document.getElementById("age");
+const unitSelect = document.getElementById("unit");
+
+// Add event listener to the checkbox
+checkbox.addEventListener("change", function() {
+  // Toggle the disabled state of age and unit elements
+  ageInput.disabled = this.checked;
+  ageInput.value = "0";
+  unitSelect.disabled = this.checked;
+});
 </script>
 </body>
 </html>
