@@ -64,7 +64,8 @@ if(isset($_GET['del'])){
               <a href="category.php?cate_id=Layer"><button class="btn btn-success btn-block custom-green">Layer</button></a>
             </div><?php } ?> <?php if($_SESSION['Free_Range']==1) {?>
             <div class="col-4" style="padding-right:0px; padding-left:0px;">
-              <a href="category.php?cate_id=Free_Range"><button class="btn btn-danger btn-block custom-red" style="padding-right:2px; padding-left:2px;">Free Range</button></a>
+              <a href="category.php?cate_id=Free_Range"><button class="btn btn-danger btn-block custom-red" style="padding-right:2px; padding-left:2px;
+              ">Free Range</button></a>
             </div><?php } ?> 
           </div>
         </div>
