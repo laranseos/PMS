@@ -66,6 +66,27 @@ if(isset($_POST['inserts']))
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="form-group col-md-12 ">
+                                <label class="col-sm-12 pl-0 pr-0">Cause of Culling</label>
+                                <div class="col-sm-12 pl-0 pr-0">
+                                    <select id="culling" style="border-radius: 8px;" name="culling" style="color: #495057;" class="form-control" required>
+                                        <option value="" selected disabled hidden>Select culling</option>
+                                        <option value="Lameness">Lameness</option>
+                                        <option value="Poor growth, malnutrition">Poor growth, malnutrition</option>
+                                        <option value="Cannibalism">Cannibalism</option>
+                                        <option value="Bullying others">Bullying others</option>
+                                        <option value="Poor breed representation ( breeding birds)">Poor breed representation ( breeding birds)</option>
+                                        <?php if($row->CategoryName=='Broiler') {?>
+                                        <option value="Stunted growth/runt">Stunted growth/runt</option>
+                                        <option value="Disability">Disability</option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">Quantity</label>
@@ -85,3 +106,15 @@ if(isset($_POST['inserts']))
         }
     } ?>
 </div>
+
+<script>
+    var dec_id = document.getElementById("culling");
+    console.log(dec_id.value);
+    dec_id.addEventListener("change", function() {
+    if (dec_id.selectedIndex === 0) {
+        dec_id.style.color = "gray";  
+    } else {
+        dec_id.style.color = "#495057";
+    }
+    });
+</script>
