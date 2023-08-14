@@ -192,9 +192,39 @@ if(isset($_GET['del'])){
                                   </div>
                                 </div>
                                 <div class="row ">
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Age</label>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                  <label for="unit"></label>
+                                  <select id="unit" name="unit" style="border-radius: 8px; color:black;" class="form-control mt-1" required disabled>
+                                      <option value="days" selected>days</option>
+                                      <option value="weeks">weeks</option>
+                                  </select>                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <div class="row align-items-center mt-2"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                                  </div>
+                                </div>
+                                <div class="row ">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
                                     <input type="date" style="border-radius: 10px;" name="birth" placeholder="Enter Date of Birth..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
+                                  </div>
+                                </div>
+                                <div class="row ">
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Quantity</label>
+                                    <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hews" class="form-control" id="hews"required>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks"required>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Total</label>
+                                    <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
                                   </div>
                                 </div>
                                 <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
@@ -375,6 +405,44 @@ if(isset($_GET['del'])){
         selects.style.color = "#495057";
     }
     });
+</script>
+<script>
+  const hewsInput = document.getElementById("hews");
+  const cocksInput = document.getElementById("cocks");
+  const totalInput = document.getElementById("total");
+
+  // Add event listeners to the input fields
+  hewsInput.addEventListener("input", calculateTotal);
+  cocksInput.addEventListener("input", calculateTotal);
+
+  // Define the calculateTotal function
+  function calculateTotal() {
+    // Get the values of the hews and cocks inputs
+    const hewsValue = parseInt(hewsInput.value) || 0;
+    const cocksValue = parseInt(cocksInput.value) || 0;
+
+    // Calculate the total value
+    const totalValue = hewsValue + cocksValue;
+
+    // Set the value of the total input
+    totalInput.value = totalValue;
+  }
+</script>
+<script>
+  // Get the checkbox element
+const checkbox = document.getElementById("dayold");
+
+// Get the age and unit elements
+const ageInput = document.getElementById("age");
+const unitSelect = document.getElementById("unit");
+
+// Add event listener to the checkbox
+checkbox.addEventListener("change", function() {
+  // Toggle the disabled state of age and unit elements
+  ageInput.disabled = this.checked;
+  ageInput.value = "0";
+  unitSelect.disabled = this.checked;
+});
 </script>
 </body>
 </html>
