@@ -8,34 +8,33 @@ header('Expires: 0');
 
 $category=$_SESSION['cate'];
 
-if(isset($_POST['insertsa']))
+if(isset($_POST['insertsw']))
 {
     $fowlrun=$_POST['fowlrun'];
-    $dressed=$_POST['dressed'];
+    $date=$_POST['date'];
+    $eid = $_SESSION['editbid'];
     $weight=$_POST['weight'];
 
-    $eid = $_SESSION['editbid'];
-    $code=$_SESSION['current_count'] - $_POST['codes'];
-
-    $sql4="update tblcategory set tblcategory.CategoryCode=:code where id=:eid";
+    $sql4="update tblcategory set tblcategory.weight=:weight, tblcategory.weightDate=:date where id=:eid";
     $query=$dbh->prepare($sql4);
-    $query->bindParam(':code',$code,PDO::PARAM_STR);
+    $query->bindParam(':weight',$weight,PDO::PARAM_STR);
+    $query->bindParam(':date',$date,PDO::PARAM_STR);
     $query->bindParam(':eid',$eid,PDO::PARAM_STR);
     $query->execute();
 
     if ($query->execute())
     {
-        echo '<script>alert("Saled  '.$dressed.' '.$weight.'kg '.$_POST['codes'].'chickens from '.$fowlrun.'")</script>';
+        // echo '<script>alert("Added '.$_POST['weight'].'chickens to '.$fowlrun.'")</script>';
         echo "<script>window.location.href ='category.php?cate_id=$category'</script>";
     }else{
         echo '<script>alert("Addition failed! try again later")</script>';
     }
-}
 
+}
 ?>
 <div class="card-body">
     <?php
-    $eid=$_POST['edit_id8'];
+    $eid=$_POST['edit_id5'];
     $sql2="SELECT * from tblcategory  where tblcategory.id=:eid";
     $query2 = $dbh -> prepare($sql2);
     $query2-> bindParam(':eid', $eid, PDO::PARAM_STR);
@@ -47,7 +46,7 @@ if(isset($_POST['insertsa']))
         foreach($results as $row)
         {
             $_SESSION['editbid']=$row->id;
-            $_SESSION['current_count']=$row->CategoryCode;
+            $_SESSION['current_weight']=$row->weight;
             
             ?>
             <form class="form-sample"  method="post" enctype="multipart/form-data">
@@ -69,30 +68,17 @@ if(isset($_POST['insertsa']))
                                 </div>
                             </div>
                         </div>
-                    
                         <div class="row">
-                            <div class="form-group col-md-6 ">
-                                <label class="pl-0 pr-0">Weight(Kg)</label>
-                                <div class="pl-0 pr-0">
-                                    <select id="dressed" style="border-radius: 8px; color:black;" name="dressed" style="color: #495057;" class="form-control" required>
-                                        <option value="Dressed">Dressed</option>
-                                        <option value="Live Weight">Live Weight</option>
-                                    </select>
+                            <div class="form-group col-md-12">
+                                <label for="exampleInputName1">Date</label>
+                                <input type="date" style="border-radius: 10px;" name="date" placeholder="Enter Date..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
                                 </div>
                             </div>
-                            <div class="form-group col-md-6 ">
-                                <label class=" pl-0 pr-0"></label>
-                                <div class=" pl-0 pr-0 mt-1">
-                                    <input type="text" style="border-radius: 8px;" name="weight" value=<?php echo $row->weight; ?> placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="row">
                             <div class="form-group col-md-12 ">
-                                <label class="col-sm-12 pl-0 pr-0">Quantity</label>
+                                <label class="col-sm-12 pl-0 pr-0">Weight(Kg)</label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <input type="text" style="border-radius: 8px;" name="codes" placeholder="Enter chicken count..." style="min-width:160px;" class="form-control" required>
+                                    <input type="text" style="border-radius: 8px;" name="weight" value=<?php echo $row->weight ?> placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +86,7 @@ if(isset($_POST['insertsa']))
                     </div>
                   
                 </div>
-                <button type="submit" name="insertsa" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Sale</button>
+                <button type="submit" name="insertsw" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Update</button>
             </form>
             <?php 
         }

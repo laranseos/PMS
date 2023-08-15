@@ -14,13 +14,28 @@ if(isset($_POST['save']))
 {
   $frcode=$_POST['frcode'];
   $code=0;
+  $breed="";
+  $cocks=0;
+  $hews=0;
+  
   $birth=$_POST['birth'];
-  $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate)values(:category,:frcode,:code,:birth)";
+  
+  if(isset($_POST['breed'])) $breed=$_POST['breed'];
+  if(isset($_POST['cocks'])) $cocks=$_POST['cocks'];
+  if(isset($_POST['hews'])) $hews=$_POST['hews'];
+
+
+  $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate,breed,cocks,hews) values(:category,:frcode,:code,:birth,:breed,:cocks,:hews)";
   $query=$dbh->prepare($sql);
   $query->bindParam(':category',$category,PDO::PARAM_STR);
   $query->bindParam(':frcode',$frcode,PDO::PARAM_STR);
   $query->bindParam(':code',$code,PDO::PARAM_STR);
   $query->bindParam(':birth',$birth,PDO::PARAM_STR);
+
+  $query->bindParam(':breed',$breed,PDO::PARAM_STR);
+  $query->bindParam(':cocks',$cocks,PDO::PARAM_STR);
+  $query->bindParam(':hews',$hews,PDO::PARAM_STR);
+
   $query->execute();
   $LastInsertId=$dbh->lastInsertId();
   if ($LastInsertId>0) 
@@ -69,6 +84,7 @@ if(isset($_GET['del'])){
             </div><?php } ?> 
           </div>
         </div>
+        
         <h2 style="text-align: center; margin-top: 10px;"><?php echo $category ?>
           <div style="float: right;">
             <button type="button" style="border-radius: 12px; margin-right: 10px;" class="btn btn-info" data-toggle="modal" data-target="#add" id='pbtn'>Add Fowl Run
@@ -82,7 +98,7 @@ if(isset($_GET['del'])){
             <div class="row" style="margin-bottom: -20px;" >
             <?php
               $cate=$_SESSION['cate'];
-              $sql="SELECT tblcategory.id,tblcategory.CategoryName,tblcategory.CategoryFowlRun,tblcategory.CategoryCode,tblcategory.PostingDate from tblcategory where tblcategory.CategoryName=:cate ORDER BY tblcategory.CategoryFowlRun ASC";
+              $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate ORDER BY tblcategory.CategoryFowlRun ASC";
               
               $query = $dbh -> prepare($sql);
               $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
@@ -97,6 +113,7 @@ if(isset($_GET['del'])){
                   $today = new DateTime('today');
                   $diff = $postingDate->diff($today);
                   $fdays = $diff->format('%a');
+                  $_SESSION['current_weight'] = $row->weight;
                   ?>
                   <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
                     <div class="card card1" style="min-height: 35vh;">
@@ -104,15 +121,41 @@ if(isset($_GET['del'])){
                         <h3 class="font-weight-normal mb-3 text-center" style="color: #00008B;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3>
                       </div>
                       <div class="card-body">
-                          <label for="code" style="color: #aaaaaa;">Chicken Quantity</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <label for="fpd" style="color: #aaaaaa;">Date of Birth</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Record Mortality</button></a><hr>
-                          <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr>
+                          
+                          <?php if($category=="Free_Range") { ?>
+                            <div class="row">
+                                <div class="col-md-6">
+                                  <label for="code" style="color: #aaaaaa;">Hews</label><input type="" class="text-center" name='hewss' readonly="readonly" value="<?php  echo htmlentities($row->hews);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                                </div>
+                                <div class="col-md-6">
+                                  <label for="code" style="color: #aaaaaa;">Cocks</label><input type="" class="text-center" name='cockss' readonly="readonly" value="<?php  echo htmlentities($row->cocks);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                                </div>
+                            </div>
+                            <hr style="margin-top: 6px; margin-bottom:6px;">
+
+                            <label for="fpd" style="color: #aaaaaa;">Breed</label><input type="" class="text-center" name='breeds'readonly="readonly" value="<?php  echo htmlentities($row->breed);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                            <hr style="margin-top: 6px; margin-bottom:6px;">
+                          <?php } else { ?> 
+                            <label for="code" style="color: #aaaaaa;">Chicken Quantity</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                            <hr style="margin-top: 6px; margin-bottom:6px;">  
+                          <?php } ?>
+
+                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                          <hr style="margin-top: 6px; margin-bottom:6px;">
+
+                          <label for="fpd" style="color: #aaaaaa;">Weight(Kg) : <span style="color:darkmagenta"><?php  echo htmlentities($row->weightDate);?></span></label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($row->weight);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                          <hr style="margin-top: 6px; margin-bottom:6px;">
+
+                          <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
+                          <a href="#"  class=" edit_data5" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Update Weight</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
+                          
                           <div class="row">
-                            <div class="col-md-6"><a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a><hr></div>
-                            <div class="col-md-6"><a href="#"  class=" edit_data8" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-danger auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Sale</button></a><hr></div>
+                            <div class="col-md-6"><a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a></div>
+                            <div class="col-md-6"><a href="#"  class=" edit_data8" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Sale</button></a></div>
                           </div>
+
+                          <hr style="margin-top: 6px; margin-bottom:6px;">
+                          <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Record Mortality</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
                           <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Remove Fowl</button></a>
                       </div>
                     </div>
@@ -147,54 +190,7 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                                <div class="row">
-                                  <div class="form-group col-md-12">
-                                    <label for="breed">Breed</label>
-                                    <select id="breed" name="breed" style="border-radius: 8px;" class="form-control" required>
-                                        <option value="" selected disabled hidden>Select Breed</option>
-                                        <option value="Boschveld">Boschveld</option>
-                                        <option value="Black australorp">Black australorp</option>
-                                        <option value="Potchefstroom koekoek">Potchefstroom koekoek</option>
-                                        <option value="Sasso">Sasso</option>
-                                        <option value="Blue orpington">Blue orpington</option>
-                                        <option value="Black (swat) orpington">Black (swat) orpington</option>
-                                        <option value="Orpington koekoek">Orpington koekoek</option>
-                                        <option value="Silver laced wyandotte">Silver laced wyandotte</option>
-                                        <option value="Gold laced wyandotte">Gold laced wyandotte</option>
-                                        <option value="Blue laced wyandotte">Blue laced wyandotte</option>
-                                        <option value="Buff orpington">Buff orpington</option>
-                                        <option value="Light sussex">Light sussex</option>
-                                        <option value="Speckled sussex">Speckled sussex</option>
-                                        <option value="Ayam cemani">Ayam cemani</option>
-                                        <option value="Perkin bantam">Perkin bantam</option>
-                                        <option value="Venda motle">Venda motle</option>
-                                        <option value="Gold partridge brahma">Gold partridge brahma</option>
-                                        <option value="Columbian light brahma">Columbian light brahma</option>
-                                        <option value="Rhode Island red">Rhode Island red</option>
-                                        <option value="Rhode island white">Rhode island white</option>
-                                        <option value="White leghorn">White leghorn</option>
-                                        <option value="Barred Plymouth rock">Barred Plymouth rock </option>
-                                        <option value="Mixed breed">Mixed breed</option>
-                                        <option value="Silver patridge brahma">Silver patridge brahma</option>
-                                        <option value="Gold laced Orpington">Gold laced Orpington</option>
-                                        <option value="Lavender orpington">Lavender orpington</option>
-                                        <option value="White Plymouth Rock">White Plymouth Rock</option>
-                                        <option value="Crested Legbar">Crested Legbar</option>
-                                        <option value="Frizzle">Frizzle</option>
-                                        <option value="Naked Neck">Naked Neck</option>
-                                        <option value="Splash Orpington">Splash Orpington</option>
-                                        <option value="Jubilee Orpington">Jubilee Orpington</option>
-                                        <option value="Golden Laced Orpington">Golden Laced Orpington</option>
-                                        <option value="Buff Columbia Brahma">Buff Columbia Brahma</option>
-                                        <option value="Blue Buff Brahma">Blue Buff Brahma</option>
-                                        <option value="Lemon Pyle Brahma">Lemon Pyle Brahma</option>
-                                        <option value="Light Columbia Bra">Light Columbia Bra</option>hma bantam
-                                        <option value="Buff Orpington bantam">Buff Orpington bantam</option>
-                                        <option value="Polish bantam">Polish bantam</option>
-                                        <option value="Light Columbia wyandotte">Light Columbia wyandotte</option>
-                                    </select>
-                                  </div>
-                                </div>
+                              
                                 <div class="row ">
                                   <div class="form-group col-md-4">
                                     <label for="exampleInputName1">Age</label>
@@ -211,26 +207,79 @@ if(isset($_GET['del'])){
                                     <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
                                   </div>
                                 </div>
-                                <div class="row ">
+
+                                <div class="row" style="display: none;">
                                   <div class="form-group col-md-12">
                                     <label for="exampleInputName1">Date of Birth</label>
                                     <input type="date" style="border-radius: 10px;" name="birth" placeholder="Enter Date of Birth..." class="datepicker form-control" id="birth" value="<?php echo date('Y-m-d');?>" required>
                                   </div>
                                 </div>
-                                <div class="row ">
-                                  <div class="form-group col-md-4">
-                                    <label for="exampleInputName1">Quantity</label>
-                                    <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hews" class="form-control" id="hews"required>
+
+                                <?php 
+                                if($category == "Free_Range") {?> 
+                                  <div class="row">
+                                    <div class="form-group col-md-12">
+                                      <label for="breed">Breed</label>
+                                      <select id="breed" name="breed" style="border-radius: 8px;" class="form-control" required>
+                                          <option value="" selected disabled hidden>Select Breed</option>
+                                          <option value="Boschveld">Boschveld</option>
+                                          <option value="Black australorp">Black australorp</option>
+                                          <option value="Potchefstroom koekoek">Potchefstroom koekoek</option>
+                                          <option value="Sasso">Sasso</option>
+                                          <option value="Blue orpington">Blue orpington</option>
+                                          <option value="Black (swat) orpington">Black (swat) orpington</option>
+                                          <option value="Orpington koekoek">Orpington koekoek</option>
+                                          <option value="Silver laced wyandotte">Silver laced wyandotte</option>
+                                          <option value="Gold laced wyandotte">Gold laced wyandotte</option>
+                                          <option value="Blue laced wyandotte">Blue laced wyandotte</option>
+                                          <option value="Buff orpington">Buff orpington</option>
+                                          <option value="Light sussex">Light sussex</option>
+                                          <option value="Speckled sussex">Speckled sussex</option>
+                                          <option value="Ayam cemani">Ayam cemani</option>
+                                          <option value="Perkin bantam">Perkin bantam</option>
+                                          <option value="Venda motle">Venda motle</option>
+                                          <option value="Gold partridge brahma">Gold partridge brahma</option>
+                                          <option value="Columbian light brahma">Columbian light brahma</option>
+                                          <option value="Rhode Island red">Rhode Island red</option>
+                                          <option value="Rhode island white">Rhode island white</option>
+                                          <option value="White leghorn">White leghorn</option>
+                                          <option value="Barred Plymouth rock">Barred Plymouth rock </option>
+                                          <option value="Mixed breed">Mixed breed</option>
+                                          <option value="Silver patridge brahma">Silver patridge brahma</option>
+                                          <option value="Gold laced Orpington">Gold laced Orpington</option>
+                                          <option value="Lavender orpington">Lavender orpington</option>
+                                          <option value="White Plymouth Rock">White Plymouth Rock</option>
+                                          <option value="Crested Legbar">Crested Legbar</option>
+                                          <option value="Frizzle">Frizzle</option>
+                                          <option value="Naked Neck">Naked Neck</option>
+                                          <option value="Splash Orpington">Splash Orpington</option>
+                                          <option value="Jubilee Orpington">Jubilee Orpington</option>
+                                          <option value="Golden Laced Orpington">Golden Laced Orpington</option>
+                                          <option value="Buff Columbia Brahma">Buff Columbia Brahma</option>
+                                          <option value="Blue Buff Brahma">Blue Buff Brahma</option>
+                                          <option value="Lemon Pyle Brahma">Lemon Pyle Brahma</option>
+                                          <option value="Light Columbia Bra">Light Columbia Bra</option>hma bantam
+                                          <option value="Buff Orpington bantam">Buff Orpington bantam</option>
+                                          <option value="Polish bantam">Polish bantam</option>
+                                          <option value="Light Columbia wyandotte">Light Columbia wyandotte</option>
+                                      </select>
+                                    </div>
                                   </div>
-                                  <div class="form-group col-md-4">
-                                    <label for="exampleInputName1"> </label>
-                                    <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks"required>
+                                  <div class="row ">
+                                    <div class="form-group col-md-4">
+                                      <label for="exampleInputName1">Quantity</label>
+                                      <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hews" class="form-control" id="hews" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                      <label for="exampleInputName1"> </label>
+                                      <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                      <label for="exampleInputName1">Total</label>
+                                      <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
+                                    </div>
                                   </div>
-                                  <div class="form-group col-md-4">
-                                    <label for="exampleInputName1">Total</label>
-                                    <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
-                                  </div>
-                                </div>
+                                <?php } ?>
                                 <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
                               </form>
                             </div>
@@ -276,6 +325,35 @@ if(isset($_GET['del'])){
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
               <!--  start  modal -->
+              <div id="editData5" class="modal fade">
+                <div class="modal-dialog modal-md">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Update Weight</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="info_update5">
+                      <?php @include("add_weight_category.php");?>
+                    </div>
+                    <div class="modal-footer ">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                    <!-- /.modal-content -->
+                  </div>
+                  <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+              </div>
+              <!--   end modal -->
+              <!--  start  modal -->
+            </div>
+          </div>
+
+          <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <!--  start  modal -->
               <div id="editData6" class="modal fade">
                 <div class="modal-dialog modal-md">
                   <div class="modal-content">
@@ -301,7 +379,6 @@ if(isset($_GET['del'])){
               <!--  start  modal -->
             </div>
           </div>
-          
 
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
@@ -331,6 +408,7 @@ if(isset($_GET['del'])){
               <!--  start  modal -->
             </div>
           </div>
+
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
               <!--  start  modal -->
@@ -385,6 +463,22 @@ if(isset($_GET['del'])){
         success:function(data){
           $("#info_update4").html(data);
           $("#editData4").modal('show');
+        }
+      });
+    });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(document).on('click','.edit_data5',function(){
+      var edit_id5=$(this).attr('id');
+      $.ajax({
+        url:"add_weight_category.php",
+        type:"post",
+        data:{edit_id5:edit_id5},
+        success:function(data){
+          $("#info_update5").html(data);
+          $("#editData5").modal('show');
         }
       });
     });
@@ -496,6 +590,40 @@ checkbox.addEventListener("change", function() {
 });
 </script>
 
+
+<script>
+const ageInputs = document.getElementById("age");
+const unitSelects = document.getElementById("unit");
+const birthInput = document.getElementById("birth");
+
+// Add event listeners to listen for changes
+ageInputs.addEventListener("input", calculateOutput);
+unitSelects.addEventListener("change", calculateOutput);
+
+function calculateOutput() {
+  let age = parseInt(ageInputs.value) || 0; // Get the age value and convert it to an integer
+  let selectedOption = unitSelects.value; // Get the selected option value
+
+  let output;
+  const today = new Date();
+  if (selectedOption === "days") {
+    output = age;
+  } else if (selectedOption === "weeks") {
+    output = age * 7;
+  }
+
+    
+  today.setDate(today.getDate() - output);
+  const birthDate = today.toISOString().split("T")[0];
+
+  // Set the birth value in the input field
+  birthInput.value = birthDate;
+
+  console.log(output); // This will display the calculated output value
+  console.log(birthInput.value);
+}
+
+</script>
 
 </body>
 </html>
