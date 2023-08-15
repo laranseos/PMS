@@ -13,7 +13,7 @@ if(isset($_POST['insertsw']))
     $fowlrun=$_POST['fowlrun'];
     $date=$_POST['date'];
     $eid = $_SESSION['editbid'];
-    $weight=$_POST['weight'] +  $_SESSION['current_weight'];
+    $weight=$_POST['weight'];
 
     $sql4="update tblcategory set tblcategory.weight=:weight, tblcategory.weightDate=:date where id=:eid";
     $query=$dbh->prepare($sql4);
@@ -78,7 +78,7 @@ if(isset($_POST['insertsw']))
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">Weight(Kg)</label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <input type="text" style="border-radius: 8px;" name="weight" value=<?php echo $row->weight?> placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
+                                    <input type="text" style="border-radius: 8px;" name="weight" value=<?php echo $row->weight ?> placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
                                 </div>
                             </div>
                         </div>
@@ -86,7 +86,7 @@ if(isset($_POST['insertsw']))
                     </div>
                   
                 </div>
-                <button type="submit" name="insertsw" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Add</button>
+                <button type="submit" name="insertsw" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Update</button>
             </form>
             <?php 
         }

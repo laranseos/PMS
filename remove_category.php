@@ -24,7 +24,7 @@ if(isset($_POST['inserts']))
 
     if ($query->execute())
     {
-        echo '<script>alert("Removed '.$_POST['codes'].'chickens from '.$fowlrun.' with '.$culling.'")</script>';
+        echo '<script>alert("Culled '.$_POST['codes'].'chickens from '.$fowlrun.' with '.$culling.'")</script>';
         echo "<script>window.location.href ='category.php?cate_id=$category'</script>";
     }else{
         echo '<script>alert("Addition failed! try again later")</script>';

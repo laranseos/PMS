@@ -14,11 +14,15 @@ if(isset($_POST['save']))
 {
   $frcode=$_POST['frcode'];
   $code=0;
+  $breed="";
+  $cocks=0;
+  $hews=0;
+  
   $birth=$_POST['birth'];
   
-  $breed=$_POST['breed'];
-  $cocks=$_POST['cocks'];
-  $hews=$_POST['hews'];
+  if(isset($_POST['breed'])) $breed=$_POST['breed'];
+  if(isset($_POST['cocks'])) $cocks=$_POST['cocks'];
+  if(isset($_POST['hews'])) $hews=$_POST['hews'];
 
 
   $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate,breed,cocks,hews) values(:category,:frcode,:code,:birth,:breed,:cocks,:hews)";
@@ -109,6 +113,7 @@ if(isset($_GET['del'])){
                   $today = new DateTime('today');
                   $diff = $postingDate->diff($today);
                   $fdays = $diff->format('%a');
+                  $_SESSION['current_weight'] = $row->weight;
                   ?>
                   <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
                     <div class="card card1" style="min-height: 35vh;">
