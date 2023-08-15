@@ -13,6 +13,8 @@ if(isset($_POST['inserts']))
     $fowlrun=$_POST['fowlrun'];
     $eid = $_SESSION['editbid'];
     $code=$_SESSION['current_count'] - $_POST['codes'];
+    $culling=$_POST['culling'];
+    
 
     $sql4="update tblcategory set tblcategory.CategoryCode=:code where id=:eid";
     $query=$dbh->prepare($sql4);
@@ -22,7 +24,7 @@ if(isset($_POST['inserts']))
 
     if ($query->execute())
     {
-        echo '<script>alert("Removed '.$_POST['codes'].'chickens from '.$fowlrun.'")</script>';
+        echo '<script>alert("Removed '.$_POST['codes'].'chickens from '.$fowlrun.' with '.$culling.'")</script>';
         echo "<script>window.location.href ='category.php?cate_id=$category'</script>";
     }else{
         echo '<script>alert("Addition failed! try again later")</script>';
@@ -100,7 +102,7 @@ if(isset($_POST['inserts']))
                     </div>
                   
                 </div>
-                <button type="submit" name="inserts" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Remove</button>
+                <button type="submit" name="inserts" class="btn btn-info btn-fw mr-2" style="float: left; border-radius: 8px;">Cull</button>
             </form>
             <?php 
         }

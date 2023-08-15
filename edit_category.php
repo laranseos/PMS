@@ -11,7 +11,8 @@ if(isset($_POST['insert']))
     $fowlrun=$_POST['fowlrun'];
     $code=$_POST['code'];
     $date=$_POST['up_date'];
-    $description=$_POST['description'];
+    $description=$_POST['reason'];
+    $details=$_POST['details'];
 
     $delta_count=$current_count-$code;
 
@@ -24,7 +25,7 @@ if(isset($_POST['insert']))
             return false;
         } 
         
-        $description = $code.' chicken(s) died with ' . $description;
+        $description = $code.' chicken(s) died with ' . $description.' '.$details;
         
         $sql4="update tblcategory set CategoryCode=:delta_count where id=:eib";
         $query=$dbh->prepare($sql4);
@@ -127,7 +128,7 @@ if(isset($_POST['insert']))
                                 <div class="form-group col-md-12 ">
                                     <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
                                     <div class="col-sm-12 pl-0 pr-0">
-                                        <select style="border-radius: 8px;" name="f_detail" style="color: #495057;" class="form-control" required>
+                                        <select style="border-radius: 8px;" name="details" style="color: #495057;" class="form-control" required>
                                             <option value="Egg peritonitis/egg bound">Egg peritonitis/egg bound</option>
                                             <option value="Fowl coryza">Fowl coryza</option>
                                             <option value="Fowl pox">Fowl pox</option>
@@ -150,7 +151,7 @@ if(isset($_POST['insert']))
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <select style="border-radius: 8px;" name="b_detail" style="color: #495057;" class="form-control" required>
+                                    <select style="border-radius: 8px;" name="details" style="color: #495057;" class="form-control" required>
                                         <option value=" Yolk sac infection"> Yolk sac infection</option>
                                         <option value="Respiratory disease">Respiratory disease</option>
                                         <option value="Ascites">Ascites</option>
