@@ -1,4 +1,4 @@
 # PMS
-Poultry Management System
+Huku
 
 Welcome to my project!

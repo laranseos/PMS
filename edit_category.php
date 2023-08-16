@@ -126,7 +126,7 @@ if(isset($_POST['insert']))
                         ?>
                             <div class="row b_detail-row" style="display: none;">
                                 <div class="form-group col-md-12 ">
-                                    <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
+                                    <label class="col-sm-12 pl-0 pr-0">Name of Disease</label>
                                     <div class="col-sm-12 pl-0 pr-0">
                                         <select style="border-radius: 8px;" name="details" style="color: #495057;" class="form-control" required>
                                             <option value="Egg peritonitis/egg bound">Egg peritonitis/egg bound</option>
@@ -149,7 +149,7 @@ if(isset($_POST['insert']))
                        
                         <div class="row b_detail-row" style="display: none;">
                             <div class="form-group col-md-12 ">
-                                <label class="col-sm-12 pl-0 pr-0">What disease caused?</label>
+                                <label class="col-sm-12 pl-0 pr-0">Name of Disease</label>
                                 <div class="col-sm-12 pl-0 pr-0">
                                     <select style="border-radius: 8px;" name="details" style="color: #495057;" class="form-control" required>
                                         <option value=" Yolk sac infection"> Yolk sac infection</option>

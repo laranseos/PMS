@@ -29,7 +29,7 @@ check_login();
                       <div class="row">
                         <div class="col-md-7 mb-20">
                           <h3 class="mb-35 font-weight-600">     PFMS </h3>
-                          <h6 class="mb-5">Poultry Management System</h6>
+                          <h6 class="mb-5">Huku</h6>
                         </div>
                         <?php 
                         //Consumer Details

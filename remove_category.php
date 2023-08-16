@@ -74,7 +74,6 @@ if(isset($_POST['inserts']))
                                 <label class="col-sm-12 pl-0 pr-0">Cause of Culling</label>
                                 <div class="col-sm-12 pl-0 pr-0">
                                     <select id="culling" style="border-radius: 8px;" name="culling" style="color: #495057;" class="form-control" required>
-                                        <option value="" selected disabled hidden>Select culling</option>
                                         <option value="Lameness">Lameness</option>
                                         <option value="Poor growth, malnutrition">Poor growth, malnutrition</option>
                                         <option value="Cannibalism">Cannibalism</option>
@@ -93,7 +92,7 @@ if(isset($_POST['inserts']))
                             <div class="form-group col-md-12 ">
                                 <label class="col-sm-12 pl-0 pr-0">Quantity</label>
                                 <div class="col-sm-12 pl-0 pr-0">
-                                    <input type="text" style="border-radius: 8px;" name="codes" placeholder="Enter chicken count..." style="min-width:160px;" class="form-control" required>
+                                    <input type="text" style="border-radius: 8px;" name="codes" placeholder="Enter Number of Chickens..." style="min-width:160px;" class="form-control" required>
                                 </div>
                             </div>
                         </div>

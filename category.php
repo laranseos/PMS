@@ -14,16 +14,11 @@ if(isset($_POST['save']))
 {
   $frcode=$_POST['frcode'];
   $code=0;
-  $breed="";
+  $breed="Not set";
   $cocks=0;
   $hews=0;
   
   $birth=$_POST['birth'];
-  
-  if(isset($_POST['breed'])) $breed=$_POST['breed'];
-  if(isset($_POST['cocks'])) $cocks=$_POST['cocks'];
-  if(isset($_POST['hews'])) $hews=$_POST['hews'];
-
 
   $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate,breed,cocks,hews) values(:category,:frcode,:code,:birth,:breed,:cocks,:hews)";
   $query=$dbh->prepare($sql);
@@ -125,7 +120,7 @@ if(isset($_GET['del'])){
                           <?php if($category=="Free_Range") { ?>
                             <div class="row">
                                 <div class="col-md-6">
-                                  <label for="code" style="color: #aaaaaa;">Hews</label><input type="" class="text-center" name='hewss' readonly="readonly" value="<?php  echo htmlentities($row->hews);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                                  <label for="code" style="color: #aaaaaa;">Hens</label><input type="" class="text-center" name='hewss' readonly="readonly" value="<?php  echo htmlentities($row->hews);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                                 </div>
                                 <div class="col-md-6">
                                   <label for="code" style="color: #aaaaaa;">Cocks</label><input type="" class="text-center" name='cockss' readonly="readonly" value="<?php  echo htmlentities($row->cocks);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
@@ -140,7 +135,7 @@ if(isset($_GET['del'])){
                             <hr style="margin-top: 6px; margin-bottom:6px;">  
                           <?php } ?>
 
-                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                           <hr style="margin-top: 6px; margin-bottom:6px;">
 
                           <label for="fpd" style="color: #aaaaaa;">Weight(Kg) : <span style="color:darkmagenta"><?php  echo htmlentities($row->weightDate);?></span></label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($row->weight);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
@@ -149,14 +144,13 @@ if(isset($_GET['del'])){
                           <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
                           <a href="#"  class=" edit_data5" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Update Weight</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
                           
-                          <div class="row">
-                            <div class="col-md-6"><a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a></div>
-                            <div class="col-md-6"><a href="#"  class=" edit_data8" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Sale</button></a></div>
-                          </div>
+                          <a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a>
+                          <hr style="margin-top: 6px; margin-bottom:6px;">
+                          <a href="#"  class=" edit_data8" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Sale</button></a>
 
                           <hr style="margin-top: 6px; margin-bottom:6px;">
                           <a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Record Mortality</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
-                          <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Remove Fowl</button></a>
+                          <!-- <a href="category.php?del=<?php echo $row->id;?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <button name="login" class="btn btn-block btn-dark auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Remove Fowl</button></a> -->
                       </div>
                     </div>
                   </div>
@@ -190,11 +184,17 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
-                              
-                                <div class="row ">
+
+
+                                <?php if($category=='Broiler') { ?>
+                                 <div class="row" style="display: none;">
+                                <?php } else { ?> 
+                                  <div class="row">
+                                <?php }
+                                 ?>
                                   <div class="form-group col-md-4">
                                     <label for="exampleInputName1">Age</label>
-                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="1" placeholder="age" class="form-control" id="age" required disabled>
                                   </div>
                                   <div class="form-group col-md-4">
                                   <label for="unit"></label>
@@ -207,6 +207,8 @@ if(isset($_GET['del'])){
                                     <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
                                   </div>
                                 </div>
+                                
+                               
 
                                 <div class="row" style="display: none;">
                                   <div class="form-group col-md-12">
@@ -215,71 +217,6 @@ if(isset($_GET['del'])){
                                   </div>
                                 </div>
 
-                                <?php 
-                                if($category == "Free_Range") {?> 
-                                  <div class="row">
-                                    <div class="form-group col-md-12">
-                                      <label for="breed">Breed</label>
-                                      <select id="breed" name="breed" style="border-radius: 8px;" class="form-control" required>
-                                          <option value="" selected disabled hidden>Select Breed</option>
-                                          <option value="Boschveld">Boschveld</option>
-                                          <option value="Black australorp">Black australorp</option>
-                                          <option value="Potchefstroom koekoek">Potchefstroom koekoek</option>
-                                          <option value="Sasso">Sasso</option>
-                                          <option value="Blue orpington">Blue orpington</option>
-                                          <option value="Black (swat) orpington">Black (swat) orpington</option>
-                                          <option value="Orpington koekoek">Orpington koekoek</option>
-                                          <option value="Silver laced wyandotte">Silver laced wyandotte</option>
-                                          <option value="Gold laced wyandotte">Gold laced wyandotte</option>
-                                          <option value="Blue laced wyandotte">Blue laced wyandotte</option>
-                                          <option value="Buff orpington">Buff orpington</option>
-                                          <option value="Light sussex">Light sussex</option>
-                                          <option value="Speckled sussex">Speckled sussex</option>
-                                          <option value="Ayam cemani">Ayam cemani</option>
-                                          <option value="Perkin bantam">Perkin bantam</option>
-                                          <option value="Venda motle">Venda motle</option>
-                                          <option value="Gold partridge brahma">Gold partridge brahma</option>
-                                          <option value="Columbian light brahma">Columbian light brahma</option>
-                                          <option value="Rhode Island red">Rhode Island red</option>
-                                          <option value="Rhode island white">Rhode island white</option>
-                                          <option value="White leghorn">White leghorn</option>
-                                          <option value="Barred Plymouth rock">Barred Plymouth rock </option>
-                                          <option value="Mixed breed">Mixed breed</option>
-                                          <option value="Silver patridge brahma">Silver patridge brahma</option>
-                                          <option value="Gold laced Orpington">Gold laced Orpington</option>
-                                          <option value="Lavender orpington">Lavender orpington</option>
-                                          <option value="White Plymouth Rock">White Plymouth Rock</option>
-                                          <option value="Crested Legbar">Crested Legbar</option>
-                                          <option value="Frizzle">Frizzle</option>
-                                          <option value="Naked Neck">Naked Neck</option>
-                                          <option value="Splash Orpington">Splash Orpington</option>
-                                          <option value="Jubilee Orpington">Jubilee Orpington</option>
-                                          <option value="Golden Laced Orpington">Golden Laced Orpington</option>
-                                          <option value="Buff Columbia Brahma">Buff Columbia Brahma</option>
-                                          <option value="Blue Buff Brahma">Blue Buff Brahma</option>
-                                          <option value="Lemon Pyle Brahma">Lemon Pyle Brahma</option>
-                                          <option value="Light Columbia Bra">Light Columbia Bra</option>hma bantam
-                                          <option value="Buff Orpington bantam">Buff Orpington bantam</option>
-                                          <option value="Polish bantam">Polish bantam</option>
-                                          <option value="Light Columbia wyandotte">Light Columbia wyandotte</option>
-                                      </select>
-                                    </div>
-                                  </div>
-                                  <div class="row ">
-                                    <div class="form-group col-md-4">
-                                      <label for="exampleInputName1">Quantity</label>
-                                      <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hews" class="form-control" id="hews" required>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                      <label for="exampleInputName1"> </label>
-                                      <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks" required>
-                                    </div>
-                                    <div class="form-group col-md-4">
-                                      <label for="exampleInputName1">Total</label>
-                                      <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
-                                    </div>
-                                  </div>
-                                <?php } ?>
                                 <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
                               </form>
                             </div>
@@ -416,7 +353,7 @@ if(isset($_GET['del'])){
                 <div class="modal-dialog modal-md">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Sale Chickens</h5>
+                      <h5 class="modal-title">Sell Chickens</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -526,8 +463,8 @@ if(isset($_GET['del'])){
         type:"post",
         data:{edit_id8:edit_id8},
         success:function(data){
-          $("#info_update7").html(data);
-          $("#editData7").modal('show');
+          $("#info_update8").html(data);
+          $("#editData8").modal('show');
         }
       });
     });
@@ -551,28 +488,7 @@ if(isset($_GET['del'])){
     }
     });
 </script>
-<script>
-  const hewsInput = document.getElementById("hews");
-  const cocksInput = document.getElementById("cocks");
-  const totalInput = document.getElementById("total");
 
-  // Add event listeners to the input fields
-  hewsInput.addEventListener("input", calculateTotal);
-  cocksInput.addEventListener("input", calculateTotal);
-
-  // Define the calculateTotal function
-  function calculateTotal() {
-    // Get the values of the hews and cocks inputs
-    const hewsValue = parseInt(hewsInput.value) || 0;
-    const cocksValue = parseInt(cocksInput.value) || 0;
-
-    // Calculate the total value
-    const totalValue = hewsValue + cocksValue;
-
-    // Set the value of the total input
-    totalInput.value = totalValue;
-  }
-</script>
 <script>
   // Get the checkbox element
 const checkbox = document.getElementById("dayold");
@@ -590,7 +506,6 @@ checkbox.addEventListener("change", function() {
 });
 </script>
 
-
 <script>
 const ageInputs = document.getElementById("age");
 const unitSelects = document.getElementById("unit");
@@ -601,7 +516,7 @@ ageInputs.addEventListener("input", calculateOutput);
 unitSelects.addEventListener("change", calculateOutput);
 
 function calculateOutput() {
-  let age = parseInt(ageInputs.value) || 0; // Get the age value and convert it to an integer
+  let age = parseInt(ageInputs.value) || 0;
   let selectedOption = unitSelects.value; // Get the selected option value
 
   let output;
