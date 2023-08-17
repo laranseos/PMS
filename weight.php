@@ -2,29 +2,34 @@
 include('includes/checklogin.php');
 check_login();
 
-if(isset($_POST['getEgg']))
+$category=$_GET['cate_id'];
+$_SESSION['cate']=$category;
+
+if(isset($_POST['recordWeight']))
 {
   $fowlrun=$_POST['fowlrun'];
-  $count=$_POST['ecount'];
+  $weight=$_POST['ecount'];
   $tdate=date("Y-m-d");
-  if($count==""){
-    echo '<script>alert("Please fill egg count field!")</script>';
-    echo "<script>window.location.href ='product.php'</script>";
+
+  if($weight==""){
+    echo '<script>alert("Please fill required field!")</script>';
+    echo "<script>window.location.href ='weight.php?cate_id=$category'</script>";
     return false;
   }
 
-  $sql="insert into tblproducts(tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount) values(:fowlrun,:tdate,:count)";
+  $sql="insert into tblweight(tblweight.fowlrun,tblweight.date,tblweight.weight) values(:fowlrun,:tdate,:weight)";
   $query=$dbh->prepare($sql);
 
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
-  $query->bindParam(':count',$count,PDO::PARAM_STR);
+  $query->bindParam(':weight',$weight,PDO::PARAM_STR);
   $query->bindParam(':tdate',$tdate,PDO::PARAM_STR);
   $query->execute();
+
   $LastInsertId=$dbh->lastInsertId();
   if ($LastInsertId>0) 
   {
-    echo '<script>alert("Egg Count Successfully Loged!")</script>';
-    echo "<script>window.location.href ='product.php'</script>";
+    echo '<script>alert("Chicken weight Successfully Loged!")</script>';
+    echo "<script>window.location.href ='weight.php?cate_id=$category'</script>";
   }
   else
   {
@@ -32,35 +37,12 @@ if(isset($_POST['getEgg']))
   }
 }
 
-if(isset($_POST['save']))
-{
-  $layer_run=$_POST['layer_run'];
-  $eggdate=$_POST['eggdate'];
-  $eggcount=$_POST['eggcount'];
 
-  $sql="insert into tblproducts(Layer_runName,Eggdate,Eggcount) values(:layer_run,:eggdate,:eggcount)";
-  $query=$dbh->prepare($sql);
-  $query->bindParam(':layer_run',$layer_run,PDO::PARAM_STR);
-  $query->bindParam(':eggdate',$eggdate,PDO::PARAM_STR);
-  $query->bindParam(':eggcount',$eggcount,PDO::PARAM_STR);
-
-  $query->execute();
-  $LastInsertId=$dbh->lastInsertId();
-  if ($LastInsertId>0) 
-  {
-    echo '<script>alert("Egg Registered successfully")</script>';
-    echo "<script>window.location.href ='product.php'</script>";
-  }
-  else
-  {
-    echo '<script>alert("Something Went Wrong. Please try again")</script>';
-  }
-}
 if(isset($_GET['del'])){    
   $cmpid=$_GET['del'];
-  $query=mysqli_query($con,"delete from tblproducts where id='$cmpid'");
-  echo "<script>alert('Product record deleted.');</script>";   
-  echo "<script>window.location.href='product.php'</script>";
+  $query=mysqli_query($con,"delete from tblweight where id='$cmpid'");
+  echo "<script>alert('Weight record deleted.');</script>";   
+  echo "<script>window.location.href='weight.php?cate_id=$category'</script>";
 }
 ?>
 <!DOCTYPE html>
@@ -68,45 +50,67 @@ if(isset($_GET['del'])){
 <?php @include("includes/head.php");?>
 <body>
   <div class="container-scroller">
-    <!-- partial:../../partials/_navbar.html -->
     <?php @include("includes/header.php");?>
-    <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-      <!-- partial:../../partials/_sidebar.html -->
       <?php @include("includes/sidebar.php");?>
-      <!-- partial -->
       <div class="main-panel">
+        <div class="container">
+          <div class="row">
+              <?php if($_SESSION['Broiler']==1) {?>
+              <div class="col-4" style="padding-right:0px; padding-left:0px;">
+                <a href="weight.php?cate_id=Broiler"><button class="btn btn-info btn-block custom-blue">Broiler</button></a>
+              </div>
+              <?php } ?> <?php if($_SESSION['Layer']==1) {?>
+              <div class="col-4" style="padding-right:0px; padding-left:0px;">
+                <a href="weight.php?cate_id=Layer"><button class="btn btn-success btn-block custom-green">Layer</button></a>
+              </div><?php } ?> <?php if($_SESSION['Free_Range']==1) {?>
+              <div class="col-4" style="padding-right:0px; padding-left:0px;">
+                <a href="weight.php?cate_id=Free_Range"><button class="btn btn-danger btn-block custom-red" style="padding-right:2px; padding-left:2px;
+                ">Free Range</button></a>
+              </div><?php } ?> 
+            </div>
+        </div>
+        <h2 style="text-align: center; margin-top: 20px;"><?php echo $category ?></h2>
         <div class="content-wrapper">
             <div>
               <div class="row" style="margin-bottom: -20px;" >
                 <?php
   
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName='Layer' order by tblcategory.CategoryFowlRun ASC";
+                $cate=$_SESSION['cate'];
+                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate ORDER BY tblcategory.CategoryFowlRun ASC";
                 
                 $query = $dbh -> prepare($sql);
+                $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
                 $query->execute();
                 $results=$query->fetchAll(PDO::FETCH_OBJ);
+                
                 $cnt=1;
                 if($query->rowCount() > 0)
                 {
                   foreach($results as $row)
                   { 
+
+                    $postingDate = new DateTime($row->PostingDate);
+                    $today = new DateTime('today');
+                    $diff = $postingDate->diff($today);
+                    $fdays = $diff->format('%a');
+
                     $fr=$row->CategoryFowlRun;
                     $dt=date("Y-m-d");
 
-                    $sql1="SELECT * from tblproducts where tblproducts.Layer_runName=:fr and tblproducts.Eggdate=:dt";
+                    $sql1="SELECT * from tblweight where tblweight.fowlrun=:fr and tblweight.date=:dt";
                     
                     $query1 = $dbh -> prepare($sql1);
                     $query1-> bindParam(':fr', $fr, PDO::PARAM_STR);
                     $query1-> bindParam(':dt', $dt, PDO::PARAM_STR);
                     $query1->execute();
                     $result = $query1->fetchAll(PDO::FETCH_ASSOC);
-                    $checkegg = 0;
+                    $checkweight = 0;
                     if($query1->rowCount() > 0)
                     {
-                      $checkegg = 1;
+                      $checkweight = 1;
                       foreach($result as $rows){ 
-                        $cnt = $rows['Eggcount'];
+                        $weight = $rows['weight'];
                       }
                     }
 
@@ -116,34 +120,34 @@ if(isset($_GET['del'])){
                           <div class="card card1" style="min-height: 35vh;">
                             <div class="card-header">
                               <h4><?php  echo htmlentities(date("Y-m-d"));?><i class="mdi mdi-pin mdi-24px float-right"></i></h4>
-                              <?php if($checkegg==1){ ?>
+                              <?php if($checkweight==1){ ?>
                               <h3 class="font-weight-normal mb-3 text-center" style="color: #00008B;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3> <?php } else{?> 
                               <h3 class="font-weight-normal mb-3 text-center" style="color:crimson;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3><?php } ?>
                             </div>
                             <div class="card-body">
 
-                              <form method="post" action="product.php">
+                              <form method="post" action="weight.php?cate_id=<?php echo $category?>">
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
                                 <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='chicken_count' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Date of Birth</label><input type="" class="text-center" name='fpd' readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='fpd' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <?php 
-                                if($checkegg==1){  ?>
-                                <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($cnt);?>" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Check Egg</label>
+                                if($checkweight==1){  ?>
+                                <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($weight);?>" id="ecount" name='ecount' placeholder="Enter Chicken weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Record</label>
                                 <div class="text-center">
-                                  <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Egg count already is recorded.');">
-                                    <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="taken" checked onclick='return false'/>&nbsp;
+                                  <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Chicken weight is already recorded.');">
+                                    <input type="checkbox" name="recordWeight" style="width: 1.8em; height:1.8em;" class="taken" checked onclick='return false'/>&nbsp;
                                   </a>
                                 </div>
                                 <?php
                                 }
                                 else { ?>
-                                  <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                  <label for="fpd" style="color: #aaaaaa;">Check Egg</label>
+                                  <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Chicken Weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
+                                  <label for="fpd" style="color: #aaaaaa;">Record</label>
                                   <div class="text-center">
                                     <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record egg count?');">
-                                      <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="getEgg align-items-center" onchange="this.form.submit()"/>&nbsp;
+                                      <input type="checkbox" name="recordWeight" style="width: 1.8em; height:1.8em;" class="recordWeight align-items-center" onchange="this.form.submit()"/>&nbsp;
                                     </a>
                                   </div>
                                     <?php
@@ -163,12 +167,11 @@ if(isset($_GET['del'])){
 
           <div class="col-lg-12 grid-margin stretch-card">
             <div class="card">
-              <!--  start  modal -->
               <div id="editData4" class="modal fade">
                 <div class="modal-dialog modal-md">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Edit Product details</h5>
+                      <h5 class="modal-title">Edit Weight</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -180,31 +183,26 @@ if(isset($_GET['del'])){
                     <div class="modal-footer ">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
-                    <!-- /.modal-content -->
                   </div>
-                  <!-- /.modal-dialog -->
                 </div>
-                <!-- /.modal -->
               </div>
-              <!--   end modal -->
-              <!--  start  modal -->
-              
-              <!--   end modal -->
+
               <div class="table-responsive p-3">
                 <table class="table align-items-center table-flush table-hover" id="dataTableHover">
                   <thead>
                     <tr>
                       <th class="text-center">No</th>
-                      <th class="text-center">Layer Run Name</th>
+                      <th class="text-center">Fowl Run</th>
                       <th class="text-center">Posting Date</th>
-                      <th class="text-center">Egg Count</th>
+                      <th class="text-center">Weight</th>
                       <th class="text-center" style="width: 10%;">Edit</th>
-                      <th class="text-center" style="width: 10%;">Cancel</th>
+                      <th class="text-center" style="width: 10%;">Delete</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php
-                    $sql="SELECT tblproducts.id,tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount from tblproducts ORDER BY id DESC";
+                    $cate=$_SESSION['cate'];
+                    $sql="SELECT * from tblweight ORDER BY id DESC";
                     $query = $dbh -> prepare($sql);
                     $query->execute();
                     $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -216,11 +214,11 @@ if(isset($_GET['del'])){
                         ?>
                         <tr>
                           <td class="text-center"><?php echo htmlentities($cnt);?></td>
-                          <td class="text-center"><?php  echo htmlentities($row->Layer_runName);?></td>
-                          <td class="text-center"><?php  echo htmlentities($row->Eggdate);?></td>
-                          <td class="text-center"><?php  echo htmlentities($row->Eggcount);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->fowlrun);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->date);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->weight);?></td>
                           <td class=" text-center"><a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><i class="mdi mdi-pencil-box-outline" aria-hidden="true"></i></a></td>
-                          <td class=" text-center"> <a href="product.php?del=<?php echo ($row->id);?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete?');"> <i class="mdi mdi-delete" style="color: #f05050"></i> </a>
+                          <td class=" text-center"> <a href="weight.php?del=<?php echo ($row->id);?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete log?');"> <i class="mdi mdi-delete" style="color: #f05050"></i> </a>
                           </td>
                         </tr>
                         <?php 
@@ -235,18 +233,11 @@ if(isset($_GET['del'])){
           </div>
         </div>
       </div>
-      <!-- content-wrapper ends -->
-      <!-- partial:../../partials/_footer.html -->
       <?php @include("includes/footer.php");?>
-      <!-- partial -->
     </div>
-    <!-- main-panel ends -->
   </div>
-  <!-- page-body-wrapper ends -->
 </div>
-<!-- container-scroller -->
 <?php @include("includes/foot.php");?>
-<!-- End custom js for this page -->
 <script type="text/javascript">
   $(document).ready(function(){
     $(document).on('click','.edit_data4',function(){

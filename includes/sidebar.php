@@ -38,8 +38,9 @@
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="category.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Manage Category</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="weight.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Weight Record</a></li>
                     <?php if($_SESSION['Layer']==1) {?>
-                    <li class="nav-item"> <a class="nav-link" href="product.php">Egg Recording</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="product.php">Egg Record</a></li>
                     <?php } ?>
                 </ul>
             </div>

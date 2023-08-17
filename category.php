@@ -142,7 +142,7 @@ if(isset($_GET['del'])){
                           <hr style="margin-top: 6px; margin-bottom:6px;">
 
                           <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
-                          <a href="#"  class=" edit_data5" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Update Weight</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
+                          <!-- <a href="#"  class=" edit_data5" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Update Weight</button></a><hr style="margin-top: 6px; margin-bottom:6px;"> -->
                           
                           <a href="#"  class=" edit_data7" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-info auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Cull</button></a>
                           <hr style="margin-top: 6px; margin-bottom:6px;">
