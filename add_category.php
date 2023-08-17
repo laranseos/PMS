@@ -18,16 +18,17 @@ if(isset($_POST['insertss']))
     $hews=0;
     
     $birth=$_POST['birth'];
-    
+
+    if(isset($_POST['code'])) $code=$_POST['code'] + $_SESSION['current_count'];
     if(isset($_POST['breed'])) $breed=$_POST['breed'];
     if(isset($_POST['cocks'])) $cocks=$_POST['cocks'] + $_SESSION['current_cocks'];
     if(isset($_POST['hews'])) $hews=$_POST['hews'] + $_SESSION['current_hews'];
 
-    $sql4="update tblcategory set tblcategory.cocks=:cocks, tblcategory.hews=:hews, tblcategory.breed=:breed where id=:eid";
+    $sql4="update tblcategory set tblcategory.cocks=:cocks, tblcategory.hews=:hews, tblcategory.breed=:breed, tblcategory.CategoryCode=:code  where id=:eid";
     $query=$dbh->prepare($sql4);
 
     $query->bindParam(':eid',$eid,PDO::PARAM_STR);
-
+    $query->bindParam(':code',$code,PDO::PARAM_STR);
     $query->bindParam(':breed',$breed,PDO::PARAM_STR);
     $query->bindParam(':cocks',$cocks,PDO::PARAM_STR);
     $query->bindParam(':hews',$hews,PDO::PARAM_STR);
