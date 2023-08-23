@@ -17,7 +17,17 @@
                 if($row->AdminName=="Admin")
                 { 
                     $_SESSION['admin'] = 'true';
+                    
+                    if($row->Status == 99) {
                     ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sp_userregister.php">
+                                <span class="menu-title">Admin Panel</span>
+                                <i class="mdi mdi-account-key menu-icon"></i>
+                            </a>
+                        </li>
+                    <?php } ?>
+
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
                                 <span class="menu-title">Dashboard</span>

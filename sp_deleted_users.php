@@ -11,7 +11,7 @@ if(isset($_GET['restoreid']))
     $query->execute();
     if ($query->execute()){
         echo "<script>alert('User Restored!');</script>"; 
-        echo "<script>window.location.href = 'userregister.php?modal_block=true'</script>";
+        echo "<script>window.location.href = 'sp_userregister.php?modal_block=true'</script>";
     }else{
         echo '<script>alert("update failed! try again later")</script>';
     }
@@ -35,10 +35,9 @@ if(isset($_GET['restoreid']))
         </thead>
         <tbody>
             <?php
-            $fname=$_SESSION['fname'];
-            $sql="SELECT * from tbladmin where Status='0' and tbladmin.FarmName=:fname";
+
+            $sql="SELECT * from tbladmin where Status='0' and tbladmin.AdminName='Admin' ";
             $query = $dbh -> prepare($sql);
-            $query->bindParam(':fname',$fname,PDO::PARAM_STR);
             $query->execute();
             $results=$query->fetchAll(PDO::FETCH_OBJ);
             $cnt=1;
@@ -69,7 +68,7 @@ if(isset($_GET['restoreid']))
                         <td class="text-center">
                             <span ><?php  echo htmlentities(date("d-m-Y", strtotime($row->AdminRegdate)));?></span>
                         </td>
-                            <td class="text-center"><a href="deleted_users.php?restoreid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Restore user ?');" title="Restore this User"><i class="mdi mdi-backup-restore" data-toggle="tooltip" data-placement="right" title="Restore this user"></i></a></td>
+                            <td class="text-center"><a href="sp_deleted_users.php?restoreid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Restore user ?');" title="Restore this User"><i class="mdi mdi-backup-restore" data-toggle="tooltip" data-placement="right" title="Restore this user"></i></a></td>
                         </tr>
                         <?php $cnt=$cnt+1;
                     }

@@ -4,20 +4,28 @@ check_login();
 if(isset($_POST['submit']))
 {
   $adminid=$_SESSION['odmsaid'];
-  $AName=$_POST['username'];
+  $current_farmname=$_SESSION['current_farmname'];
+  $farmname=$_POST['farmname'];
   $fName=$_POST['firstname'];
   $lName=$_POST['lastname'];
   $mobno=$_POST['mobilenumber'];
   $email=$_POST['email'];
-  $sql="update tbladmin set UserName=:adminname,FirstName=:firstname,LastName=:lastname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
+  $sql="update tbladmin set FirstName=:firstname,LastName=:lastname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
   $query = $dbh->prepare($sql);
-  $query->bindParam(':adminname',$AName,PDO::PARAM_STR);
   $query->bindParam(':firstname',$fName,PDO::PARAM_STR);
   $query->bindParam(':lastname',$lName,PDO::PARAM_STR);
   $query->bindParam(':email',$email,PDO::PARAM_STR);
   $query->bindParam(':mobilenumber',$mobno,PDO::PARAM_STR);
   $query->bindParam(':aid',$adminid,PDO::PARAM_STR);
   $query->execute();
+
+  $sql1="update tbladmin set FarmName=:farmname where FarmName=:current_farmname";
+  $query1 = $dbh->prepare($sql1);
+  $query1->bindParam(':farmname',$farmname,PDO::PARAM_STR);
+  $_SESSION['fname']=$farmname;
+  $query1->bindParam(':current_farmname',$current_farmname,PDO::PARAM_STR);
+  $query1->execute();
+  
   echo '<script>alert("Profile has been updated")</script>';
 }
 ?>
@@ -52,6 +60,7 @@ if(isset($_POST['submit']))
                                     {
                                         foreach($results as $row)
                                         {  
+                                            $_SESSION['current_farmname']=$row->FarmName;
                                             ?>
                                             <form method="post">
                                                 <div class="form-group row">
@@ -61,9 +70,13 @@ if(isset($_POST['submit']))
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="col-12" for="register1-email">User Name:</label>
+                                                    <label class="col-12" for="register1-email">Farm Name:</label>
                                                     <div class="col-12">
-                                                        <input type="text" class="form-control" name="username" value="<?php  echo $row->UserName;?>" required='true' >
+                                                    <?php   if($row->AdminName == 'User') {?>
+                                                        <input type="text" class="form-control" name="farmname" value="<?php  echo $row->FarmName;?>" required='true' readonly >
+                                                    <?php } else { ?>
+                                                        <input type="text" class="form-control" name="farmname" value="<?php  echo $row->FarmName;?>" required='true' >
+                                                        <?php } ?>
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">

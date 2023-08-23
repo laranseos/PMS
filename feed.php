@@ -52,10 +52,12 @@ if(isset($_POST['notaken'])){
               <div class="row" style="margin-bottom: -20px;" >
                 <?php
                 $cate=$_SESSION['cate'];
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate order by tblcategory.CategoryFowlRun ASC";
+                $fname=$_SESSION['fname'];
+                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun ASC";
                 
                 $query = $dbh -> prepare($sql);
                 $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                 $query->execute();
                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                 $cnt=1;
@@ -63,15 +65,15 @@ if(isset($_POST['notaken'])){
                 {
                   foreach($results as $row)
                   { 
-
-                    $c_code = $row->CategoryCode; 
+                    if($cate=='Free_Range') $c_code = $row->cocks + $row->hews;
+                    else $c_code = $row->CategoryCode; 
                     $c_date = $row->PostingDate;
 
                     $postingDate = new DateTime($c_date);
                     $today = new DateTime('today');
                     $diff = $postingDate->diff($today);
 
-                    $fdays = $diff->format('%a');
+                    $fdays = $diff->format('%a')+1;
                   
                     $sql1="SELECT tblfeed.fpd from tblfeed where tblfeed.category=:cate and tblfeed.start<=:fdays and tblfeed.end>=:fdays";
                     $query1=$dbh->prepare($sql1);
@@ -106,8 +108,11 @@ if(isset($_POST['notaken'])){
                       }
                     } else {
                       $total = $c_feed*$c_code;
-                      $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate)";
+                      $fname=$_SESSION['fname'];
+                      
+                      $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname)";
                       $query2=$dbh->prepare($sql2);
+                      $query2-> bindParam(':fname', $fname, PDO::PARAM_STR);
                       $query2->bindParam(':category',$cate,PDO::PARAM_STR);
                       $query2->bindParam(':fowlrun',$fr,PDO::PARAM_STR);
                       $query2->bindParam(':code',$c_code,PDO::PARAM_STR);
@@ -133,9 +138,9 @@ if(isset($_POST['notaken'])){
                                 <input type="text" class="text-center" name='logid' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Feed per day</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php echo number_format($c_feed, 3, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="tfeed" style="color: #aaaaaa;">Feed Recommend</label><input type="" class="text-center" name='tfeed' readonly="readonly" value="<?php echo number_format($c_feed*$c_code, 2, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <input type="" class="text-center" name='fpd'readonly="readonly" value="<?php echo number_format($c_feed, 3, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
+                                <label for="tfeed" style="color: #aaaaaa;">Feed per day(Kg)</label><input type="" class="text-center" name='tfeed' readonly="readonly" value="<?php echo number_format($c_feed*$c_code, 2, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
 
                                 <?php if($feedcheck==1){
                                   ?>
@@ -207,7 +212,7 @@ if(isset($_POST['notaken'])){
                         <tr>
                           <th class="text-center">FowlRun</th>
                           <th class="text-center">Chicken Count</th>
-                          <th class="text-center">Feed per day</th>
+                          <!-- <th class="text-center">Feed per day(Kg)</th> -->
                           <th class="text-center">Total Feed</th>
                           <th class="text-center">Feed Date</th>
                           <th class="text-center" style="width: 15%;">Feed State</th>
@@ -216,9 +221,11 @@ if(isset($_POST['notaken'])){
                       <tbody>
                         <?php
                         $cate=$_SESSION['cate'];
-                        $sql="SELECT * from tblfeed_log where tblfeed_log.category=:cate ORDER BY id DESC";
+                        $fname=$_SESSION['fname'];
+                        $sql="SELECT * from tblfeed_log where tblfeed_log.category=:cate and tblfeed_log.fname=:fname  ORDER BY id DESC";
                         
                         $query = $dbh -> prepare($sql);
+                        $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                         $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
                         $query->execute();
                         $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -231,7 +238,7 @@ if(isset($_POST['notaken'])){
                             <tr>
                               <td class="text-center"><?php  echo htmlentities($row->fowlRun);?></td>
                               <td class="text-center"><?php  echo htmlentities($row->count);?></td>
-                              <td class="text-center"><?php echo number_format($row->fpd, 3, '.', '');?></td>
+                              <!-- <td class="text-center"><?php echo number_format($row->fpd, 3, '.', '');?></td> -->
                               <td class="text-center"><?php echo number_format($row->total, 2, '.', '');?></td>
                               <td class="text-center"><?php  echo htmlentities(date("Y-m-d", strtotime($row->posting)));?></td>
                               <?php 

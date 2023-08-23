@@ -10,6 +10,7 @@ if(isset($_POST['recordWeight']))
   $fowlrun=$_POST['fowlrun'];
   $weight=$_POST['ecount'];
   $tdate=date("Y-m-d");
+  $fname=$_SESSION['fname'];
 
   if($weight==""){
     echo '<script>alert("Please fill required field!")</script>';
@@ -17,9 +18,9 @@ if(isset($_POST['recordWeight']))
     return false;
   }
 
-  $sql="insert into tblweight(tblweight.fowlrun,tblweight.date,tblweight.weight) values(:fowlrun,:tdate,:weight)";
+  $sql="insert into tblweight(tblweight.fowlrun,tblweight.date,tblweight.weight,tblweight.fname) values(:fowlrun,:tdate,:weight,:fname)";
   $query=$dbh->prepare($sql);
-
+  $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':weight',$weight,PDO::PARAM_STR);
   $query->bindParam(':tdate',$tdate,PDO::PARAM_STR);
@@ -77,10 +78,12 @@ if(isset($_GET['del'])){
                 <?php
   
                 $cate=$_SESSION['cate'];
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate ORDER BY tblcategory.CategoryFowlRun ASC";
+                $fname=$_SESSION['fname'];
+                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname ORDER BY tblcategory.CategoryFowlRun ASC";
                 
                 $query = $dbh -> prepare($sql);
                 $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                 $query->execute();
                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                 
@@ -89,6 +92,8 @@ if(isset($_GET['del'])){
                 {
                   foreach($results as $row)
                   { 
+                    if($cate=='Free_Range') $c_code = $row->cocks + $row->hews;
+                    else $c_code = $row->CategoryCode;
 
                     $postingDate = new DateTime($row->PostingDate);
                     $today = new DateTime('today');
@@ -101,6 +106,7 @@ if(isset($_GET['del'])){
                     $sql1="SELECT * from tblweight where tblweight.fowlrun=:fr and tblweight.date=:dt";
                     
                     $query1 = $dbh -> prepare($sql1);
+
                     $query1-> bindParam(':fr', $fr, PDO::PARAM_STR);
                     $query1-> bindParam(':dt', $dt, PDO::PARAM_STR);
                     $query1->execute();
@@ -129,7 +135,7 @@ if(isset($_GET['del'])){
                               <form method="post" action="weight.php?cate_id=<?php echo $category?>">
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='chicken_count' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='chicken_count' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='fpd' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <?php 
                                 if($checkweight==1){  ?>
@@ -202,8 +208,10 @@ if(isset($_GET['del'])){
                   <tbody>
                     <?php
                     $cate=$_SESSION['cate'];
-                    $sql="SELECT * from tblweight ORDER BY id DESC";
+                    $fname=$_SESSION['fname'];
+                    $sql="SELECT * from tblweight where tblweight.fname=:fname  ORDER BY id DESC";
                     $query = $dbh -> prepare($sql);
+                    $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                     $query->execute();
                     $results=$query->fetchAll(PDO::FETCH_OBJ);
                     $cnt=1;

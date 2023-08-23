@@ -13,6 +13,7 @@ $_SESSION['cate']=$category;
 if(isset($_POST['save']))
 {
   $frcode=$_POST['frcode'];
+  $fname=$_SESSION['fname'];
   $code=0;
   $breed="Not set";
   $cocks=0;
@@ -20,8 +21,11 @@ if(isset($_POST['save']))
   
   $birth=$_POST['birth'];
 
-  $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate,breed,cocks,hews) values(:category,:frcode,:code,:birth,:breed,:cocks,:hews)";
+  $sql="insert into tblcategory(CategoryName,CategoryFowlRun,CategoryCode,PostingDate,breed,cocks,hews,fname) values(:category,:frcode,:code,:birth,:breed,:cocks,:hews,:fname)";
   $query=$dbh->prepare($sql);
+
+  $query->bindParam(':fname',$fname,PDO::PARAM_STR);
+
   $query->bindParam(':category',$category,PDO::PARAM_STR);
   $query->bindParam(':frcode',$frcode,PDO::PARAM_STR);
   $query->bindParam(':code',$code,PDO::PARAM_STR);
@@ -93,10 +97,12 @@ if(isset($_GET['del'])){
             <div class="row" style="margin-bottom: -20px;" >
             <?php
               $cate=$_SESSION['cate'];
-              $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate ORDER BY tblcategory.CategoryFowlRun ASC";
+              $fname=$_SESSION['fname'];
+              $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname  ORDER BY tblcategory.CategoryFowlRun ASC";
               
               $query = $dbh -> prepare($sql);
               $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+              $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
               $query->execute();
               $results=$query->fetchAll(PDO::FETCH_OBJ);
               $cnt=1;
@@ -138,8 +144,8 @@ if(isset($_GET['del'])){
                           <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                           <hr style="margin-top: 6px; margin-bottom:6px;">
 
-                          <label for="fpd" style="color: #aaaaaa;">Weight(Kg) : <span style="color:darkmagenta"><?php  echo htmlentities($row->weightDate);?></span></label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($row->weight);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
-                          <hr style="margin-top: 6px; margin-bottom:6px;">
+                          <!-- <label for="fpd" style="color: #aaaaaa;">Weight(Kg) : <span style="color:darkmagenta"><?php  echo htmlentities($row->weightDate);?></span></label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($row->weight);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                          <hr style="margin-top: 6px; margin-bottom:6px;"> -->
 
                           <a href="#"  class=" edit_data6" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Add Chickens</button></a><hr style="margin-top: 6px; margin-bottom:6px;">
                           <!-- <a href="#"  class=" edit_data5" id="<?php echo  ($row->id); ?>" title="click to edit"><button name="login" class="btn btn-block btn-success auth-form-btn" style="border-radius: 16px; padding-right:5px; padding-left:5px;">Update Weight</button></a><hr style="margin-top: 6px; margin-bottom:6px;"> -->
@@ -501,7 +507,7 @@ const unitSelect = document.getElementById("unit");
 checkbox.addEventListener("change", function() {
   // Toggle the disabled state of age and unit elements
   ageInput.disabled = this.checked;
-  ageInput.value = "0";
+  ageInput.value = "1";
   unitSelect.disabled = this.checked;
 });
 </script>

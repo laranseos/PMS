@@ -41,9 +41,12 @@ check_login();
                               </thead>
                               <tbody>
                                 <?php
-                                $sql="SELECT tblcategory_log.CategoryName,tblcategory_log.CategoryFowlRun,tblcategory_log.CategoryCount,tblcategory_log.CategoryDate,tblcategory_log.CategoryDescription from tblcategory_log ORDER BY id DESC";
-                                
+                                $fname=$_SESSION['fname'];
+
+                                $sql="SELECT tblcategory_log.CategoryName,tblcategory_log.CategoryFowlRun,tblcategory_log.CategoryCount,tblcategory_log.CategoryDate,tblcategory_log.CategoryDescription from tblcategory_log where tblcategory_log.fname=:fname ORDER BY id DESC";
+
                                 $query = $dbh -> prepare($sql);
+                                $query->bindParam(':fname',$fname,PDO::PARAM_STR);
                                 $query->execute();
                                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                                 $cnt=1;

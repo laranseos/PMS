@@ -12,7 +12,7 @@ if(isset($_GET['delid']))
     $result = $query->execute();
     if ($query->execute()){
         echo "<script>alert('User blocked');</script>"; 
-        echo "<script>window.location.href = 'userregister.php'</script>";
+        echo "<script>window.location.href = 'sp_userregister.php'</script>";
     } else{
         echo '<script>alert("update failed! try again later")</script>';
     }
@@ -57,6 +57,8 @@ if(isset($_GET['modal_block'])) { ?>
                             <div class="modal-header">
                                 <h5 class="modal-title" style="float: left;">Registered Users</h5>    
                                 <div class="card-tools" style="float: right;">
+                                    <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#switch" id='pbtn'></i> Switch Farm
+                                    </button>
                                     <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#add" id='pbtn'></i> Pending Users
                                     </button>
                                     <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete" id='bbtn'></i> Blocked Users
@@ -66,6 +68,37 @@ if(isset($_GET['modal_block'])) { ?>
                                 </div>      
                             </div>
                             <!-- /.card-header -->
+
+                            <div class="modal fade" id="switch">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Switch System</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="card">
+                                                <div class="col-md-12 mt-4">
+                                                    <form class="forms-sample" method="post" enctype="multipart/form-data" class="form-horizontal">
+                                                        <div class="row ">
+                                                        <div class="form-group col-md-12">
+                                                            <label for="exampleInputName1">Fowl-Run Name</label>
+                                                            <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
+                                                        </div>
+                                                        </div>
+
+                                                        <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                                    <!-- /.modal-content -->
+                            </div>
+
                             <div class="modal fade" id="registeruser">
                                 <div class="modal-dialog ">
                                     <div class="modal-content">
@@ -96,7 +129,7 @@ if(isset($_GET['modal_block'])) { ?>
                                         </div>
                                         <div class="modal-body">
                                             <!-- <p>One fine body&hellip;</p> -->
-                                            <?php @include("deleted_users.php");?>
+                                            <?php @include("sp_deleted_users.php");?>
                                         </div>
                                     </div>
                                     <!-- /.modal-content -->
@@ -115,7 +148,7 @@ if(isset($_GET['modal_block'])) { ?>
                                         </div>
                                         <div class="modal-body">
                                             <!-- <p>One fine body&hellip;</p> -->
-                                            <?php @include("pending_users.php");?>
+                                            <?php @include("sp_pending_users.php");?>
                                         </div>
                                     </div>
                                     <!-- /.modal-content -->
@@ -141,6 +174,7 @@ if(isset($_GET['modal_block'])) { ?>
                                 </div>
                                 <!-- /.modal -->
                             </div>
+
                             <div id="editData5" class="modal fade">
                                 <div class="modal-dialog modal-md">
                                     <div class="modal-content">
@@ -160,7 +194,6 @@ if(isset($_GET['modal_block'])) { ?>
                                     </div>
                                 <!-- /.modal-dialog -->
                                 </div>
-                            <!-- /.modal -->
                             </div>
                             <!--   end modal -->
                             <div class="card-body table-responsive p-3">
@@ -181,10 +214,8 @@ if(isset($_GET['modal_block'])) { ?>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $fname=$_SESSION['fname'];
-                                        $sql="SELECT * from tbladmin where tbladmin.Status='1' and tbladmin.FarmName=:fname ";
+                                        $sql="SELECT * from tbladmin where tbladmin.Status='1' and tbladmin.AdminName='Admin' ";
                                         $query = $dbh -> prepare($sql);
-                                        $query->bindParam(':fname',$fname,PDO::PARAM_STR);
                                         $query->execute();
                                         $results=$query->fetchAll(PDO::FETCH_OBJ);
                                         $cnt=1;
@@ -219,7 +250,7 @@ if(isset($_GET['modal_block'])) { ?>
                                                         <a href="#"  class=" edit_data5" id="<?php echo  ($row->ID); ?>" title="click to view">&nbsp;<i class="mdi mdi-eye" aria-hidden="true"></i></a>
                                                     </td>
                                                     <td class=" text-center">
-                                                        <a href="userregister.php?delid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Block ?');" title="Block this User"><i class="mdi mdi-delete fa-delete" style="color: #f05050"  aria-hidden="true"></i></a>
+                                                        <a href="sp_userregister.php?delid=<?php echo ($row->ID);?>" onclick="return confirm('Do you really want to Block ?');" title="Block this User"><i class="mdi mdi-delete fa-delete" style="color: #f05050"  aria-hidden="true"></i></a>
                                                     </td>
                                                 </tr>   
                                                     <?php $cnt=$cnt+1;

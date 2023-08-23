@@ -4,7 +4,8 @@ error_reporting(0);
 include('includes/dbconnection.php');
 if(isset($_POST['insert']))
 {
-    
+    $fname=$_SESSION['fname'];
+
     $eib= $_SESSION['editbid'];
     $current_count=$_SESSION['current_count'];
     $category=$_POST['category'];
@@ -33,8 +34,10 @@ if(isset($_POST['insert']))
         $query->bindParam(':delta_count',$delta_count,PDO::PARAM_STR);
         $query->bindParam(':eib',$eib,PDO::PARAM_STR);
 
-        $sql_log="insert into tblcategory_log(CategoryName,CategoryFowlRun,CategoryCount,CategoryDate,CategoryDescription)values(:category,:fowlrun,:code,:date,:description)";
+        $sql_log="insert into tblcategory_log(CategoryName,CategoryFowlRun,CategoryCount,CategoryDate,CategoryDescription,fname)values(:category,:fowlrun,:code,:date,:description,:fname)";
         $query_log=$dbh->prepare($sql_log);
+
+        $query_log->bindParam(':fname',$fname,PDO::PARAM_STR);
         
         $query_log->bindParam(':category',$category,PDO::PARAM_STR);
         $query_log->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);

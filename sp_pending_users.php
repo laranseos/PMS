@@ -11,7 +11,7 @@ if(isset($_GET['allowid']))
     $query->execute();
     if ($query->execute()){
         echo "<script>alert('User Allowed!');</script>"; 
-        echo "<script>window.location.href = 'userregister.php?modal_pending=true'</script>";
+        echo "<script>window.location.href = 'sp_userregister.php?modal_pending=true'</script>";
     }else{
         echo '<script>alert("Allow failed! try again later")</script>';
     }
@@ -26,7 +26,7 @@ if(isset($_GET['blockid']))
     $query->execute();
     if ($query->execute()){
         echo "<script>alert('User Denied!');</script>"; 
-        echo "<script>window.location.href = 'userregister.php?modal_pending=true'</script>";
+        echo "<script>window.location.href = 'sp_userregister.php?modal_pending=true'</script>";
     }else{
         echo '<script>alert("Allow failed! try again later")</script>';
     }
@@ -50,10 +50,8 @@ if(isset($_GET['blockid']))
         </thead>
         <tbody>
             <?php
-            $fname=$_SESSION['fname'];
-            $sql="SELECT * from tbladmin where Status='2' and tbladmin.FarmName=:fname";
+            $sql="SELECT * from tbladmin where Status='2' and tbladmin.AdminName='Admin' ";
             $query = $dbh -> prepare($sql);
-            $query->bindParam(':fname',$fname,PDO::PARAM_STR);
             $query->execute();
             $results=$query->fetchAll(PDO::FETCH_OBJ);
             $cnt=1;
@@ -84,8 +82,8 @@ if(isset($_GET['blockid']))
                             <td class="text-center">
                                 <span ><?php  echo htmlentities(date("d-m-Y", strtotime($row->AdminRegdate)));?></span>
                             </td>
-                            <td class="text-center"><a href="pending_users.php?allowid=<?php echo ($row->ID);?>" onclick="return confirm('Do you allow this user?');" title="Allow this User"><i class="mdi mdi-checkbox-marked-circle-outline"></i></a></td>
-                            <td class="text-center"><a href="pending_users.php?blockid=<?php echo ($row->ID);?>" onclick="return confirm('Do you want to deny this user?');" title="Deny this User"><i class="mdi mdi-cancel" style="color: red;"></i></a>
+                            <td class="text-center"><a href="sp_pending_users.php?allowid=<?php echo ($row->ID);?>" onclick="return confirm('Do you allow this user?');" title="Allow this User"><i class="mdi mdi-checkbox-marked-circle-outline"></i></a></td>
+                            <td class="text-center"><a href="sp_pending_users.php?blockid=<?php echo ($row->ID);?>" onclick="return confirm('Do you want to deny this user?');" title="Deny this User"><i class="mdi mdi-cancel" style="color: red;"></i></a>
                             </td>
                         </tr>
                         <?php $cnt=$cnt+1;

@@ -10,9 +10,10 @@ if(isset($_POST['taken']))
   $vid = $_POST['taken'];
   
   $fowlrun = $_POST['fowlrun'];
-
-  $sql="insert into tblvaccination_log(tblvaccination_log.category,tblvaccination_log.fowlrun,tblvaccination_log.vacid) values(:category,:fowlrun,:vid)";
+  $fname=$_SESSION['fname'];
+  $sql="insert into tblvaccination_log(tblvaccination_log.category,tblvaccination_log.fowlrun,tblvaccination_log.vacid,tblvaccination_log.fname) values(:category,:fowlrun,:vid,:fname)";
   $query=$dbh->prepare($sql);
+  $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
   $query->bindParam(':category',$category,PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':vid',$vid,PDO::PARAM_STR);
@@ -71,8 +72,10 @@ if(isset($_GET['del'])){
               <option value="" selected>All</option>
                 <?php
                 $cate=$_SESSION['cate'];
-                $sql="SELECT * from  tblcategory where tblcategory.CategoryName=:cate order by tblcategory.CategoryFowlRun";
+                $fname=$_SESSION['fname'];
+                $sql="SELECT * from  tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun";
                 $query = $dbh -> prepare($sql);
+                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                 $query->bindParam(':cate',$cate,PDO::PARAM_STR);
                 $query->execute();
                 $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -95,11 +98,11 @@ if(isset($_GET['del'])){
               <div class="row" style="margin-bottom: -20px;" >
                 <?php
                 $cate=$_SESSION['cate'];
-
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate order by tblcategory.CategoryFowlRun";
+                $fname=$_SESSION['fname'];
+                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun";
 
                 $query = $dbh -> prepare($sql);
-
+                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                 $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
 
                 $query->execute();
@@ -130,6 +133,7 @@ if(isset($_GET['del'])){
                       foreach ($results1 as $row1) {
                         $left = $row1['age'] - $fdays;
                         $vacid = $row1['id'];
+                        if($left<0) continue;
                         if($left>0) $cnt++;
                         
                     ?>
@@ -146,10 +150,10 @@ if(isset($_GET['del'])){
                                   if($cnt == 1) {
                                   ?> 
                                   <span class="upcomming">upcomming</span>
-                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
+                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
                                   <?php }
                                   else { ?>
-                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
+                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
                                   <?php 
                                   }
                                 }
@@ -183,12 +187,13 @@ if(isset($_GET['del'])){
                                       <input type="" class="text-center" name='vaccination_id' readonly="readonly" value="<?php  echo htmlentities($row1['id']);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
                                       <label>Check</label>
                                       <?php 
-
-                                        $sql="SELECT * from tblvaccination_log where tblvaccination_log.fowlrun=:currentfowl and tblvaccination_log.vacid=:vacid";
+                                        $fname=$_SESSION['fname'];
+                                        $sql="SELECT * from tblvaccination_log where tblvaccination_log.fowlrun=:currentfowl and tblvaccination_log.vacid=:vacid and tblvaccination_log.fname=:fname";
                                         
                                         $currentfowl = $row->CategoryFowlRun;
                                         $query = $dbh -> prepare($sql);
                                         $query->bindParam(':currentfowl',$currentfowl,PDO::PARAM_STR);
+                                        $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                                         $query->bindParam(':vacid',$vacid,PDO::PARAM_STR);
                                         $query->execute();
                                         $result = $query->fetchAll(PDO::FETCH_ASSOC);

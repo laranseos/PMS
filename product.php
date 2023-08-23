@@ -6,6 +6,7 @@ if(isset($_POST['getEgg']))
 {
   $fowlrun=$_POST['fowlrun'];
   $count=$_POST['ecount'];
+  $fname=$_SESSION['fname'];
   $tdate=date("Y-m-d");
   if($count==""){
     echo '<script>alert("Please fill egg count field!")</script>';
@@ -13,9 +14,9 @@ if(isset($_POST['getEgg']))
     return false;
   }
 
-  $sql="insert into tblproducts(tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount) values(:fowlrun,:tdate,:count)";
+  $sql="insert into tblproducts(tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount, tblproducts.fname) values(:fowlrun,:tdate,:count,:fname)";
   $query=$dbh->prepare($sql);
-
+  $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':count',$count,PDO::PARAM_STR);
   $query->bindParam(':tdate',$tdate,PDO::PARAM_STR);
@@ -32,30 +33,7 @@ if(isset($_POST['getEgg']))
   }
 }
 
-if(isset($_POST['save']))
-{
-  $layer_run=$_POST['layer_run'];
-  $eggdate=$_POST['eggdate'];
-  $eggcount=$_POST['eggcount'];
 
-  $sql="insert into tblproducts(Layer_runName,Eggdate,Eggcount) values(:layer_run,:eggdate,:eggcount)";
-  $query=$dbh->prepare($sql);
-  $query->bindParam(':layer_run',$layer_run,PDO::PARAM_STR);
-  $query->bindParam(':eggdate',$eggdate,PDO::PARAM_STR);
-  $query->bindParam(':eggcount',$eggcount,PDO::PARAM_STR);
-
-  $query->execute();
-  $LastInsertId=$dbh->lastInsertId();
-  if ($LastInsertId>0) 
-  {
-    echo '<script>alert("Egg Registered successfully")</script>';
-    echo "<script>window.location.href ='product.php'</script>";
-  }
-  else
-  {
-    echo '<script>alert("Something Went Wrong. Please try again")</script>';
-  }
-}
 if(isset($_GET['del'])){    
   $cmpid=$_GET['del'];
   $query=mysqli_query($con,"delete from tblproducts where id='$cmpid'");
@@ -80,10 +58,13 @@ if(isset($_GET['del'])){
             <div>
               <div class="row" style="margin-bottom: -20px;" >
                 <?php
+
+                $fname=$_SESSION['fname'];
   
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName='Layer' order by tblcategory.CategoryFowlRun ASC";
+                $sql="SELECT * from tblcategory where tblcategory.CategoryName='Layer' and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun ASC";
                 
                 $query = $dbh -> prepare($sql);
+                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                 $query->execute();
                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                 $cnt=1;
@@ -204,8 +185,10 @@ if(isset($_GET['del'])){
                   </thead>
                   <tbody>
                     <?php
-                    $sql="SELECT tblproducts.id,tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount from tblproducts ORDER BY id DESC";
+                    $fname=$_SESSION['fname'];
+                    $sql="SELECT tblproducts.id,tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount from tblproducts where tblproducts.fname=:fname ORDER BY id DESC";
                     $query = $dbh -> prepare($sql);
+                    $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                     $query->execute();
                     $results=$query->fetchAll(PDO::FETCH_OBJ);
                     $cnt=1;

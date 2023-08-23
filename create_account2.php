@@ -21,14 +21,16 @@ if(isset($_POST['signup']))
     $email=$_SESSION['emailid']; 
     $myaddress=$_SESSION['myaddress']; 
     $mobile=$_SESSION['mobileno'];
+    $dignity=$_POST['roles'];
 
-    $farmname=$_POST['farmname'];
+    if($dignity=='Admin') $farmname=$_POST['farmname'];
+    else $farmname=$_POST['farmid'];
+
     $farmcity=$_POST['farmcity'];
     $farmaddress=$_POST['farmaddress'];
-    $farmcountry=$_POST['farmcountry']; 
-
-
-    $dignity='User'; 
+    $farmcountry=$_POST['farmcountry'];
+    echo "<script>alert(".$farmcountry.");</script>";
+     
     $password=md5($_POST['password']); 
     $sql="INSERT INTO  tbladmin(AdminName,FirstName,LastName,FarmName,FarmAddress, FarmCity, FarmCountry, MyAddress,City,Country,Email,MobileNumber,Password,UserRole) VALUES(:dignity,:firstname,:lastname,:farmname,:farmaddress,:farmcity,:farmcountry,:myaddress,:city,:country,:email,:mobile,:password,:sum)";
     $query = $dbh->prepare($sql);
@@ -148,24 +150,56 @@ if(isset($_POST['back']))
                             <form  method="post" name="signup" onSubmit="return valid();">
                                 <div class="row mb-3">
                                     <div class="form-group col-md-12">
+                                        <label for="role">Role</label>
+                                        <select id="role" name="roles" style="border-radius: 8px; color:black;" class="form-control" required>
+                                            <option value="User" selected>User</option>
+                                            <option value="Admin">Administrator</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row mb-3" id="userfarm">
+                                    <div class="form-group col-md-12">
+                                        <label for="farmid">Farm Name</label>
+                                        <select id="farmid" name="farmid" style="border-radius: 8px;" class="form-control">
+                                            <option value="" selected disabled hidden>Select Farm</option>                                        
+                                            <?php
+                                            $sql="SELECT * from  tbladmin where tbladmin.AdminName = 'Admin' and tbladmin.Status=1 ";
+                                            $query = $dbh -> prepare($sql);
+                                            $query->execute();
+                                            $results=$query->fetchAll(PDO::FETCH_OBJ);
+                                            
+                                            if($query->rowCount() > 0)
+                                            {
+                                            foreach($results as $rows)
+                                            {
+                                                ?> 
+                                                <option value="<?php  echo $rows->FarmName;?>"><?php  echo $rows->FarmName;?></option>
+                                                <?php 
+                                            }
+                                            } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3" id="adminfarm" style="display: none;">
+                                    <div class="form-group col-md-12">
                                         <label for="farmname">Farm Name</label>
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmname" value="<?php echo isset($_SESSION['farmname'])?($_SESSION['farmname']):""; ?>" placeholder="Farm Name" required="required">
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmname" id="farmname" value="<?php echo isset($_SESSION['farmname'])?($_SESSION['farmname']):""; ?>" placeholder="Farm Name">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="form-group col-md-12">
                                         <label for="farmaddress">Farm Address</label>    
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmaddress" value="<?php echo isset($_SESSION['farmaddress'])?($_SESSION['farmaddress']):""; ?>" placeholder="Farm Address" required="required">
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmaddress" id="farmaddress" value="<?php echo isset($_SESSION['farmaddress'])?($_SESSION['farmaddress']):""; ?>" placeholder="Farm Address" required readonly>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="form-group col-md-6">
                                         <label for="farmcity">Farm City</label>
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmcity" value="<?php echo isset($_SESSION['farmcity'])?($_SESSION['farmcity']):""; ?>" placeholder="Farm City" required="required">
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmcity" id="farmcity" value="<?php echo isset($_SESSION['farmcity'])?($_SESSION['farmcity']):""; ?>" placeholder="Farm City" required readonly>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="farmcountry">Farm Country</label>
-                                        <select id="farmcountry" name="farmcountry" style="border-radius: 8px;" class="form-control" required>
+                                        <select name="farmcountry" id="farmcountry" style="border-radius: 8px;" class="form-control" required disabled>
                                             <option value="" selected disabled hidden>Select Country</option>
                                             <option value="Afghanistan">Afghanistan</option>
                                             <option value="Åland Islands">Åland Islands</option>
@@ -416,11 +450,11 @@ if(isset($_POST['back']))
                                 <div class="row mb-3">
                                     <div class="form-group col-md-6">
                                         <label for="password">Password</label>
-                                        <input type="password" style="border-radius: 8px;" class="form-control" name="password" minlength="6" placeholder="Password" required="required">
+                                        <input type="password" style="border-radius: 8px;" class="form-control" name="password" minlength="6" placeholder="Password" required>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="country">Confirm Password</label>
-                                        <input type="password" style="border-radius: 8px;" class="form-control" name="confirmpassword" minlength="6" placeholder="Confirm Password" required="required">
+                                        <input type="password" style="border-radius: 8px;" class="form-control" name="confirmpassword" minlength="6" placeholder="Confirm Password" required>
                                     </div>
                                 </div>
                                 
@@ -471,6 +505,7 @@ $('.btn-check').click(function(){
 <script>
     $('#back').click(function() {
         $("input").removeAttr("required"); 
+        $("select").removeAttr("required"); 
     });
 </script>
 <script>
@@ -495,6 +530,18 @@ $('.btn-check').click(function(){
     }
     });
 </script>
+
+<script>
+    const select_farm = document.getElementById("farmid");
+
+    select_farm.addEventListener("change", function() {
+    if (select_farm.selectedIndex === 0) {
+        select_farm.style.color = "gray";  
+    } else {
+        select_farm.style.color = "#495057";
+    }
+    });
+</script>
 <script> 
     var options = document.getElementsByTagName('option');
     var keyword = "<?php echo $_SESSION['farmcountry']?>";
@@ -503,6 +550,78 @@ $('.btn-check').click(function(){
             options[i].selected = true;
         }
     } 
+</script>
+<script>
+    document.getElementById("role").addEventListener("change", function() {
+        var selectedRole = this.options[this.selectedIndex].value;
+        if (selectedRole === "User") {
+            document.getElementById("userfarm").style.display = "block";
+            document.getElementById("adminfarm").style.display = "none";
+        } else if (selectedRole === "Admin") {
+            document.getElementById("userfarm").style.display = "none";
+            document.getElementById("adminfarm").style.display = "block";
+        } 
+    });
+</script>
+<script>
+  $(document).ready(function() {
+  $('#role').change(function() {
+    var selectedRole = $(this).val();
+
+    // Check if the selected role is "Administrator"
+    if (selectedRole === 'Admin') {
+      // Enable all fields
+      $('#farmaddress').prop('readonly', false);
+      $('#farmcity').prop('readonly', false);
+      $('#farmcountry').prop('disabled', false);
+      $('#farmname').val('');
+      $('#farmaddress').val('');
+      $('#farmcity').val('');
+      $('#farmcountry').val('');
+      
+    } else {
+      // Disable all fields
+      $('#farmaddress').prop('readonly', true);
+      $('#farmcity').prop('readonly', true);
+      $('#farmcountry').prop('disabled', true);
+      $('#farmaddress').val('');
+      $('#farmcity').val('');
+    }
+  });
+});
+</script>
+<script>
+$(document).ready(function() {
+  $('#farmid').change(function() {
+    var selectedFarm = $(this).val();
+
+    $.ajax({
+      url: 'get_farm_id.php',
+      method: 'POST',
+      data: {
+        farmid: selectedFarm
+      },
+      success: function(response) {
+        var farmDetails = JSON.parse(response);
+
+
+        var farmAddress = farmDetails.FarmAddress;
+        var farmCity = farmDetails.FarmCity;
+        var farmCountry = farmDetails.FarmCountry;
+
+        $('#farmaddress').val(farmAddress).prop('readonly', true);;
+        $('#farmcity').val(farmCity).prop('readonly', true);
+        $('#farmcountry').val(farmCountry).prop('disabled', false);
+        $('#farmcountry').css('color', 'black');
+  
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+        // Handle the error here
+      }
+    });
+  });
+});
 </script>
 <style>
     option {
