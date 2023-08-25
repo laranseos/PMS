@@ -2,6 +2,24 @@
 include('includes/checklogin.php');
 check_login();
 
+if(isset($_POST['switch']))
+{
+    $farmname=$_POST['farmid'];
+    $_SESSION['fname'] = $farmname;
+    echo '<script>alert("Switched into '.$farmname.' Management System!")</script>';
+    // $sql="update tbladmin set tbladmin.FarmName=:farmname where tbladmin.Status='99' ";
+    // $query=$dbh->prepare($sql);
+    // $query->bindParam(':farmname',$farmname,PDO::PARAM_STR);
+    // if ($query->execute()){
+    //     $_SESSION['fname'] = 
+    //     echo '<script>alert("Switched into '.$farmname.' Management System!")</script>';
+    //     echo "<script>window.location.href ='sp_userregister.php'</script>";
+    // } else{
+    //     echo '<script>alert("Something Went Wrong. Please try again")</script>';
+    // }
+
+}
+
 if(isset($_GET['delid']))
 {
 
@@ -81,16 +99,32 @@ if(isset($_GET['modal_block'])) { ?>
                                         <div class="modal-body">
                                             <div class="card">
                                                 <div class="col-md-12 mt-4">
-                                                    <form class="forms-sample" method="post" enctype="multipart/form-data" class="form-horizontal">
-                                                        <div class="row ">
+                                                <form class="forms-sample" method="post" enctype="multipart/form-data" class="form-horizontal">
+                                                    <div class="row ">
                                                         <div class="form-group col-md-12">
-                                                            <label for="exampleInputName1">Fowl-Run Name</label>
-                                                            <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
+                                                            <label for="farmid">Farm Name</label>
+                                                            <select id="farmid" name="farmid" style="border-radius: 8px;" class="form-control">
+                                                                <option value="" selected disabled hidden>Select Farm</option>                                        
+                                                                <?php
+                                                                $sql="SELECT * from  tbladmin where tbladmin.AdminName = 'Admin' and tbladmin.Status=1 ";
+                                                                $query = $dbh -> prepare($sql);
+                                                                $query->execute();
+                                                                $results=$query->fetchAll(PDO::FETCH_OBJ);
+                                                                
+                                                                if($query->rowCount() > 0)
+                                                                {
+                                                                foreach($results as $rows)
+                                                                {
+                                                                    ?> 
+                                                                    <option value="<?php  echo $rows->FarmName;?>"><?php  echo $rows->FarmName;?></option>
+                                                                    <?php 
+                                                                }
+                                                                } ?>
+                                                            </select>
                                                         </div>
-                                                        </div>
-
-                                                        <button type="submit" style="float: left; border-radius: 10px" name="save" class="btn btn-info mr-2 mb-4">Add</button>
-                                                    </form>
+                                                    </div>
+                                                    <button type="submit" style="float: left; border-radius: 10px" name="switch" class="btn btn-info mr-2 mb-4">Switch</button>
+                                                </form>
                                                 </div>
                                             </div>
                                         </div> 

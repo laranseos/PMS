@@ -21,11 +21,9 @@ if(isset($_POST['signup']))
     $email=$_SESSION['emailid']; 
     $myaddress=$_SESSION['myaddress']; 
     $mobile=$_SESSION['mobileno'];
-    $dignity=$_POST['roles'];
+    $dignity='User';
 
-    if($dignity=='Admin') $farmname=$_POST['farmname'];
-    else $farmname=$_POST['farmid'];
-
+    $farmname=$_POST['farmname'];
     $farmcity=$_POST['farmcity'];
     $farmaddress=$_POST['farmaddress'];
     $farmcountry=$_POST['farmcountry'];
@@ -74,6 +72,12 @@ if(isset($_POST['back']))
 }
 
 ?>
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- jQuery UI library -->
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 <script>
     function checkAvailability() 
     {
@@ -148,7 +152,7 @@ if(isset($_POST['back']))
                                 <img class="img-avatar mb-3" src="companyimages/poultrylogo.png" alt="">
                             </div>
                             <form  method="post" name="signup" onSubmit="return valid();">
-                                <div class="row mb-3">
+                                <!-- <div class="row mb-3">
                                     <div class="form-group col-md-12">
                                         <label for="role">Role</label>
                                         <select id="role" name="roles" style="border-radius: 8px; color:black;" class="form-control" required>
@@ -156,8 +160,8 @@ if(isset($_POST['back']))
                                             <option value="Admin">Administrator</option>
                                         </select> 
                                     </div>
-                                </div>
-                                <div class="row mb-3" id="userfarm">
+                                </div> -->
+                                <!-- <div class="row mb-3" id="userfarm">
                                     <div class="form-group col-md-12">
                                         <label for="farmid">Farm Name</label>
                                         <select id="farmid" name="farmid" style="border-radius: 8px;" class="form-control">
@@ -179,27 +183,29 @@ if(isset($_POST['back']))
                                             } ?>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="row mb-3" id="adminfarm" style="display: none;">
+                                </div> -->
+                                <div class="row mb-3">
                                     <div class="form-group col-md-12">
                                         <label for="farmname">Farm Name</label>
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmname" id="farmname" value="<?php echo isset($_SESSION['farmname'])?($_SESSION['farmname']):""; ?>" placeholder="Farm Name">
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmname" id="farmname" placeholder="Farm Name" autocomplete="off" />
+                                        <div id="farmnameList" class="farmname-list" style="display: none;"></div>
                                     </div>
                                 </div>
+
                                 <div class="row mb-3">
                                     <div class="form-group col-md-12">
                                         <label for="farmaddress">Farm Address</label>    
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmaddress" id="farmaddress" value="<?php echo isset($_SESSION['farmaddress'])?($_SESSION['farmaddress']):""; ?>" placeholder="Farm Address" required readonly>
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmaddress" id="farmaddress" value="<?php echo isset($_SESSION['farmaddress'])?($_SESSION['farmaddress']):""; ?>" placeholder="Farm Address" required>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="form-group col-md-6">
                                         <label for="farmcity">Farm City</label>
-                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmcity" id="farmcity" value="<?php echo isset($_SESSION['farmcity'])?($_SESSION['farmcity']):""; ?>" placeholder="Farm City" required readonly>
+                                        <input type="text" style="border-radius: 8px;" class="form-control" name="farmcity" id="farmcity" value="<?php echo isset($_SESSION['farmcity'])?($_SESSION['farmcity']):""; ?>" placeholder="Farm City" required>
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="farmcountry">Farm Country</label>
-                                        <select name="farmcountry" id="farmcountry" style="border-radius: 8px;" class="form-control" required disabled>
+                                        <select name="farmcountry" id="farmcountry" style="border-radius: 8px;" class="form-control" required>
                                             <option value="" selected disabled hidden>Select Country</option>
                                             <option value="Afghanistan">Afghanistan</option>
                                             <option value="Åland Islands">Åland Islands</option>
@@ -531,17 +537,6 @@ $('.btn-check').click(function(){
     });
 </script>
 
-<script>
-    const select_farm = document.getElementById("farmid");
-
-    select_farm.addEventListener("change", function() {
-    if (select_farm.selectedIndex === 0) {
-        select_farm.style.color = "gray";  
-    } else {
-        select_farm.style.color = "#495057";
-    }
-    });
-</script>
 <script> 
     var options = document.getElementsByTagName('option');
     var keyword = "<?php echo $_SESSION['farmcountry']?>";
@@ -551,50 +546,13 @@ $('.btn-check').click(function(){
         }
     } 
 </script>
-<script>
-    document.getElementById("role").addEventListener("change", function() {
-        var selectedRole = this.options[this.selectedIndex].value;
-        if (selectedRole === "User") {
-            document.getElementById("userfarm").style.display = "block";
-            document.getElementById("adminfarm").style.display = "none";
-        } else if (selectedRole === "Admin") {
-            document.getElementById("userfarm").style.display = "none";
-            document.getElementById("adminfarm").style.display = "block";
-        } 
-    });
-</script>
-<script>
-  $(document).ready(function() {
-  $('#role').change(function() {
-    var selectedRole = $(this).val();
 
-    // Check if the selected role is "Administrator"
-    if (selectedRole === 'Admin') {
-      // Enable all fields
-      $('#farmaddress').prop('readonly', false);
-      $('#farmcity').prop('readonly', false);
-      $('#farmcountry').prop('disabled', false);
-      $('#farmname').val('');
-      $('#farmaddress').val('');
-      $('#farmcity').val('');
-      $('#farmcountry').val('');
-      
-    } else {
-      // Disable all fields
-      $('#farmaddress').prop('readonly', true);
-      $('#farmcity').prop('readonly', true);
-      $('#farmcountry').prop('disabled', true);
-      $('#farmaddress').val('');
-      $('#farmcity').val('');
-    }
-  });
-});
-</script>
-<script>
+
+<!-- <script>
 $(document).ready(function() {
-  $('#farmid').change(function() {
+  $('#farmname').on('input',function() {
     var selectedFarm = $(this).val();
-
+    console.log(selectedFarm);
     $.ajax({
       url: 'get_farm_id.php',
       method: 'POST',
@@ -611,17 +569,107 @@ $(document).ready(function() {
 
         $('#farmaddress').val(farmAddress).prop('readonly', true);;
         $('#farmcity').val(farmCity).prop('readonly', true);
-        $('#farmcountry').val(farmCountry).prop('disabled', false);
+        $('#farmcountry').val(farmCountry);
         $('#farmcountry').css('color', 'black');
   
       },
       error: function(xhr, status, error) {
-        console.log(error);
+        console.log(xhr.responseText);
+        $('#farmaddress').val("").prop('readonly', false);
+        $('#farmcity').val("").prop('readonly', false);
+        $('#farmcountry').val("");
+        $('#farmcountry').css('color', '#c9c8c8');
+
         // Handle the error here
       }
     });
   });
 });
+</script> -->
+<script>
+  $(document).ready(function() {
+    var farmnameList = $('#farmnameList');
+    farmnameList.hide(); // Hide the farmnameList initially
+
+    $('#farmname').on('input', function() {
+        var input = $(this).val();
+        if (input.length > 0) {
+            $.ajax({
+                url: 'get_farmnames.php',
+                method: 'GET',
+                data: { input: input },
+                dataType: 'json',
+                success: function(response) {
+                   
+                    if (response.length > 0) {
+                        farmnameList.show(); // Show the farmnameList if it is not empty
+                    } else {
+                        farmnameList.hide(); // Hide the farmnameList if it is empty
+                    }
+                    showFarmNameSuggestions(response);
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    farmnameList.hide();
+                    $('#farmaddress').val("").prop('readonly', false);
+                    $('#farmcity').val("").prop('readonly', false);
+                    $('#farmcountry').val("");
+                    $('#farmcountry').css('color', '#c9c8c8');
+                }
+            });
+        } else {
+            farmnameList.hide(); // Hide the farmnameList if the input is empty
+        }
+    });
+});
+
+function showFarmNameSuggestions(suggestions) {
+    var suggestionList = $('#farmnameList');
+    suggestionList.empty();
+    suggestions.forEach(function(suggestion) {
+        var suggestionItem = $('<div></div>').text(suggestion);
+        suggestionItem.on('click', function() {
+            $('#farmname').val(suggestion);
+            
+            var selectedFarm = $('#farmname').val();
+            console.log(selectedFarm);
+            $.ajax({
+            url: 'get_farm_id.php',
+            method: 'POST',
+            data: {
+                farmid: selectedFarm
+            },
+            success: function(response) {
+                var farmDetails = JSON.parse(response);
+
+
+                var farmAddress = farmDetails.FarmAddress;
+                var farmCity = farmDetails.FarmCity;
+                var farmCountry = farmDetails.FarmCountry;
+
+                $('#farmaddress').val(farmAddress).prop('readonly', true);;
+                $('#farmcity').val(farmCity).prop('readonly', true);
+                $('#farmcountry').val(farmCountry);
+                $('#farmcountry').css('color', 'black');
+        
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+                $('#farmaddress').val("").prop('readonly', false);
+                $('#farmcity').val("").prop('readonly', false);
+                $('#farmcountry').val("");
+                $('#farmcountry').css('color', '#c9c8c8');
+
+                // Handle the error here
+            }
+            });
+
+            suggestionList.hide(); // Hide the farmnameList on suggestion selection
+            // $('#farmname').trigger('input');
+        });
+        suggestionList.append(suggestionItem);
+    });
+}
 </script>
 <style>
     option {
@@ -670,4 +718,25 @@ $(document).ready(function() {
 .hiddenCB input[type="checkbox"]:checked+label:hover{
   background: rgba(128, 128, 128, 0, .7);
 }
+
+.farmname-list {
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 999;
+    width: 90%;
+}
+
+.farmname-list div {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.farmname-list div:hover {
+    background-color: #f0f0f0;
+}
+
 </style>

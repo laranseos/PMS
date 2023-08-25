@@ -22,7 +22,11 @@ if(isset($_POST['farmid'])) {
       // Convert the array to JSON and return
       echo json_encode($farmDetails);
   } else {
-      echo "No farm found with the selected ID.";
+    http_response_code(400);
+    $error = array(
+        'message' => 'Invalid request.'
+    );
+    echo json_encode($error);
   }
 }
 ?>

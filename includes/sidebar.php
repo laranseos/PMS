@@ -1,3 +1,13 @@
+<?php 
+if(isset($_POST['switch']))
+{
+    $farmname=$_POST['farmid'];
+    $_SESSION['fname'] = $farmname;
+    echo '<script>alert("Switched into '.$farmname.' Management System!")</script>';
+
+}
+
+?>
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
 
@@ -18,15 +28,7 @@
                 { 
                     $_SESSION['admin'] = 'true';
                     
-                    if($row->Status == 99) {
                     ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="sp_userregister.php">
-                                <span class="menu-title">Admin Panel</span>
-                                <i class="mdi mdi-account-key menu-icon"></i>
-                            </a>
-                        </li>
-                    <?php } ?>
 
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
@@ -103,6 +105,7 @@
 
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item"> <a class="nav-link" href="userregister.php">Register user </a></li> 
+                            <li class="nav-item"> <a class="nav-link" href="#" data-toggle="modal" data-target="#switch">Switch user </a></li> 
                         </ul>
 
                     </div>
@@ -112,3 +115,50 @@
         ?>
     </ul>
 </nav>
+
+<div class="modal fade" id="switch">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Switch System</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="col-md-12 mt-4">
+                    <form class="forms-sample" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <div class="row ">
+                            <div class="form-group col-md-12">
+                                <label for="farmid">Farm Name</label>
+                                <select id="farmid" name="farmid" style="border-radius: 8px;" class="form-control">
+                                    <option value="" selected disabled hidden>Select Farm</option>                                        
+                                    <?php
+                                    $sql="SELECT DISTINCT tbladmin.FarmName from  tbladmin where tbladmin.Status=1 ";
+                                    $query = $dbh -> prepare($sql);
+                                    $query->execute();
+                                    $results=$query->fetchAll(PDO::FETCH_OBJ);
+                                    
+                                    if($query->rowCount() > 0)
+                                    {
+                                    foreach($results as $rows)
+                                    {
+                                        if($rows->FarmName=='xxx') continue;
+                                        ?> 
+                                        <option value="<?php  echo $rows->FarmName;?>"><?php  echo $rows->FarmName;?></option>
+                                        <?php 
+                                    }
+                                    } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" style="float: left; border-radius: 10px" name="switch" class="btn btn-info mr-2 mb-4">Switch</button>
+                    </form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+    </div>
+        <!-- /.modal-content -->
+</div>

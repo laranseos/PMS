@@ -182,7 +182,7 @@ if(isset($_GET['modal_block'])) { ?>
                                     <tbody>
                                         <?php
                                         $fname=$_SESSION['fname'];
-                                        $sql="SELECT * from tbladmin where tbladmin.Status='1' and tbladmin.FarmName=:fname ";
+                                        $sql="SELECT * from tbladmin where tbladmin.Status='1' ORDER BY tbladmin.FarmName ";
                                         $query = $dbh -> prepare($sql);
                                         $query->bindParam(':fname',$fname,PDO::PARAM_STR);
                                         $query->execute();
@@ -192,6 +192,7 @@ if(isset($_GET['modal_block'])) { ?>
                                         {
                                             foreach($results as $row)
                                             {    
+                                                if($row->FarmName=='xxx') continue;
                                                 ?>
                                                 <tr>
                                                     <td class="text-center"><?php echo htmlentities($cnt);?></td>

@@ -66,7 +66,7 @@ if(isset($_POST['login']))
                 // echo "<script>alert('layer.$layer');</script>";
                 // echo "<script>alert('freerange.$freerange');</script>";
 
-            if($row->Status=="1" || $row->Status=="99")
+            if($row->Status=="1")
             { 
                 if($row->AdminName=="Admin")  echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>"; 
                 echo "<script type='text/javascript'> document.location ='category.php?cate_id=$inite'; </script>";     

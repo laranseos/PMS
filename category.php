@@ -12,6 +12,7 @@ $_SESSION['cate']=$category;
 
 if(isset($_POST['save']))
 {
+
   $frcode=$_POST['frcode'];
   $fname=$_SESSION['fname'];
   $code=0;

@@ -51,9 +51,8 @@ if(isset($_GET['blockid']))
         <tbody>
             <?php
             $fname=$_SESSION['fname'];
-            $sql="SELECT * from tbladmin where Status='2' and tbladmin.FarmName=:fname";
+            $sql="SELECT * from tbladmin where Status='2'";
             $query = $dbh -> prepare($sql);
-            $query->bindParam(':fname',$fname,PDO::PARAM_STR);
             $query->execute();
             $results=$query->fetchAll(PDO::FETCH_OBJ);
             $cnt=1;

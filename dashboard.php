@@ -50,10 +50,12 @@ check_login();
                                 $query->execute();
                                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                                 $cnt=1;
+                                
                                 if($query->rowCount() > 0)
                                 {
                                   foreach($results as $row)
                                   { 
+                                    fputcsv($file, $row);
                                     ?>
                                     <tr>
                                       <td class="text-center"><?php echo htmlentities($cnt);?></td>
@@ -66,6 +68,7 @@ check_login();
                                     <?php 
                                     $cnt=$cnt+1;
                                   }
+                               
                                 } ?>
                               </tbody>
                             </table>

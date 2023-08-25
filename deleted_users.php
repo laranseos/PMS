@@ -36,7 +36,7 @@ if(isset($_GET['restoreid']))
         <tbody>
             <?php
             $fname=$_SESSION['fname'];
-            $sql="SELECT * from tbladmin where Status='0' and tbladmin.FarmName=:fname";
+            $sql="SELECT * from tbladmin where Status='0'";
             $query = $dbh -> prepare($sql);
             $query->bindParam(':fname',$fname,PDO::PARAM_STR);
             $query->execute();
