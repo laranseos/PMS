@@ -50,7 +50,6 @@ if(isset($_GET['blockid']))
         </thead>
         <tbody>
             <?php
-            $fname=$_SESSION['fname'];
             $sql="SELECT * from tbladmin where Status='2'";
             $query = $dbh -> prepare($sql);
             $query->execute();

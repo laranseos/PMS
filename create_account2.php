@@ -185,6 +185,16 @@ if(isset($_POST['back']))
                                     </div>
                                 </div> -->
                                 <div class="row mb-3">
+                                    <div class="form-group col-md-6">      
+                                        <input  type="radio" name="farmtype" id="newfarm" value="new" checked>
+                                        <label  for="newfarm">New Farm</label>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <input  type="radio" name="farmtype" id="oldfarm" value="old">
+                                        <label  for="oldfarm">Existing Farm</label>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
                                     <div class="form-group col-md-12">
                                         <label for="farmname">Farm Name</label>
                                         <input type="text" style="border-radius: 8px;" class="form-control" name="farmname" id="farmname" placeholder="Farm Name" autocomplete="off" />
@@ -498,8 +508,6 @@ if(isset($_POST['back']))
 
 </body>
 </html>
-
-
 <script>
 $('.btn-check').click(function(){
     if($('#broiler').is(':checked') || $('#layer').is(':checked') || $('#freerange').is(':checked'))
@@ -588,11 +596,39 @@ $(document).ready(function() {
 </script> -->
 <script>
   $(document).ready(function() {
+    var old = false;
+    function handleRadioChange() {
+      if ($("#oldfarm").is(":checked")) {
+       
+        $('#farmname').val("");
+        $('#farmaddress').val("").prop('readonly', false);
+        $('#farmcity').val("").prop('readonly', false);
+        $('#farmcountry').val("");
+        $('#farmcountry').css('color', '#c9c8c8');
+        old = true;
+        console.log(old);
+      } else {
+        $('#farmnameList').hide();
+        $('#farmname').val("");
+        $('#farmaddress').val("").prop('readonly', false);
+        $('#farmcity').val("").prop('readonly', false);
+        $('#farmcountry').val("");
+        $('#farmcountry').css('color', '#c9c8c8');
+        old = false;
+        console.log(old);
+      }
+    }
+
+    // Add event listener to the radio buttons
+    $("#newfarm, #oldfarm").on("change", handleRadioChange);
+
+
     var farmnameList = $('#farmnameList');
     farmnameList.hide(); // Hide the farmnameList initially
-
-    $('#farmname').on('input', function() {
+    var previousValue = 0;
+    $('#farmname').on('input', function(event) {
         var input = $(this).val();
+
         if (input.length > 0) {
             $.ajax({
                 url: 'get_farmnames.php',
@@ -602,7 +638,8 @@ $(document).ready(function() {
                 success: function(response) {
                    
                     if (response.length > 0) {
-                        farmnameList.show(); // Show the farmnameList if it is not empty
+                        if(old)  farmnameList.show(); // Show the farmnameList if it is not empty
+                        
                     } else {
                         farmnameList.hide(); // Hide the farmnameList if it is empty
                     }
@@ -620,6 +657,16 @@ $(document).ready(function() {
         } else {
             farmnameList.hide(); // Hide the farmnameList if the input is empty
         }
+        var currentValue = $(this).val();
+        if (currentValue.length < previousValue.length) {
+        // Input has changed to a shorter length
+        $('#farmaddress').val("").prop('readonly', false);
+        $('#farmcity').val("").prop('readonly', false);
+        $('#farmcountry').val("");
+        $('#farmcountry').css('color', '#c9c8c8');
+        console.log("Input changed to a shorter length");
+        }
+        previousValue = currentValue;
     });
 });
 
@@ -641,7 +688,6 @@ function showFarmNameSuggestions(suggestions) {
             },
             success: function(response) {
                 var farmDetails = JSON.parse(response);
-
 
                 var farmAddress = farmDetails.FarmAddress;
                 var farmCity = farmDetails.FarmCity;

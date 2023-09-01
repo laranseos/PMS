@@ -90,7 +90,7 @@ if(isset($_GET['del'])){
                     <?php 
                   }
                 } ?>
-              <option value="upcomming">Upcomming</option>  
+              <option value="upcoming">upcoming</option>  
             </select>
           </div>
         <div class="content-wrapper">
@@ -149,7 +149,7 @@ if(isset($_GET['del'])){
                                 <?php } else {
                                   if($cnt == 1) {
                                   ?> 
-                                  <span class="upcomming">upcomming</span>
+                                  <span class="upcoming">upcoming</span>
                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
                                   <?php }
                                   else { ?>
@@ -353,8 +353,8 @@ if(isset($_GET['del'])){
 
     var keyword = this.value;
     keyword = keyword.toUpperCase();
-    if(keyword=="UPCOMMING") {
-    var header1 = document.getElementsByClassName("upcomming");
+    if(keyword=="upcoming") {
+    var header1 = document.getElementsByClassName("upcoming");
     
     for(var i=0; i<header1.length; i++){
 

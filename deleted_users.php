@@ -35,10 +35,8 @@ if(isset($_GET['restoreid']))
         </thead>
         <tbody>
             <?php
-            $fname=$_SESSION['fname'];
             $sql="SELECT * from tbladmin where Status='0'";
             $query = $dbh -> prepare($sql);
-            $query->bindParam(':fname',$fname,PDO::PARAM_STR);
             $query->execute();
             $results=$query->fetchAll(PDO::FETCH_OBJ);
             $cnt=1;

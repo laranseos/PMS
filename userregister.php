@@ -181,10 +181,8 @@ if(isset($_GET['modal_block'])) { ?>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $fname=$_SESSION['fname'];
                                         $sql="SELECT * from tbladmin where tbladmin.Status='1' ORDER BY tbladmin.FarmName ";
                                         $query = $dbh -> prepare($sql);
-                                        $query->bindParam(':fname',$fname,PDO::PARAM_STR);
                                         $query->execute();
                                         $results=$query->fetchAll(PDO::FETCH_OBJ);
                                         $cnt=1;

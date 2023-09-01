@@ -83,7 +83,7 @@ if(isset($_POST['insertsa']))
                             <div class="form-group col-md-6 ">
                                 <label class=" pl-0 pr-0"></label>
                                 <div class=" pl-0 pr-0 mt-1">
-                                    <input type="text" style="border-radius: 8px;" name="weight" value=<?php echo $row->weight; ?> placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
+                                    <input type="text" style="border-radius: 8px;" name="weight" value="" placeholder="Enter chicken weight..." style="min-width:160px;" class="form-control" required>
                                 </div>
                             </div>
                         </div>

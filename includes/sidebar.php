@@ -29,7 +29,6 @@ if(isset($_POST['switch']))
                     $_SESSION['admin'] = 'true';
                     
                     ?>
-
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
                                 <span class="menu-title">Dashboard</span>
