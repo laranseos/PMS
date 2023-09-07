@@ -12,6 +12,7 @@ if(isset($_POST['insert']))
     $fowlrun=$_POST['fowlrun'];
     $code=$_POST['code'];
     $date=$_POST['up_date'];
+    $age=$_POST['age'];
     $description=$_POST['reason'];
     $details=$_POST['details'];
 
@@ -34,11 +35,11 @@ if(isset($_POST['insert']))
         $query->bindParam(':delta_count',$delta_count,PDO::PARAM_STR);
         $query->bindParam(':eib',$eib,PDO::PARAM_STR);
 
-        $sql_log="insert into tblcategory_log(CategoryName,CategoryFowlRun,CategoryCount,CategoryDate,CategoryDescription,fname)values(:category,:fowlrun,:code,:date,:description,:fname)";
+        $sql_log="insert into tblcategory_log(CategoryName,CategoryFowlRun,CategoryCount,CategoryDate,CategoryDescription,fname,age)values(:category,:fowlrun,:code,:date,:description,:fname,:age)";
         $query_log=$dbh->prepare($sql_log);
 
         $query_log->bindParam(':fname',$fname,PDO::PARAM_STR);
-        
+        $query_log->bindParam(':age',$age,PDO::PARAM_STR);
         $query_log->bindParam(':category',$category,PDO::PARAM_STR);
         $query_log->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
         $query_log->bindParam(':code',$code,PDO::PARAM_STR);
@@ -62,7 +63,7 @@ if(isset($_POST['insert']))
 <div class="card-body">
     <?php
     $eid=$_POST['edit_id4'];
-    $sql2="SELECT tblcategory.id,tblcategory.CategoryName,tblcategory.CategoryFowlRun,tblcategory.CategoryCode,tblcategory.PostingDate from tblcategory  where tblcategory.id=:eid";
+    $sql2="SELECT * from tblcategory  where tblcategory.id=:eid";
     $query2 = $dbh -> prepare($sql2);
     $query2-> bindParam(':eid', $eid, PDO::PARAM_STR);
     $query2->execute();
@@ -71,6 +72,11 @@ if(isset($_POST['insert']))
     {
         foreach($results as $row)
         {
+            $postingDate = new DateTime($row->PostingDate);
+            $today = new DateTime('today');
+            $diff = $postingDate->diff($today);
+            $fdays = $diff->format('%a')+1;
+
             $_SESSION['editbid']=$row->id;
             $_SESSION['current_count']=$row->CategoryCode;
             ?>
@@ -90,6 +96,14 @@ if(isset($_POST['insert']))
                                 <label class="col-sm-12 pl-0 pr-0">Fowl Run</label>
                                 <div class="col-sm-12 pl-0 pr-0">
                                     <input type="text" style="border-radius: 8px;" name="fowlrun" id="fowlrun" class="form-control" readonly="readonly" style="min-width:160px;" value="<?php  echo $row->CategoryFowlRun;?>" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label class="col-sm-12 pl-0 pr-0">Age(Days)</label>
+                                <div class="col-sm-12 pl-0 pr-0">
+                                    <input type="text" style="border-radius: 8px;" name="age" id="age" class="form-control" readonly="readonly" style="min-width:160px;" value="<?php  echo $fdays;?>" required />
                                 </div>
                             </div>
                         </div>

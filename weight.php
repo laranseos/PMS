@@ -11,6 +11,8 @@ if(isset($_POST['recordWeight']))
   $weight=$_POST['ecount'];
   $tdate=date("Y-m-d");
   $fname=$_SESSION['fname'];
+  $age=$_POST['age'];
+  $count=$_POST['count'];
 
   if($weight==""){
     echo '<script>alert("Please fill required field!")</script>';
@@ -18,12 +20,15 @@ if(isset($_POST['recordWeight']))
     return false;
   }
 
-  $sql="insert into tblweight(tblweight.fowlrun,tblweight.date,tblweight.weight,tblweight.fname) values(:fowlrun,:tdate,:weight,:fname)";
+  $sql="insert into tblweight(tblweight.fowlrun,tblweight.date,tblweight.weight,tblweight.fname,tblweight.age,tblweight.category,tblweight.count) values(:fowlrun,:tdate,:weight,:fname,:age,:category,:count)";
   $query=$dbh->prepare($sql);
   $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':weight',$weight,PDO::PARAM_STR);
+  $query->bindParam(':age',$age,PDO::PARAM_STR);
   $query->bindParam(':tdate',$tdate,PDO::PARAM_STR);
+  $query->bindParam(':category',$category,PDO::PARAM_STR);
+  $query->bindParam(':count',$count,PDO::PARAM_STR);
   $query->execute();
 
   $LastInsertId=$dbh->lastInsertId();
@@ -135,8 +140,8 @@ if(isset($_GET['del'])){
                               <form method="post" action="weight.php?cate_id=<?php echo $category?>">
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='chicken_count' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='fpd' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='count' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <?php 
                                 if($checkweight==1){  ?>
                                 <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($weight);?>" id="ecount" name='ecount' placeholder="Enter Chicken weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
@@ -199,9 +204,11 @@ if(isset($_GET['del'])){
                     <tr>
                       <th class="text-center">No</th>
                       <th class="text-center">Fowl Run</th>
+                      <th class="text-center">Age</th>
+                      <th class="text-center">Quantity</th>
                       <th class="text-center">Posting Date</th>
                       <th class="text-center">Weight</th>
-                      <th class="text-center" style="width: 10%;">Edit</th>
+                      <!-- <th class="text-center" style="width: 10%;">Edit</th> -->
                       <th class="text-center" style="width: 10%;">Delete</th>
                     </tr>
                   </thead>
@@ -223,9 +230,11 @@ if(isset($_GET['del'])){
                         <tr>
                           <td class="text-center"><?php echo htmlentities($cnt);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->fowlrun);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->age);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->count);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->date);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->weight);?></td>
-                          <td class=" text-center"><a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><i class="mdi mdi-pencil-box-outline" aria-hidden="true"></i></a></td>
+                          <!-- <td class=" text-center"><a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><i class="mdi mdi-pencil-box-outline" aria-hidden="true"></i></a></td> -->
                           <td class=" text-center"> <a href="weight.php?del=<?php echo ($row->id);?>&cate_id=<?php echo $cate;?>" data-toggle="tooltip" data-original-title="Delete" onclick="return confirm('Do you really want to delete log?');"> <i class="mdi mdi-delete" style="color: #f05050"></i> </a>
                           </td>
                         </tr>

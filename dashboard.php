@@ -1,6 +1,126 @@
 <?php 
 include('includes/checklogin.php');
 check_login();
+
+if(isset($_GET['download']))
+{
+
+    $did=$_GET['download'];
+    if($did=='broiler_mortality') {
+      $today = date("Y-m-d");
+      $filename = "Broiler_Mortality(".$today.").csv";		 
+      header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+      header("Content-type: text/csv");
+      header("Content-Disposition: attachment; filename=\"$filename\"");
+      header("Expires: 0");
+      $fh = fopen( 'php://output', 'w' );
+
+      $fname=$_SESSION['fname'];
+      $cate='Broiler';
+      $sql="SELECT * from tblcategory_log where tblcategory_log.fname=:fname and tblcategory_log.CategoryName=:cate  ORDER BY id DESC";
+
+      $query = $dbh -> prepare($sql);
+      $query->bindParam(':fname',$fname,PDO::PARAM_STR);
+      $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+      $query->execute();
+      $results=$query->fetchAll(PDO::FETCH_OBJ);
+      $cnt=1;
+      fputcsv($fh, array(str_pad("Fowl Run",10), "Age(weeks)",str_pad("Record Date",10), "Quantity", "Cause of Death"));
+      if($query->rowCount() > 0)
+      {
+        foreach($results as $row)
+        {
+            fputcsv($fh, array(
+            str_pad($row->CategoryFowlRun, 10),
+            str_pad((intval($row->age/7)+1),10),
+            str_pad($row->CategoryDate,10),
+            str_pad($row->CategoryCount, 10),
+            str_pad($row->CategoryDescription, 10)
+        )); 
+        }
+        $cnt=$cnt+1;
+      }
+      fclose($fh);
+      exit();   
+    }
+    if($did=='broiler_feed'){
+      $today = date("Y-m-d");
+      $filename = "Broiler_Feed(".$today.").csv";		 
+      header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+      header("Content-type: text/csv");
+      header("Content-Disposition: attachment; filename=\"$filename\"");
+      header("Expires: 0");
+      $fh = fopen( 'php://output', 'w' );
+
+      $cate='Broiler';
+      $fname=$_SESSION['fname'];
+      $sql="SELECT * from tblfeed_log where tblfeed_log.category=:cate and tblfeed_log.fname=:fname  ORDER BY id DESC";
+      
+      $query = $dbh -> prepare($sql);
+      $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+      $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+      $query->execute();
+      $results=$query->fetchAll(PDO::FETCH_OBJ);
+      $cnt=1;
+      fputcsv($fh, array(str_pad("Fowl Run",10),str_pad("Age(Weeks)",10), "Quantity", str_pad("Record Date",10), "Total Feed"));
+      if($query->rowCount() > 0)
+      {
+        foreach($results as $row)
+        { 
+            if($row->count=='0') $row->count='-';
+            if($row->total=='0') $row->total='-';
+            fputcsv($fh, array(
+            str_pad($row->fowlRun, 10),
+            str_pad(intval($row->age/7)+1, 10),
+            str_pad($row->count,10),
+            str_pad(date("Y-m-d", strtotime($row->posting)),10),
+            str_pad($row->total,10)
+        )); 
+        }
+        $cnt=$cnt+1;
+      }
+      fclose($fh);
+      exit();   
+    }
+    if($did=='broiler_weight'){
+      $today = date("Y-m-d");
+      $filename = "Broiler_Weight(".$today.").csv";		 
+      header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+      header("Content-type: text/csv");
+      header("Content-Disposition: attachment; filename=\"$filename\"");
+      header("Expires: 0");
+      $fh = fopen( 'php://output', 'w' );
+
+      $cate='Broiler';
+      $fname=$_SESSION['fname'];
+      $sql="SELECT * from tblweight where tblweight.category=:cate and tblweight.fname=:fname ORDER BY id DESC";
+      
+      $query = $dbh -> prepare($sql);
+      $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+      $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+      $query->execute();
+      $results=$query->fetchAll(PDO::FETCH_OBJ);
+      $cnt=1;
+      fputcsv($fh, array(str_pad("Fowl Run",10),str_pad("Age(Weeks)",10),"Quantity", str_pad("Record Date",10), "Weight"));
+      if($query->rowCount() > 0)
+      {
+        foreach($results as $row)
+        { 
+            fputcsv($fh, array(
+            str_pad($row->fowlrun, 10),
+            str_pad(intval($row->age/7)+1, 10),
+            str_pad($row->count, 10),
+            str_pad(date("Y-m-d", strtotime($row->date)),10),
+            str_pad($row->weight,10),
+        )); 
+        }
+        $cnt=$cnt+1;
+      }
+      fclose($fh);
+      exit();   
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +135,8 @@ check_login();
       <?php @include("includes/sidebar.php");?>
 
       <div class="main-panel">
-        <div class="content-wrapper">
+        <div class="content-wrapper">+
+
           <div class="row">
             <div class="modal fade" id="viewLog">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -42,11 +163,13 @@ check_login();
                               <tbody>
                                 <?php
                                 $fname=$_SESSION['fname'];
+                                $cate='Broiler';
 
-                                $sql="SELECT tblcategory_log.CategoryName,tblcategory_log.CategoryFowlRun,tblcategory_log.CategoryCount,tblcategory_log.CategoryDate,tblcategory_log.CategoryDescription from tblcategory_log where tblcategory_log.fname=:fname ORDER BY id DESC";
+                                $sql="SELECT * from tblcategory_log where tblcategory_log.fname=:fname and tblcategory_log.CategoryName=:cate ORDER BY id DESC";
 
                                 $query = $dbh -> prepare($sql);
                                 $query->bindParam(':fname',$fname,PDO::PARAM_STR);
+                                $query->bindParam(':cate',$cate,PDO::PARAM_STR);
                                 $query->execute();
                                 $results=$query->fetchAll(PDO::FETCH_OBJ);
                                 $cnt=1;
@@ -55,7 +178,6 @@ check_login();
                                 {
                                   foreach($results as $row)
                                   { 
-                                    fputcsv($file, $row);
                                     ?>
                                     <tr>
                                       <td class="text-center"><?php echo htmlentities($cnt);?></td>
@@ -80,6 +202,126 @@ check_login();
                 <!-- /.modal-dialog -->
             </div>
           </div>
+          <div class="row">
+            <div class="modal fade" id="feedLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Feed Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                              <thead>
+                                <tr>
+                                  <th class="text-center">FowlRun</th>
+                                  <th class="text-center">Chicken Count</th>
+                                  <th class="text-center">Total Feed</th>
+                                  <th class="text-center">Feed Date</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <?php
+                                $cate='Broiler';
+                                $fname=$_SESSION['fname'];
+                                $sql="SELECT * from tblfeed_log where tblfeed_log.category=:cate and tblfeed_log.fname=:fname  ORDER BY id DESC";
+                                
+                                $query = $dbh -> prepare($sql);
+                                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                                $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+                                $query->execute();
+                                $results=$query->fetchAll(PDO::FETCH_OBJ);
+                                $cnt=1;
+                                if($query->rowCount() > 0)
+                                {
+                                  foreach($results as $row)
+                                  { 
+                                    ?>
+                                    <tr>
+                                      <td class="text-center"><?php  echo htmlentities($row->fowlRun);?></td>
+                                      <td class="text-center"><?php  echo htmlentities($row->count);?></td>
+                                      <td class="text-center"><?php echo number_format($row->total, 2, '.', '');?></td>
+                                      <td class="text-center"><?php  echo htmlentities(date("Y-m-d", strtotime($row->posting)));?></td>
+                                    </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                  }
+                                } ?>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="modal fade" id="weightLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Weight Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                            <thead>
+                              <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Fowl Run</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Posting Date</th>
+                                <th class="text-center">Weight</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php
+                              $cate='Broiler';
+                              $fname=$_SESSION['fname'];
+                              $sql="SELECT * from tblweight where tblweight.fname=:fname and tblweight.category=:cate  ORDER BY id DESC";
+                              $query = $dbh -> prepare($sql);
+                              $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                              $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
+                              $query->execute();
+                              $results=$query->fetchAll(PDO::FETCH_OBJ);
+                              $cnt=1;
+                              if($query->rowCount() > 0)
+                              {
+                                foreach($results as $row)
+                                { 
+                                  ?>
+                                  <tr>
+                                    <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($row->fowlrun);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($row->age);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($row->count);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($row->date);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($row->weight);?></td>                                  </tr>
+                                  <?php 
+                                  $cnt=$cnt+1;
+                                }
+                              } ?>
+                            </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
+
+
           <div class="row" style="margin-bottom: 50px;">
             <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 150px;">
@@ -161,7 +403,8 @@ check_login();
               </div>
             </div>
           </div>
-          <div class="text-center"><h2 style="color:#FF1493">Today is <?php echo date('Y-m-d');?></h2></div>
+
+          <div class="text-left ml-4"><h2 style="color:#FF1493">Today is <?php echo date('Y-m-d');?></h2></div>
           <hr>
           <div class="row" style="margin-bottom: 20px;">
             <div class="col-xxl-4 col-md-3">
@@ -283,6 +526,197 @@ check_login();
 
                 <div class="card-body" style="background-color: #F05000; color:antiquewhite">
                   <h5 class="card-title" style="color:white;">Vaccination Takens</h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <?php 
+                          $sql1="SELECT * from tblvaccination_log";
+                          $query1=$dbh->prepare($sql1);
+                          $query1->execute();
+                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+                          
+                          $cnt = $query1->rowCount();
+                      ?>
+                      <h2><?php echo $cnt?></h2>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left ml-4"><h2 style="color:#FF1493">Broiler</h2></div>
+          <hr>
+          <div class="row" style="margin-bottom: 20px;">
+            <div class="col-xxl-4 col-md-3">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+                <div class="card-body" style="background-color: #3D8E90; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <a href="dashboard.php?download=broiler_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-3">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #9F1493; color:antiquewhite" >
+                  <h5 class="card-title" style="color:white">Feed Usage<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#feedLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <a href="dashboard.php?download=broiler_feed" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-3">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #509AEA; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Mortality<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                  <a href="dashboard.php?download=broiler_mortality" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                  <!-- <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                     <?php
+                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
+                      $row=mysqli_fetch_array($query);
+                      $total = $row['total'];
+                      
+                      $query1=mysqli_query($con,"select sum(tblcategory_log.CategoryCount) as total from tblcategory_log");
+                      $row1=mysqli_fetch_array($query1);
+                      $deaths = $row1['total'];
+                      
+                      $m_rate=($deaths*100)/($deaths+$total);
+                      ?>
+                      <h2><?php echo number_format($m_rate, 2, '.', '');?>%</h2>
+                    </div>
+                  </div> -->
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-3">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #F05000; color:antiquewhite">
+                  <h5 class="card-title" style="color:white;">Vaccination Takens<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i><i class="mdi mdi-download mdi-24px float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                      <?php 
+                          $sql1="SELECT * from tblvaccination_log";
+                          $query1=$dbh->prepare($sql1);
+                          $query1->execute();
+                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+                          
+                          $cnt = $query1->rowCount();
+                      ?>
+                      <h2><?php echo $cnt?></h2>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="text-left ml-4"><h2 style="color:#FF1493">Layer</h2></div>
+          <hr>
+          <div class="row" style="margin-bottom: 20px;">
+            <div class="col-xxl-4 col-md-2">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+                <div class="card-body" style="background-color: #3D8E90; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <a href="dashboard.php?download=layer_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-2">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #9F1493; color:antiquewhite" >
+                  <h5 class="card-title" style="color:white">Feed Usage<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_feedLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                    <a href="dashboard.php?download=layer_feed" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-2">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #509AEA; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Mortality<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_viewLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                  <a href="dashboard.php?download=layer_mortality" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                  <!-- <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                     <?php
+                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
+                      $row=mysqli_fetch_array($query);
+                      $total = $row['total'];
+                      
+                      $query1=mysqli_query($con,"select sum(tblcategory_log.CategoryCount) as total from tblcategory_log");
+                      $row1=mysqli_fetch_array($query1);
+                      $deaths = $row1['total'];
+                      
+                      $m_rate=($deaths*100)/($deaths+$total);
+                      ?>
+                      <h2><?php echo number_format($m_rate, 2, '.', '');?>%</h2>
+                    </div>
+                  </div> -->
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-2">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #509AEA; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Mortality<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_viewLog"></i></h5>
+                  <hr>
+                  <div class="d-flex align-items-center">
+                  <a href="dashboard.php?download=layer_mortality" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                  </div>
+                  <!-- <div class="d-flex align-items-center">
+                    <div class="ps-3">
+                     <?php
+                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
+                      $row=mysqli_fetch_array($query);
+                      $total = $row['total'];
+                      
+                      $query1=mysqli_query($con,"select sum(tblcategory_log.CategoryCount) as total from tblcategory_log");
+                      $row1=mysqli_fetch_array($query1);
+                      $deaths = $row1['total'];
+                      
+                      $m_rate=($deaths*100)/($deaths+$total);
+                      ?>
+                      <h2><?php echo number_format($m_rate, 2, '.', '');?>%</h2>
+                    </div>
+                  </div> -->
+                </div>
+
+              </div>
+            </div>
+            <div class="col-xxl-4 col-md-2">
+              <div class="card info-card sales-card" style="min-height: 160px;">
+
+                <div class="card-body" style="background-color: #F05000; color:antiquewhite">
+                  <h5 class="card-title" style="color:white;">Vaccination Takens<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i><i class="mdi mdi-download mdi-24px float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">

@@ -110,7 +110,7 @@ if(isset($_POST['notaken'])){
                       $total = $c_feed*$c_code;
                       $fname=$_SESSION['fname'];
                       
-                      $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname)";
+                      $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname,tblfeed_log.age) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname,:age)";
                       $query2=$dbh->prepare($sql2);
                       $query2-> bindParam(':fname', $fname, PDO::PARAM_STR);
                       $query2->bindParam(':category',$cate,PDO::PARAM_STR);
@@ -119,6 +119,7 @@ if(isset($_POST['notaken'])){
                       $query2->bindParam(':fpd',$c_feed,PDO::PARAM_STR);
                       $query2->bindParam(':tfeed',$total,PDO::PARAM_STR);
                       $query2->bindParam(':tdate',$dt,PDO::PARAM_STR);
+                      $query2->bindParam(':age',$fdays,PDO::PARAM_STR);
                       $query2->execute();
                       $LastInsertId=$dbh->lastInsertId();
                     }
@@ -138,9 +139,11 @@ if(isset($_POST['notaken'])){
                                 <input type="text" class="text-center" name='logid' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
+                                <label for="tfeed" style="color: #aaaaaa;">Age</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php echo $fdays;?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <input type="" class="text-center" name='fpd'readonly="readonly" value="<?php echo number_format($c_feed, 3, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
                                 <label for="tfeed" style="color: #aaaaaa;">Feed per day(Kg)</label><input type="" class="text-center" name='tfeed' readonly="readonly" value="<?php echo number_format($c_feed*$c_code, 2, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+
 
                                 <?php if($feedcheck==1){
                                   ?>
@@ -211,6 +214,7 @@ if(isset($_POST['notaken'])){
                       <thead>
                         <tr>
                           <th class="text-center">FowlRun</th>
+                          <th class="text-center">Age</th>
                           <th class="text-center">Chicken Count</th>
                           <!-- <th class="text-center">Feed per day(Kg)</th> -->
                           <th class="text-center">Total Feed</th>
@@ -237,6 +241,7 @@ if(isset($_POST['notaken'])){
                             ?>
                             <tr>
                               <td class="text-center"><?php  echo htmlentities($row->fowlRun);?></td>
+                              <td class="text-center"><?php  echo htmlentities($row->age);?></td>
                               <td class="text-center"><?php  echo htmlentities($row->count);?></td>
                               <!-- <td class="text-center"><?php echo number_format($row->fpd, 3, '.', '');?></td> -->
                               <td class="text-center"><?php echo number_format($row->total, 2, '.', '');?></td>
