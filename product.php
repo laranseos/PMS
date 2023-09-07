@@ -6,6 +6,8 @@ if(isset($_POST['getEgg']))
 {
   $fowlrun=$_POST['fowlrun'];
   $count=$_POST['ecount'];
+  $age=$_POST['age'];
+  $quantity=$_POST['quantity'];
   $fname=$_SESSION['fname'];
   $tdate=date("Y-m-d");
   if($count==""){
@@ -14,11 +16,13 @@ if(isset($_POST['getEgg']))
     return false;
   }
 
-  $sql="insert into tblproducts(tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount, tblproducts.fname) values(:fowlrun,:tdate,:count,:fname)";
+  $sql="insert into tblproducts(tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount, tblproducts.fname, tblproducts.age,tblproducts.quantity) values(:fowlrun,:tdate,:count,:fname,:age,:quantity)";
   $query=$dbh->prepare($sql);
   $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':count',$count,PDO::PARAM_STR);
+  $query->bindParam(':age',$age,PDO::PARAM_STR);
+  $query->bindParam(':quantity',$quantity,PDO::PARAM_STR);
   $query->bindParam(':tdate',$tdate,PDO::PARAM_STR);
   $query->execute();
   $LastInsertId=$dbh->lastInsertId();
@@ -72,6 +76,11 @@ if(isset($_GET['del'])){
                 {
                   foreach($results as $row)
                   { 
+                    $postingDate = new DateTime($row->PostingDate);
+                    $today = new DateTime('today');
+                    $diff = $postingDate->diff($today);
+                    $fdays = $diff->format('%a');
+
                     $fr=$row->CategoryFowlRun;
                     $dt=date("Y-m-d");
 
@@ -106,8 +115,8 @@ if(isset($_GET['del'])){
                               <form method="post" action="product.php">
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='chicken_count' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Date of Birth</label><input type="" class="text-center" name='fpd' readonly="readonly" value="<?php  echo htmlentities(date("Y-m-d", strtotime($row->PostingDate)));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='quantity' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
                                 <?php 
                                 if($checkegg==1){  ?>
                                 <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($cnt);?>" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
@@ -177,6 +186,8 @@ if(isset($_GET['del'])){
                     <tr>
                       <th class="text-center">No</th>
                       <th class="text-center">Layer Run Name</th>
+                      <th class="text-center">Age</th>
+                      <th class="text-center">Layers</th>
                       <th class="text-center">Posting Date</th>
                       <th class="text-center">Egg Count</th>
                       <th class="text-center" style="width: 10%;">Edit</th>
@@ -186,7 +197,7 @@ if(isset($_GET['del'])){
                   <tbody>
                     <?php
                     $fname=$_SESSION['fname'];
-                    $sql="SELECT tblproducts.id,tblproducts.Layer_runName,tblproducts.Eggdate,tblproducts.Eggcount from tblproducts where tblproducts.fname=:fname ORDER BY id DESC";
+                    $sql="SELECT * from tblproducts where tblproducts.fname=:fname ORDER BY id DESC";
                     $query = $dbh -> prepare($sql);
                     $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
                     $query->execute();
@@ -200,6 +211,8 @@ if(isset($_GET['del'])){
                         <tr>
                           <td class="text-center"><?php echo htmlentities($cnt);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->Layer_runName);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->age);?></td>
+                          <td class="text-center"><?php  echo htmlentities($row->quantity);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->Eggdate);?></td>
                           <td class="text-center"><?php  echo htmlentities($row->Eggcount);?></td>
                           <td class=" text-center"><a href="#"  class=" edit_data4" id="<?php echo  ($row->id); ?>" title="click to edit"><i class="mdi mdi-pencil-box-outline" aria-hidden="true"></i></a></td>

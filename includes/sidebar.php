@@ -80,7 +80,7 @@ if(isset($_POST['switch']))
             <a class="nav-link" data-toggle="collapse" href="#vui-basics" aria-expanded="false" aria-controls="vui-basics">
                 <span class="menu-title">Vaccination Management</span>
                 <i class="menu-arrow"></i>
-                <i class="mdi    mdi-needle menu-icon"></i>
+                <i class="mdi mdi-needle menu-icon"></i>
             </a>
             <div class="collapse" id="vui-basics">
                 <ul class="nav flex-column sub-menu">
@@ -89,6 +89,16 @@ if(isset($_POST['switch']))
                 </ul>
             </div>
         </li>
+
+        <?php
+        if($_SESSION['admin']=='true') { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="report.php">
+                    <span class="menu-title">Report</span>
+                    <i class="mdi mdi-file-document menu-icon"></i>
+                </a>
+            </li>
+        <?php } ?>
        
         <?php
             if($_SESSION['admin']=='true')

@@ -216,9 +216,10 @@ if(isset($_GET['del'])){
                     <?php
                     $cate=$_SESSION['cate'];
                     $fname=$_SESSION['fname'];
-                    $sql="SELECT * from tblweight where tblweight.fname=:fname  ORDER BY id DESC";
+                    $sql="SELECT * from tblweight where tblweight.fname=:fname and tblweight.category=:cate ORDER BY id DESC";
                     $query = $dbh -> prepare($sql);
                     $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                    $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
                     $query->execute();
                     $results=$query->fetchAll(PDO::FETCH_OBJ);
                     $cnt=1;
