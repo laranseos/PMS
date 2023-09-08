@@ -179,8 +179,8 @@ if(isset($_GET['download']))
       $filename = "Broiler_Vaccination(".$today.").pdf";		 
       
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
 
       $pdf = new PDF();;
       $pdf->setHeaderText('Publish Date : '.$today);
@@ -211,6 +211,7 @@ if(isset($_GET['download']))
       {  
          foreach($resulta as $rowa)
          { 
+           $date = $rowa['date'];
            $fowl = $rowa['fowlrun'];
            $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
            $query = $dbh -> prepare($sql);
@@ -223,7 +224,7 @@ if(isset($_GET['download']))
              foreach($resultb as $rowb){
                $c_date = $rowb->PostingDate;
                $postingDate = new DateTime($c_date);
-               $today = new DateTime('today');
+               $today = new DateTime($date);
                $diff = $postingDate->diff($today);
 
                $age = $diff->format('%a');
@@ -248,8 +249,8 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
-           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {
@@ -421,8 +422,8 @@ if(isset($_GET['download']))
       $filename = "Layer_Vaccination(".$today.").pdf";		 
       
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
 
       $pdf = new PDF();
       $pdf->setHeaderText($today);
@@ -453,6 +454,7 @@ if(isset($_GET['download']))
       {  
          foreach($resulta as $rowa)
          { 
+           $date = $rowa['date'];
            $fowl = $rowa['fowlrun'];
            $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
            $query = $dbh -> prepare($sql);
@@ -465,7 +467,7 @@ if(isset($_GET['download']))
              foreach($resultb as $rowb){
                $c_date = $rowb->PostingDate;
                $postingDate = new DateTime($c_date);
-               $today = new DateTime('today');
+               $today = new DateTime($date);
                $diff = $postingDate->diff($today);
 
                $age = $diff->format('%a');
@@ -490,8 +492,8 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
-           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {
@@ -626,10 +628,9 @@ if(isset($_GET['download']))
     if($did=='freerange_vaccination'){
       $today = date("Y-m-d");
       $filename = "FreeRange_Vaccination(".$today.").pdf";		 
-      
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
 
       $pdf = new PDF();
       $pdf->setHeaderText($today);
@@ -660,6 +661,7 @@ if(isset($_GET['download']))
       {  
          foreach($resulta as $rowa)
          { 
+           $date = $rowa['date'];
            $fowl = $rowa['fowlrun'];
            $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
            $query = $dbh -> prepare($sql);
@@ -672,7 +674,7 @@ if(isset($_GET['download']))
              foreach($resultb as $rowb){
                $c_date = $rowb->PostingDate;
                $postingDate = new DateTime($c_date);
-               $today = new DateTime('today');
+               $today = new DateTime($date);
                $diff = $postingDate->diff($today);
 
                $age = $diff->format('%a');
@@ -697,8 +699,8 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
-           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {

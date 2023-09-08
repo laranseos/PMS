@@ -147,7 +147,7 @@ if(isset($_POST['insertss']))
                                 <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
                             </div>
                         </div>
-                        <!-- <div class="row">
+                        <div class="row">
                             <div class="form-group col-md-4">
                             <label for="exampleInputName1">Age</label>
                             <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
@@ -162,7 +162,7 @@ if(isset($_POST['insertss']))
                             <label for="exampleInputName1"> </label>
                             <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
                             </div>
-                        </div> -->
+                        </div>
                         <?php }  else { ?> 
                         <div class="row">
                             <div class="form-group col-md-12 ">
@@ -173,7 +173,7 @@ if(isset($_POST['insertss']))
                             </div>
                         </div>
 
-                        <!-- <?php if($category=='Broiler') { ?>
+                        <?php if($category=='Broiler') { ?>
                                  <div class="row" style="display: none;">
                                 <?php } else { ?> 
                                   <div class="row">
@@ -193,7 +193,7 @@ if(isset($_POST['insertss']))
                                     <label for="exampleInputName1"> </label>
                                     <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
                                   </div>
-                                </div> -->
+                                </div>
                                 
                         <?php } ?>
                         

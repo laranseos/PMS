@@ -9,11 +9,13 @@ if(isset($_POST['taken']))
 {
   $vid = $_POST['taken'];
   
+  $today=date('Y-m-d');
   $fowlrun = $_POST['fowlrun'];
   $fname=$_SESSION['fname'];
-  $sql="insert into tblvaccination_log(tblvaccination_log.category,tblvaccination_log.fowlrun,tblvaccination_log.vacid,tblvaccination_log.fname) values(:category,:fowlrun,:vid,:fname)";
+  $sql="insert into tblvaccination_log(tblvaccination_log.category,tblvaccination_log.fowlrun,tblvaccination_log.vacid,tblvaccination_log.fname,tblvaccination_log.date) values(:category,:fowlrun,:vid,:fname,:today)";
   $query=$dbh->prepare($sql);
   $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+  $query-> bindParam(':today', $today, PDO::PARAM_STR);
   $query->bindParam(':category',$category,PDO::PARAM_STR);
   $query->bindParam(':fowlrun',$fowlrun,PDO::PARAM_STR);
   $query->bindParam(':vid',$vid,PDO::PARAM_STR);
