@@ -1,6 +1,42 @@
 <?php 
 include('includes/checklogin.php');
+include_once('libs/fpdf.php');
 check_login();
+
+class PDF extends FPDF
+{
+  private $headerText;
+
+  // Set the header text
+  public function setHeaderText($text)
+  {
+      $this->headerText = $text;
+  }
+// Page header
+function Header()
+{
+    // Logo
+    $this->Image('companyimages/poultrylogo.png',10,5,50);
+    $this->SetFont('Arial','B',12);
+    // Move to the right
+    $this->Cell(80);
+    // Title
+    $this->Cell(80,10,$this->headerText,1,0,'C');
+    // Line break
+    $this->Ln(20);
+}
+ 
+// Page footer
+function Footer()
+{
+    // Position at 1.5 cm from bottom
+    $this->SetY(-15);
+    // Arial italic 8
+    $this->SetFont('Arial','I',8);
+    // Page number
+    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+}
+}
 
 if(isset($_GET['download']))
 {
@@ -118,6 +154,99 @@ if(isset($_GET['download']))
       }
       fclose($fh);
       exit();   
+    }
+    if($did=='broiler_vaccination'){
+      $today = date("Y-m-d");
+      $filename = "Broiler_Vaccination(".$today.").pdf";		 
+      
+
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+
+      $pdf = new PDF();
+      $pdf->setHeaderText($today);
+      //header
+      $pdf->AddPage();
+      //foter page
+      $pdf->AliasNbPages();
+      $pdf->SetFont('Arial','B',12);
+      // Set the header
+      foreach ($display_heading as $key => $heading) {
+        $pdf->Cell($cellWidths[$key], 10, $heading, 1, 0, 'C');
+      }
+
+
+      $fname=$_SESSION['fname'];
+      $cate='Broiler';
+      
+      $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+      
+      $currentfowl = $row->CategoryFowlRun;
+      $query = $dbh -> prepare($sql);
+      $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+      $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+      $query->execute();
+      $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+      $cnt=1;
+      if($query->rowCount() > 0)
+      {  
+         foreach($resulta as $rowa)
+         { 
+           $fowl = $rowa['fowlrun'];
+           $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+           $query = $dbh -> prepare($sql);
+           $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+
+           $query->execute();
+           $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+           if($query->rowCount() > 0)
+           {
+             foreach($resultb as $rowb){
+               $c_date = $rowb->PostingDate;
+               $postingDate = new DateTime($c_date);
+               $today = new DateTime('today');
+               $diff = $postingDate->diff($today);
+
+               $age = $diff->format('%a');
+               $quantity = $rowb->CategoryCode;
+             }
+           }
+
+           $vacid = $rowa['vacid'];
+           
+           $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+           $query1=$dbh->prepare($sql1);
+           $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+           $query1->execute();
+           $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+         
+           if($query1->rowCount() > 0)
+           {  
+             foreach ($resultc as $rowc) {
+               $disease = $rowc['disease'];
+               $dose = $rowc['dose'];
+               $method = $rowc['method'];
+               $vaccination = $rowc['vaccination'];
+             }
+           }
+           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $pdf->Ln();
+           $pdf->SetFont('Arial','',10);
+           foreach ($cells as $key => $cell) {
+             $pdf->Cell($cellWidths[$key], 10, $cell, 1, 0, 'C');
+            }
+           $cnt=$cnt+1;
+          }
+      }
+
+      // foreach($result as $row) {
+      // $pdf->Ln();
+      // foreach($row as $column)
+      // $pdf->Cell(20,12,$column,1);
+      // }
+
+      $pdf->Output('D', $filename);
     }
 
     if($did=='layer_mortality') {
@@ -268,6 +397,99 @@ if(isset($_GET['download']))
       fclose($fh);
       exit();   
     }
+    if($did=='layer_vaccination'){
+      $today = date("Y-m-d");
+      $filename = "Layer_Vaccination(".$today.").pdf";		 
+      
+
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+
+      $pdf = new PDF();
+      $pdf->setHeaderText($today);
+      //header
+      $pdf->AddPage();
+      //foter page
+      $pdf->AliasNbPages();
+      $pdf->SetFont('Arial','B',12);
+      // Set the header
+      foreach ($display_heading as $key => $heading) {
+        $pdf->Cell($cellWidths[$key], 8, $heading, 1, 0, 'C');
+      }
+
+
+      $fname=$_SESSION['fname'];
+      $cate='Layer';
+      
+      $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+      
+      $currentfowl = $row->CategoryFowlRun;
+      $query = $dbh -> prepare($sql);
+      $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+      $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+      $query->execute();
+      $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+      $cnt=1;
+      if($query->rowCount() > 0)
+      {  
+         foreach($resulta as $rowa)
+         { 
+           $fowl = $rowa['fowlrun'];
+           $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+           $query = $dbh -> prepare($sql);
+           $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+
+           $query->execute();
+           $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+           if($query->rowCount() > 0)
+           {
+             foreach($resultb as $rowb){
+               $c_date = $rowb->PostingDate;
+               $postingDate = new DateTime($c_date);
+               $today = new DateTime('today');
+               $diff = $postingDate->diff($today);
+
+               $age = $diff->format('%a');
+               $quantity = $rowb->CategoryCode;
+             }
+           }
+
+           $vacid = $rowa['vacid'];
+           
+           $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+           $query1=$dbh->prepare($sql1);
+           $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+           $query1->execute();
+           $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+         
+           if($query1->rowCount() > 0)
+           {  
+             foreach ($resultc as $rowc) {
+               $disease = $rowc['disease'];
+               $dose = $rowc['dose'];
+               $method = $rowc['method'];
+               $vaccination = $rowc['vaccination'];
+             }
+           }
+           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $pdf->Ln();
+           $pdf->SetFont('Arial','',10);
+           foreach ($cells as $key => $cell) {
+             $pdf->Cell($cellWidths[$key], 8, $cell, 1, 0, 'C');
+            }
+           $cnt=$cnt+1;
+          }
+      }
+
+      // foreach($result as $row) {
+      // $pdf->Ln();
+      // foreach($row as $column)
+      // $pdf->Cell(20,12,$column,1);
+      // }
+
+      $pdf->Output('D', $filename);
+    }
 
     if($did=='freerange_mortality') {
       $today = date("Y-m-d");
@@ -381,6 +603,93 @@ if(isset($_GET['download']))
       }
       fclose($fh);
       exit();   
+    }
+    if($did=='freerange_vaccination'){
+      $today = date("Y-m-d");
+      $filename = "FreeRange_Vaccination(".$today.").pdf";		 
+      
+
+      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+
+      $pdf = new PDF();
+      $pdf->setHeaderText($today);
+      //header
+      $pdf->AddPage();
+      //foter page
+      $pdf->AliasNbPages();
+      $pdf->SetFont('Arial','B',12);
+      // Set the header
+      foreach ($display_heading as $key => $heading) {
+        $pdf->Cell($cellWidths[$key], 8, $heading, 1, 0, 'C');
+      }
+
+
+      $fname=$_SESSION['fname'];
+      $cate='Free_Range';
+      
+      $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+      
+      $currentfowl = $row->CategoryFowlRun;
+      $query = $dbh -> prepare($sql);
+      $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+      $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+      $query->execute();
+      $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+      $cnt=1;
+      if($query->rowCount() > 0)
+      {  
+         foreach($resulta as $rowa)
+         { 
+           $fowl = $rowa['fowlrun'];
+           $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+           $query = $dbh -> prepare($sql);
+           $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+
+           $query->execute();
+           $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+           if($query->rowCount() > 0)
+           {
+             foreach($resultb as $rowb){
+               $c_date = $rowb->PostingDate;
+               $postingDate = new DateTime($c_date);
+               $today = new DateTime('today');
+               $diff = $postingDate->diff($today);
+
+               $age = $diff->format('%a');
+               $quantity = $rowb->CategoryCode;
+             }
+           }
+
+           $vacid = $rowa['vacid'];
+           
+           $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+           $query1=$dbh->prepare($sql1);
+           $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+           $query1->execute();
+           $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+         
+           if($query1->rowCount() > 0)
+           {  
+             foreach ($resultc as $rowc) {
+               $disease = $rowc['disease'];
+               $dose = $rowc['dose'];
+               $method = $rowc['method'];
+               $vaccination = $rowc['vaccination'];
+             }
+           }
+           $cells = array($cnt, $fowl, $age, $quantity, $disease, $vaccination, $dose, $method);
+           $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
+           $pdf->Ln();
+           $pdf->SetFont('Arial','',10);
+           foreach ($cells as $key => $cell) {
+             $pdf->Cell($cellWidths[$key], 8, $cell, 1, 0, 'C');
+            }
+           $cnt=$cnt+1;
+          }
+      }
+
+      $pdf->Output('D', $filename);
     }
 }
 
@@ -573,6 +882,113 @@ if(isset($_GET['download']))
                                   $cnt=$cnt+1;
                                 }
                               } ?>
+                            </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="modal fade" id="vacLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Vaccination Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                            <thead>
+                              <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Fowl Run</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Disease</th>
+                                <th class="text-center">Vaccination</th>
+                                <th class="text-center">Dose</th>
+                                <th class="text-center">Method</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php
+                               $fname=$_SESSION['fname'];
+                               $cate='Broiler';
+                               
+                               $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+                               
+                               $currentfowl = $row->CategoryFowlRun;
+                               $query = $dbh -> prepare($sql);
+                               $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+                               $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                               $query->execute();
+                               $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+                               $cnt=1;
+                               if($query->rowCount() > 0)
+                               {  
+                                  foreach($resulta as $rowa)
+                                  { 
+                                    $fowl = $rowa['fowlrun'];
+                                    $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+                                    $query = $dbh -> prepare($sql);
+                                    $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+              
+                                    $query->execute();
+                                    $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+                                    if($query->rowCount() > 0)
+                                    {
+                                      foreach($resultb as $rowb){
+                                        $c_date = $rowb->PostingDate;
+                                        $postingDate = new DateTime($c_date);
+                                        $today = new DateTime('today');
+                                        $diff = $postingDate->diff($today);
+
+                                        $age = $diff->format('%a');
+                                        $quantity = $rowb->CategoryCode;
+                                      }
+                                    }
+
+                                    $vacid = $rowa['vacid'];
+                                    
+                                    $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+                                    $query1=$dbh->prepare($sql1);
+                                    $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+                                    $query1->execute();
+                                    $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+                                  
+                                    if($query1->rowCount() > 0)
+                                    {  
+                                      foreach ($resultc as $rowc) {
+                                        $disease = $rowc['disease'];
+                                        $dose = $rowc['dose'];
+                                        $method = $rowc['method'];
+                                        $vaccination = $rowc['vaccination'];
+                                      }
+                                    }
+
+                                  ?>
+                                  <tr>
+                                    <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($fowl);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($age);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($disease);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($dose);?></td> 
+                                    <td class="text-center"><?php  echo htmlentities($method);?></td>   
+                                  </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                    }
+                                  }
+                              ?>
                             </tbody>
                             </table>
                           </div>
@@ -825,6 +1241,113 @@ if(isset($_GET['download']))
                 <!-- /.modal-dialog -->
             </div>
           </div>
+          <div class="row">
+            <div class="modal fade" id="layer_vacLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Vaccination Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                            <thead>
+                              <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Fowl Run</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Disease</th>
+                                <th class="text-center">Vaccination</th>
+                                <th class="text-center">Dose</th>
+                                <th class="text-center">Method</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php
+                               $fname=$_SESSION['fname'];
+                               $cate='Layer';
+                               
+                               $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+                               
+                               $currentfowl = $row->CategoryFowlRun;
+                               $query = $dbh -> prepare($sql);
+                               $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+                               $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                               $query->execute();
+                               $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+                               $cnt=1;
+                               if($query->rowCount() > 0)
+                               {  
+                                  foreach($resulta as $rowa)
+                                  { 
+                                    $fowl = $rowa['fowlrun'];
+                                    $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+                                    $query = $dbh -> prepare($sql);
+                                    $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+              
+                                    $query->execute();
+                                    $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+                                    if($query->rowCount() > 0)
+                                    {
+                                      foreach($resultb as $rowb){
+                                        $c_date = $rowb->PostingDate;
+                                        $postingDate = new DateTime($c_date);
+                                        $today = new DateTime('today');
+                                        $diff = $postingDate->diff($today);
+
+                                        $age = $diff->format('%a');
+                                        $quantity = $rowb->CategoryCode;
+                                      }
+                                    }
+
+                                    $vacid = $rowa['vacid'];
+                                    
+                                    $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+                                    $query1=$dbh->prepare($sql1);
+                                    $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+                                    $query1->execute();
+                                    $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+                                  
+                                    if($query1->rowCount() > 0)
+                                    {  
+                                      foreach ($resultc as $rowc) {
+                                        $disease = $rowc['disease'];
+                                        $dose = $rowc['dose'];
+                                        $method = $rowc['method'];
+                                        $vaccination = $rowc['vaccination'];
+                                      }
+                                    }
+
+                                  ?>
+                                  <tr>
+                                    <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($fowl);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($age);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($disease);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($dose);?></td> 
+                                    <td class="text-center"><?php  echo htmlentities($method);?></td>   
+                                  </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                    }
+                                  }
+                              ?>
+                            </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
 
           <!-- Free Range -->
           <div class="row">
@@ -1010,8 +1533,221 @@ if(isset($_GET['download']))
                 <!-- /.modal-dialog -->
             </div>
           </div>
+          <div class="row">
+            <div class="modal fade" id="freerange_vacLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Vaccination Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                            <thead>
+                              <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Fowl Run</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Disease</th>
+                                <th class="text-center">Vaccination</th>
+                                <th class="text-center">Dose</th>
+                                <th class="text-center">Method</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php
+                               $fname=$_SESSION['fname'];
+                               $cate='Free_Range';
+                               
+                               $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+                               
+                               $currentfowl = $row->CategoryFowlRun;
+                               $query = $dbh -> prepare($sql);
+                               $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+                               $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                               $query->execute();
+                               $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+                               $cnt=1;
+                               if($query->rowCount() > 0)
+                               {  
+                                  foreach($resulta as $rowa)
+                                  { 
+                                    $fowl = $rowa['fowlrun'];
+                                    $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+                                    $query = $dbh -> prepare($sql);
+                                    $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+              
+                                    $query->execute();
+                                    $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+                                    if($query->rowCount() > 0)
+                                    {
+                                      foreach($resultb as $rowb){
+                                        $c_date = $rowb->PostingDate;
+                                        $postingDate = new DateTime($c_date);
+                                        $today = new DateTime('today');
+                                        $diff = $postingDate->diff($today);
 
-         
+                                        $age = $diff->format('%a');
+                                        $quantity = $rowb->CategoryCode;
+                                      }
+                                    }
+
+                                    $vacid = $rowa['vacid'];
+                                    
+                                    $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+                                    $query1=$dbh->prepare($sql1);
+                                    $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+                                    $query1->execute();
+                                    $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+                                  
+                                    if($query1->rowCount() > 0)
+                                    {  
+                                      foreach ($resultc as $rowc) {
+                                        $disease = $rowc['disease'];
+                                        $dose = $rowc['dose'];
+                                        $method = $rowc['method'];
+                                        $vaccination = $rowc['vaccination'];
+                                      }
+                                    }
+
+                                  ?>
+                                  <tr>
+                                    <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($fowl);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($age);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($disease);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($dose);?></td> 
+                                    <td class="text-center"><?php  echo htmlentities($method);?></td>   
+                                  </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                    }
+                                  }
+                              ?>
+                            </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="modal fade" id="freerange_vacLog">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Vaccination Log</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                            <thead>
+                              <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Fowl Run</th>
+                                <th class="text-center">Age</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Disease</th>
+                                <th class="text-center">Vaccination</th>
+                                <th class="text-center">Dose</th>
+                                <th class="text-center">Method</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <?php
+                               $fname=$_SESSION['fname'];
+                               $cate='Free_Range';
+                               
+                               $sql="SELECT * from tblvaccination_log where tblvaccination_log.category=:cate and tblvaccination_log.fname=:fname";
+                               
+                               $currentfowl = $row->CategoryFowlRun;
+                               $query = $dbh -> prepare($sql);
+                               $query->bindParam(':cate',$cate,PDO::PARAM_STR);
+                               $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
+                               $query->execute();
+                               $resulta = $query->fetchAll(PDO::FETCH_ASSOC);
+                               $cnt=1;
+                               if($query->rowCount() > 0)
+                               {  
+                                  foreach($resulta as $rowa)
+                                  { 
+                                    $fowl = $rowa['fowlrun'];
+                                    $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
+                                    $query = $dbh -> prepare($sql);
+                                    $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
+              
+                                    $query->execute();
+                                    $resultb=$query->fetchAll(PDO::FETCH_OBJ);
+                                    if($query->rowCount() > 0)
+                                    {
+                                      foreach($resultb as $rowb){
+                                        $c_date = $rowb->PostingDate;
+                                        $postingDate = new DateTime($c_date);
+                                        $today = new DateTime('today');
+                                        $diff = $postingDate->diff($today);
+
+                                        $age = $diff->format('%a');
+                                        $quantity = $rowb->CategoryCode;
+                                      }
+                                    }
+
+                                    $vacid = $rowa['vacid'];
+                                    
+                                    $sql1="SELECT * from tblvaccination where tblvaccination.id=:vacid";
+                                    $query1=$dbh->prepare($sql1);
+                                    $query1->bindParam(':vacid',$vacid,PDO::PARAM_STR);
+                                    $query1->execute();
+                                    $resultc = $query1->fetchAll(PDO::FETCH_ASSOC);
+                                  
+                                    if($query1->rowCount() > 0)
+                                    {  
+                                      foreach ($resultc as $rowc) {
+                                        $disease = $rowc['disease'];
+                                        $dose = $rowc['dose'];
+                                        $method = $rowc['method'];
+                                        $vaccination = $rowc['vaccination'];
+                                      }
+                                    }
+
+                                  ?>
+                                  <tr>
+                                    <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($fowl);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($age);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($disease);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($dose);?></td> 
+                                    <td class="text-center"><?php  echo htmlentities($method);?></td>   
+                                  </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                    }
+                                  }
+                              ?>
+                            </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
+
 
           <div class="text-left ml-4"><h2 style="color:#FF1493">Broiler</h2></div>
           <hr>
@@ -1047,24 +1783,8 @@ if(isset($_GET['download']))
                   <h5 class="card-title" style="color:white">Mortality<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
-                  <a href="report.php?download=broiler_mortality" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
+                    <a href="report.php?download=broiler_mortality" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
                   </div>
-                  <!-- <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                     <?php
-                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
-                      $row=mysqli_fetch_array($query);
-                      $total = $row['total'];
-                      
-                      $query1=mysqli_query($con,"select sum(tblcategory_log.CategoryCount) as total from tblcategory_log");
-                      $row1=mysqli_fetch_array($query1);
-                      $deaths = $row1['total'];
-                      
-                      $m_rate=($deaths*100)/($deaths+$total);
-                      ?>
-                      <h2><?php echo number_format($m_rate, 2, '.', '');?>%</h2>
-                    </div>
-                  </div> -->
                 </div>
 
               </div>
@@ -1073,20 +1793,10 @@ if(isset($_GET['download']))
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color: #3366ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white;">Vaccination Takens<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i><i class="mdi mdi-download mdi-24px float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <h5 class="card-title" style="color:white;">Vaccination<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#vacLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php 
-                          $sql1="SELECT * from tblvaccination_log";
-                          $query1=$dbh->prepare($sql1);
-                          $query1->execute();
-                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
-                          $cnt = $query1->rowCount();
-                      ?>
-                      <h2><?php echo $cnt?></h2>
-                    </div>
+                     <a href="report.php?download=broiler_vaccination" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
                   </div>
                 </div>
 
@@ -1152,20 +1862,10 @@ if(isset($_GET['download']))
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color: #669900; color:antiquewhite">
-                  <h5 class="card-title" style="color:white;">Vaccination<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i><i class="mdi mdi-download mdi-24px float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <h5 class="card-title" style="color:white;">Vaccination<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_vacLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php 
-                          $sql1="SELECT * from tblvaccination_log";
-                          $query1=$dbh->prepare($sql1);
-                          $query1->execute();
-                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
-                          $cnt = $query1->rowCount();
-                      ?>
-                      <h2><?php echo $cnt?></h2>
-                    </div>
+                     <a href="report.php?download=layer_vaccination" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
                   </div>
                 </div>
 
@@ -1217,20 +1917,10 @@ if(isset($_GET['download']))
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color: #3333cc; color:antiquewhite">
-                  <h5 class="card-title" style="color:white;">Vaccination Takens<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i><i class="mdi mdi-download mdi-24px float-right" style="color:white;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <h5 class="card-title" style="color:white;">Vaccination<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_vacLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php 
-                          $sql1="SELECT * from tblvaccination_log";
-                          $query1=$dbh->prepare($sql1);
-                          $query1->execute();
-                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
-                          $cnt = $query1->rowCount();
-                      ?>
-                      <h2><?php echo $cnt?></h2>
-                    </div>
+                     <a href="report.php?download=freerange_vaccination" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
                   </div>
                 </div>
 
