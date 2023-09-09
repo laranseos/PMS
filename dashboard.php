@@ -195,7 +195,7 @@ check_login();
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color: #0099ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Mortality Rate<i class="mdi mdi-dots-vertical-circle-outline mdi-24px float-right" style="color:aqua;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                  <h5 class="card-title" style="color:white">FCR<i class="mdi mdi-dots-vertical-circle-outline mdi-24px float-right" style="color:aqua;" data-toggle="modal" data-target="#viewLog"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
@@ -221,7 +221,7 @@ check_login();
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color:#3366ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white;">Vaccination Takens</h5>
+                  <h5 class="card-title" style="color:white;">Laying Percentage</h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
@@ -238,6 +238,22 @@ check_login();
                   </div>
                 </div>
 
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="float: left;">Add Plan</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="float: left;">Add Plan</h5>
+                </div>
               </div>
             </div>
           </div>

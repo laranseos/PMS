@@ -69,7 +69,7 @@ if(isset($_GET['del'])){
         <h2 style="text-align: center; margin-top: 20px;"><?php echo $category ?></h2>
         <div class="row">
             <select  name="fowlrun" id="fowlrun" style="min-height: 50px; width: 100%; font-size:20px;" class="form-control mr-2 text-center" required>
-              <option value="" selected>All</option>
+              <option value="" selected>Select Fowl Run</option>
                 <?php
                 $cate=$_SESSION['cate'];
                 $fname=$_SESSION['fname'];
@@ -90,7 +90,7 @@ if(isset($_GET['del'])){
                     <?php 
                   }
                 } ?>
-              <option value="upcoming">upcoming</option>  
+              <!-- <option value="upcoming">upcoming</option>   -->
             </select>
           </div>
         <div class="content-wrapper">
@@ -150,10 +150,10 @@ if(isset($_GET['del'])){
                                   if($cnt == 1) {
                                   ?> 
                                   <span class="upcoming">upcoming</span>
-                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
+                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
                                   <?php }
                                   else { ?>
-                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
+                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
                                   <?php 
                                   }
                                 }

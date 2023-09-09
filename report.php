@@ -1,4 +1,5 @@
 <?php 
+error_reporting(E_ALL|E_STRICT);
 include('includes/checklogin.php');
 include_once('libs/fpdf.php');
 check_login();
@@ -24,7 +25,25 @@ function Header()
     $this->Cell(80,10,$this->headerText,1,0,'C');
     // Line break
     $this->Ln(20);
+
+    $this->SetFont('Times', 'B', 48);
+    $this->SetTextColor(140, 180, 205);
+    $watermarkText = 'Huku - Vaccination Report';
+    $this->addWatermark(35, 190, $watermarkText, 45);
+
 }
+
+function addWatermark($x, $y, $watermarkText, $angle)
+    {
+        $angle = $angle * M_PI / 180;
+        $c = cos($angle);
+        $s = sin($angle);
+        $cx = $x * $this->k;
+        $cy = ($this->h - $y) * $this->k;
+        $this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', $c, $s, - $s, $c, $cx, $cy, - $cx, - $cy));
+        $this->Text($x, $y, $watermarkText);
+        $this->_out('Q');
+    }
  
 // Page footer
 function Footer()
@@ -163,8 +182,8 @@ if(isset($_GET['download']))
       $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Disease', 'Vaccination', 'Dose','Method');
       $cellWidths = array(10, 30, 10, 20, 25, 45, 20, 30);
 
-      $pdf = new PDF();
-      $pdf->setHeaderText($today);
+      $pdf = new PDF();;
+      $pdf->setHeaderText('Publish Date : '.$today);
       //header
       $pdf->AddPage();
       //foter page

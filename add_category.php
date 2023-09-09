@@ -134,19 +134,35 @@ if(isset($_POST['insertss']))
                         </div>
                         </div>
                         <div class="row ">
-                        <div class="form-group col-md-4">
-                            <label for="exampleInputName1">Quantity</label>
-                            <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hens" class="form-control" id="hews" required>
+                            <div class="form-group col-md-4">
+                                <label for="exampleInputName1">Quantity</label>
+                                <input type="text" style="border-radius: 10px;" name="hews" value="" placeholder="Hens" class="form-control" id="hews" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="exampleInputName1"> </label>
+                                <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks" required>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="exampleInputName1">Total</label>
+                                <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
+                            </div>
                         </div>
-                        <div class="form-group col-md-4">
+                        <!-- <div class="row">
+                            <div class="form-group col-md-4">
+                            <label for="exampleInputName1">Age</label>
+                            <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                            </div>
+                            <div class="form-group col-md-4">
+                            <label for="unit"></label>
+                            <select id="unit" name="unit" style="border-radius: 8px; color:black;" class="form-control mt-1" required disabled>
+                                <option value="days" selected>days</option>
+                                <option value="weeks">weeks</option>
+                            </select>                                  </div>
+                            <div class="form-group col-md-4">
                             <label for="exampleInputName1"> </label>
-                            <input type="text" style="border-radius: 10px;" name="cocks" value="" placeholder="Cocks" class="form-control mt-1" id="cocks" required>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="exampleInputName1">Total</label>
-                            <input type="text" style="border-radius: 10px;" name="total" value="0" class="form-control"   id="total" disabled>
-                        </div>
-                        </div>
+                            <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                            </div>
+                        </div> -->
                         <?php }  else { ?> 
                         <div class="row">
                             <div class="form-group col-md-12 ">
@@ -156,6 +172,29 @@ if(isset($_POST['insertss']))
                                 </div>
                             </div>
                         </div>
+
+                        <!-- <?php if($category=='Broiler') { ?>
+                                 <div class="row" style="display: none;">
+                                <?php } else { ?> 
+                                  <div class="row">
+                                <?php }
+                                 ?>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Age</label>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                  <label for="unit"></label>
+                                  <select id="unit" name="unit" style="border-radius: 8px; color:black;" class="form-control mt-1" required disabled>
+                                      <option value="days" selected>days</option>
+                                      <option value="weeks">weeks</option>
+                                  </select>                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                                  </div>
+                                </div> -->
+                                
                         <?php } ?>
                         
                     </div>
@@ -168,6 +207,22 @@ if(isset($_POST['insertss']))
     } ?>
 </div>
 
+<script>
+  // Get the checkbox element
+const checkbox = document.getElementById("dayold");
+
+// Get the age and unit elements
+const ageInput = document.getElementById("age");
+const unitSelect = document.getElementById("unit");
+
+// Add event listener to the checkbox
+checkbox.addEventListener("change", function() {
+  // Toggle the disabled state of age and unit elements
+  ageInput.disabled = this.checked;
+  ageInput.value = "0";
+  unitSelect.disabled = this.checked;
+});
+</script>
 
 <script>
   var hewsInput = document.getElementById("hews");

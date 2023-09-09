@@ -115,6 +115,7 @@ if(isset($_GET['del'])){
                   $today = new DateTime('today');
                   $diff = $postingDate->diff($today);
                   $fdays = $diff->format('%a');
+                  // if($row->CategoryCode==0) $fdays='Not Set';
                   $_SESSION['current_weight'] = $row->weight;
                   ?>
                   <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
@@ -142,7 +143,7 @@ if(isset($_GET['del'])){
                             <hr style="margin-top: 6px; margin-bottom:6px;">  
                           <?php } ?>
 
-                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
+                          <label for="fpd" style="color: #aaaaaa;">Age (days)</label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                           <hr style="margin-top: 6px; margin-bottom:6px;">
 
                           <!-- <label for="fpd" style="color: #aaaaaa;">Weight(Kg) : <span style="color:darkmagenta"><?php  echo htmlentities($row->weightDate);?></span></label><input type="" class="text-center" name='fpd'readonly="readonly" value="<?php  echo htmlentities($row->weight);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
@@ -201,7 +202,7 @@ if(isset($_GET['del'])){
                                  ?>
                                   <div class="form-group col-md-4">
                                     <label for="exampleInputName1">Age</label>
-                                    <input type="text" style="border-radius: 10px;" name="age" value="1" placeholder="age" class="form-control" id="age" required disabled>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
                                   </div>
                                   <div class="form-group col-md-4">
                                   <label for="unit"></label>
@@ -508,7 +509,7 @@ const unitSelect = document.getElementById("unit");
 checkbox.addEventListener("change", function() {
   // Toggle the disabled state of age and unit elements
   ageInput.disabled = this.checked;
-  ageInput.value = "1";
+  ageInput.value = "0";
   unitSelect.disabled = this.checked;
 });
 </script>
