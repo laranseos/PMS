@@ -145,20 +145,13 @@ if(isset($_GET['del'])){
                                 <?php 
                                 if($checkweight==1){  ?>
                                 <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($weight);?>" id="ecount" name='ecount' placeholder="Enter Chicken weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Record</label>
-                                <div class="text-center">
-                                  <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Chicken weight is already recorded.');">
-                                    <input type="checkbox" name="recordWeight" style="width: 1.8em; height:1.8em;" class="taken" checked onclick='return false'/>&nbsp;
-                                  </a>
-                                </div>
                                 <?php
                                 }
                                 else { ?>
                                   <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Chicken Weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                  <label for="fpd" style="color: #aaaaaa;">Record</label>
                                   <div class="text-center">
-                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record egg count?');">
-                                      <input type="checkbox" name="recordWeight" style="width: 1.8em; height:1.8em;" class="recordWeight align-items-center" onchange="this.form.submit()"/>&nbsp;
+                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record weight?');">
+                                      <button type="submit" name="recordWeight" class="btn btn-info btn-fw mr-2" style="border-radius: 8px;">Record</button>
                                     </a>
                                   </div>
                                     <?php

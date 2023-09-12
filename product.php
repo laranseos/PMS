@@ -120,20 +120,14 @@ if(isset($_GET['del'])){
                                 <?php 
                                 if($checkegg==1){  ?>
                                 <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($cnt);?>" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Check Egg</label>
-                                <div class="text-center">
-                                  <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Egg count already is recorded.');">
-                                    <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="taken" checked onclick='return false'/>&nbsp;
-                                  </a>
-                                </div>
                                 <?php
                                 }
                                 else { ?>
                                   <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
-                                  <label for="fpd" style="color: #aaaaaa;">Check Egg</label>
                                   <div class="text-center">
                                     <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record egg count?');">
-                                      <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="getEgg align-items-center" onchange="this.form.submit()"/>&nbsp;
+                                      <!-- <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="getEgg align-items-center" onchange="this.form.submit()"/>&nbsp; -->
+                                      <button type="submit" name="getEgg" class="btn btn-info btn-fw mr-2" style="border-radius: 8px;">Record</button>
                                     </a>
                                   </div>
                                     <?php

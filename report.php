@@ -714,6 +714,31 @@ if(isset($_GET['download']))
     }
 }
 
+$query_broiler=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Broiler' GROUP BY (tblweight.age-1) DIV 7");
+$avg_broiler=mysqli_fetch_all($query_broiler, MYSQLI_ASSOC);
+$xBroiler = array_map(function ($item) {
+  return $item['avg_weight'];
+}, $avg_broiler);
+
+$query_layer=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Layer' GROUP BY (tblweight.age-1) DIV 7");
+$avg_layer=mysqli_fetch_all($query_layer, MYSQLI_ASSOC);
+$xLayer = array_map(function ($item) {
+  return $item['avg_weight'];
+}, $avg_layer);
+
+$query_freerange=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Free_Range' GROUP BY (tblweight.age-1) DIV 7");
+$avg_freerange=mysqli_fetch_all($query_freerange, MYSQLI_ASSOC);
+$xFreerange = array_map(function ($item) {
+  return $item['avg_weight'];
+}, $avg_freerange);
+
+
+$query_base=mysqli_query($con,"SELECT tblbase.weight AS base_weight FROM tblbase WHERE tblbase.weeks<19");
+$base=mysqli_fetch_all($query_base, MYSQLI_ASSOC);
+$xBase = array_map(function ($item) {
+  return $item['base_weight'];
+}, $base);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -730,6 +755,25 @@ if(isset($_GET['download']))
       <div class="main-panel">
         <div class="content-wrapper">
           <!-- Broiler -->
+          <div class="row">
+            <div class="modal fade" id="weightChart">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Weight</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
           <div class="row">
             <div class="modal fade" id="viewLog">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -1776,7 +1820,7 @@ if(isset($_GET['download']))
             <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
                 <div class="card-body" style="background-color:#009999; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightLog"></i></h5>
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightChart"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <a href="report.php?download=broiler_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
@@ -1828,10 +1872,10 @@ if(isset($_GET['download']))
           <div class="text-left ml-4"><h2 style="color:#FF1493">Layer</h2></div>
           <hr>
           <div class="row" style="margin-bottom: 20px;">
-            <div class="col-xxl-4 col-md-2">
+            <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
                 <div class="card-body" style="background-color: #339966; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightLog"></i></h5>
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightChart"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <a href="report.php?download=layer_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
@@ -1839,7 +1883,7 @@ if(isset($_GET['download']))
                 </div>
               </div>
             </div>
-            <div class="col-xxl-4 col-md-2">
+            <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
 
                 <div class="card-body" style="background-color: #00cc66; color:antiquewhite" >
@@ -1900,7 +1944,7 @@ if(isset($_GET['download']))
             <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
                 <div class="card-body" style="background-color:#3366ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_weightLog"></i></h5>
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightChart"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <a href="report.php?download=freerange_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
@@ -1961,593 +2005,71 @@ if(isset($_GET['download']))
   </div>
   <!-- container-scroller -->
   <?php @include("includes/foot.php");?>
-  <script >
-    $(function () {
-    /* ChartJS
-     * -------
-     * Here we will create a few charts using ChartJS
-     */
+  
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById("myChart").getContext("2d");
 
-    //--------------
-    //- AREA CHART -
-    //--------------
+  const broiler = <?php echo json_encode($xBroiler) ?>;
+  const layer = <?php echo json_encode($xLayer) ?>;
+  const freerange = <?php echo json_encode($xFreerange) ?>;
+  const base = <?php echo json_encode($xBase) ?>;
 
-    // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
-
-    var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-      {
-        label               : 'Digital Goods',
-        backgroundColor     : 'rgba(60,141,188,0.9)',
-        borderColor         : 'rgba(60,141,188,0.8)',
-        pointRadius          : false,
-        pointColor          : '#3b8bba',
-        pointStrokeColor    : 'rgba(60,141,188,1)',
-        pointHighlightFill  : '#fff',
-        pointHighlightStroke: 'rgba(60,141,188,1)',
-        data                : [28, 48, 40, 19, 86, 27, 90]
-      },
-      {
-        label               : 'Electronics',
-        backgroundColor     : 'rgba(200, 150, 30, 1)',
-        borderColor         : 'rgba(210, 214, 222, 1)',
-        pointRadius         : false,
-        pointColor          : 'rgba(210, 214, 222, 1)',
-        pointStrokeColor    : '#c1c7d1',
-        pointHighlightFill  : '#fff',
-        pointHighlightStroke: 'rgba(220,220,220,1)',
-        data                : [66, 59, 80, 81, 56, 55, 41]
-      },
-      ]
-    }
-
-    var areaChartOptions = {
-      maintainAspectRatio : false,
-      responsive : true,
-      legend: {
-        display: false
-      },
-      scales: {
-        xAxes: [{
-          gridLines : {
-            display : false,
-          }
-        }],
-        yAxes: [{
-          gridLines : {
-            display : false,
-          }
-        }]
-      }
-    }
-
-    // This will get the first returned node in the jQuery collection.
-    var areaChart       = new Chart(areaChartCanvas, { 
-      type: 'bar',
-      data: areaChartData, 
-      options: areaChartOptions
-    })
-
-    //-------------
-    //- LINE CHART -
-    //--------------
-    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
-    var lineChartOptions = jQuery.extend(true, {}, areaChartOptions)
-    var lineChartData = jQuery.extend(true, {}, areaChartData)
-    lineChartData.datasets[0].fill = false;
-    lineChartData.datasets[1].fill = false;
-    lineChartOptions.datasetFill = false
-
-    var lineChart = new Chart(lineChartCanvas, { 
-      type: 'line',
-      data: lineChartData, 
-      options: lineChartOptions
-    })
-
-    //-------------
-    //- DONUT CHART -
-    //-------------
-    // Get context with jQuery - using jQuery's .get() method.
-    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-    
-    var donutData        = {
-      labels: [
-      'Chrome', 
-      'IE',
-      'FireFox', 
-      'Safari', 
-      'Opera', 
-      'Navigator', 
-      ],
-      datasets: [
-      {
-        data: [700,500,400,600,300,100],
-        backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-      }
-      ]
-    }
-    var donutOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var donutChart = new Chart(donutChartCanvas, {
-      type: 'doughnut',
-      data: donutData,
-      options: donutOptions      
-    })
-
-    //-------------
-    //- PIE CHART -
-    //-------------
-    // Get context with jQuery - using jQuery's .get() method.
-    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-    var pieData        = donutData;
-    var pieOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var pieChart = new Chart(pieChartCanvas, {
-      type: 'pie',
-      data: pieData,
-      options: pieOptions      
-    })
-
-    //-------------
-    //- BAR CHART -
-    //-------------
-    var barChartCanvas = $('#barChart').get(0).getContext('2d')
-    var barChartData = jQuery.extend(true, {}, areaChartData)
-    var temp0 = areaChartData.datasets[0]
-    var temp1 = areaChartData.datasets[1]
-    barChartData.datasets[0] = temp1
-    barChartData.datasets[1] = temp0
-
-    var barChartOptions = {
-      responsive              : true,
-      maintainAspectRatio     : false,
-      datasetFill             : false
-    }
-
-    var barChart = new Chart(barChartCanvas, {
-      type: 'bar', 
-      data: barChartData,
-      options: barChartOptions
-    })
-
-    //---------------------
-    //- STACKED BAR CHART -
-    //---------------------
-    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
-    var stackedBarChartData = jQuery.extend(true, {}, barChartData)
-
-    var stackedBarChartOptions = {
-      responsive              : true,
-      maintainAspectRatio     : false,
-      scales: {
-        xAxes: [{
-          stacked: true,
-        }],
-        yAxes: [{
-          stacked: true
-        }]
-      }
-    }
-
-    var stackedBarChart = new Chart(stackedBarChartCanvas, {
-      type: 'bar', 
-      data: stackedBarChartData,
-      options: stackedBarChartOptions
-    })
-  })
-// $(document).ready(function () {
-//   showGraph();
-// });
-
-
-// function showGraph()
-// {
-//   {
-//     $.post("data.php",
-//       function (data)
-//       {
-//         console.log(data);
-//         var name = [];
-//         var marks = [];
-
-//         for (var i in data) {
-//           name.push(data[i].ServiceName);
-//           marks.push(data[i].population);
-//         }
-//         var barChartOptions = {
-//           responsive              : true,
-//           maintainAspectRatio     : false,
-//           datasetFill             : false,
-//           scales:{
-//             yAxes:[{
-//                 ticks:{
-//                     beginAtZero: true
-//                 }
-//             }]
-//           }
-//         }
-
-//           var chartdata = {
-//             labels: name,
-//             datasets: [
-//             {
-//               label: 'Student Marks',
-//               backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-//               borderColor: '#46d5f1',
-//               hoverBackgroundColor: '#CCCCCC',
-//               hoverBorderColor: '#666666',
-//               data: marks
-//             }
-//             ]
-//           };
-
-
-//           var graphTarget = $("#graphCanvas");
-
-//           var barGraph = new Chart(graphTarget, {
-//             type: 'bar',
-//             data: chartdata,
-//             options: barChartOptions
-//           });
-//         });
-//   }
-// }
-
-
-$(document).ready(function(){
-  $.ajax({
-    url: "data.php",
-    method: "GET",
-    success: function(data){
-      console.log(data);
-      var name = [];
-      var marks = [];
-
-      for (var i in data){
-        name.push(data[i].Sector);
-
-        marks.push(data[i].total);
-      }
-      var chartdata = {
-        labels: name,
-        datasets: [{
-          label: 'student marks',
-          backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-          borderColor: 'rgba(134, 159, 152, 1)',
-          hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-          hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-          data: marks
-
-        }]
-      };
-      var graphTarget = $("#graphCanvas");
-      var barGraph = new Chart(graphTarget, {
-        type: 'bar',
-        data: chartdata,
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
-    },
-    error: function(data) {
-      console.log(data);
-    }
-
-  });
-});
-
-$(document).ready(function () {
-  showGraph2();
-});
-function showGraph2()
-{
-  {
-    $.post("data.php",
-      function (data)
-      {
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data) {
-          name.push(data[i].Sector);
-          marks.push(data[i].total);
-        }
-
-        var chartdata = {
-          labels: name,
+  const len = Math.max(broiler.length, layer.length, freerange.length);
+  // const xValues = broiler.map((_, i) => ({ date: `Week ${i + 1}` }));
+  const xValues = Array.from({ length: len }, (_, i) => ({ date: `Week ${i + 1}` }));
+  const x = xValues.map(item => item.date);
+  const maxVal = Math.max(...broiler, ...layer, ...freerange);
+  ;
+  new Chart(ctx, {
+      type: "line",
+      data: {
+          labels: x,
           datasets: [
-          {
-            label: 'Student Marks',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            // borderColor: '#46d5f1',
-            hoverBackgroundColor: '#CCCCCC',
-            hoverBorderColor: '#666666',
-            data: marks
-          }
-          ]
-        };
-
-        var graphTarget = $("#graphCanvas2");
-
-        var pieChart = new Chart(graphTarget, {
-          type: 'pie',
-          data: chartdata
-        });
-      });
-  }
-}
-
-</script>
-
-<script >
-  $(document).ready(function(){
-    $.ajax({
-      url: "data.php",
-      method: "GET",
-      success: function(data){
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data){
-          name.push(data[i].Sector);
-
-          marks.push(data[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'student marks',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
+              {
+                  label: "Broiler",
+                  backgroundColor: "rgba(0,0,255,1.0)",
+                  borderColor: "rgba(0,0,255,0.5)",
+                  data: broiler,
+                  tension: 0.25,
+              },
+              {
+                  label: "Layer",
+                  backgroundColor: "rgba(0,255,0,1.0)",
+                  borderColor: "rgba(0,255,0,0.5)",
+                  data: layer,
+                  tension: 0.25,
+              },
+              {
+                  label: "Free Range",
+                  backgroundColor: "rgba(0,255,255,1.0)",
+                  borderColor: "rgba(0,255,255,0.5)",
+                  data: freerange,
+                  tension: 0.25,
+              },
+              {
+                  label: "Baseline",
+                  backgroundColor: "rgba(255,0,0,1.0)",
+                  borderColor: "rgba(255,0,0,1.0)",
+                  data: base,
+                  tension: 0.25,
+              },
+          ],
       },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data.php",
-      method: "GET",
-      success: function(data){
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data){
-          name.push(data[i].Sector);
-
-          marks.push(data[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of Bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas3");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: "top",
+              },
+          },
+          scales: {
+            y: {
+                max: maxVal, // Set the maximum value on the y-axis
+            },
+        },
       },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
   });
-
-
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data1.php",
-      method: "GET",
-      success: function(data1){
-        console.log(data1);
-        var name = [];
-        var marks = [];
-
-        for (var i in data1){
-          name.push(data1[i].Status);
-
-          marks.push(data1[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas4");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data2.php",
-      method: "GET",
-      success: function(data2){
-        console.log(data2);
-        var name = [];
-        var marks = [];
-
-        for (var i in data2){
-          name.push(data2[i].Source);
-
-          marks.push(data2[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas5");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data3.php",
-      method: "GET",
-      success: function(data3){
-        console.log(data3);
-        var name = [];
-        var marks = [];
-
-        for (var i in data3){
-          name.push(data3[i].Newspaper);
-
-          marks.push(data3[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of Bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas6");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
 </script>
 </body>
 </html>

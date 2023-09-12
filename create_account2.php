@@ -64,10 +64,6 @@ if(isset($_POST['signup']))
 
 if(isset($_POST['back']))
 { 
-    $_SESSION['farmname']=$_POST['farmname'];
-    $_SESSION['farmcity']=$_POST['farmcity']; 
-    $_SESSION['farmaddress']=$_POST['farmaddress']; 
-    $_SESSION['farmcountry']=$_POST['farmcountry'];
     echo "<script>window.location.href = 'create_account1.php'</script>";
 }
 
