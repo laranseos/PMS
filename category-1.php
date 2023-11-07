@@ -3,15 +3,11 @@
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
 
 include('includes/checklogin.php');
 check_login();
 $category=$_GET['cate_id'];
 $_SESSION['cate']=$category;
-
 
 if(isset($_POST['save']))
 {
@@ -119,7 +115,7 @@ if(isset($_GET['del'])){
                   $diff = $postingDate->diff($today);
                   $fdays = $diff->format('%a');
                   $fdays_string = $fdays.'/'.(intval(($fdays-1)/7+1));
-                  if($row->CategoryCode==0 && $row->cocks==0 && $row->hews==0) $fdays_string='Not Set';
+                  if($row->CategoryCode==0) $fdays='Not Set';
                   $_SESSION['current_weight'] = $row->weight;
                   ?>
                   <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
@@ -196,6 +192,31 @@ if(isset($_GET['del'])){
                                     <input type="text" style="border-radius: 10px;" name="frcode" value="" placeholder="Enter Fowl Run Name..." class="form-control" id="frcode"required>
                                   </div>
                                 </div>
+
+
+                                <!-- <?php if($category=='Broiler') { ?>
+                                 <div class="row" style="display: none;">
+                                <?php } else { ?> 
+                                  <div class="row">
+                                <?php }
+                                 ?>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1">Age</label>
+                                    <input type="text" style="border-radius: 10px;" name="age" value="0" placeholder="age" class="form-control" id="age" required disabled>
+                                  </div>
+                                  <div class="form-group col-md-4">
+                                  <label for="unit"></label>
+                                  <select id="unit" name="unit" style="border-radius: 8px; color:black;" class="form-control mt-1" required disabled>
+                                      <option value="days" selected>days</option>
+                                      <option value="weeks">weeks</option>
+                                  </select>                                  </div>
+                                  <div class="form-group col-md-4">
+                                    <label for="exampleInputName1"> </label>
+                                    <div class="row align-items-center mt-1"><input type="checkbox" checked name="dayold" id="dayold" style="width: 20px; height:20px;" class="form-control mr-1 mt-2"><label for="dayold" class="mt-3"> Day Old</label></div>
+                                  </div>
+                                </div> -->
+                                
+                               
 
                                 <div class="row" style="display: none;">
                                   <div class="form-group col-md-12">

@@ -1,6 +1,9 @@
  <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-    <a class="navbar-brand brand-logo " href="dashboard.php"><img class="img-avatar" src="companyimages/poultrylogo.png" alt=""></a>
+    <a class="navbar-brand brand-logo " href="dashboard.php">
+      <img class="img-avatar" src="companyimages/poultrylogo.png" alt="">
+      <div style="margin-top: -15px; font-size : 16px;"><?php echo $_SESSION['fname']?><?php echo $_SESSION['admin_logo']?></div>
+    </a>
   </div>
     
   <div class="navbar-menu-wrapper d-flex align-items-stretch">

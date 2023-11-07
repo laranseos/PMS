@@ -66,7 +66,7 @@ if(isset($_POST['save']))
   $LastInsertId=$dbh->lastInsertId();
   if ($LastInsertId>0) 
   {
-    echo '<script>alert("Loged successfully")</script>';
+    echo '<script>alert("Logged successfully")</script>';
     echo "<script>window.location.href ='feed.php?cate_id=$category'</script>";
   }
   else

@@ -4,6 +4,7 @@ if(isset($_POST['switch']))
     $farmname=$_POST['farmid'];
     $_SESSION['fname'] = $farmname;
     echo '<script>alert("Switched into '.$farmname.' Management System!")</script>';
+    echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 
 }
 
@@ -26,8 +27,9 @@ if(isset($_POST['switch']))
             { 
                 if($row->AdminName=="Admin")
                 { 
+
                     $_SESSION['admin'] = 'true';
-                    
+                    $_SESSION['admin_logo'] = '(Administrator)';
                     ?>
                         <li class="nav-item">
                             <a class="nav-link" href="dashboard.php">
@@ -37,6 +39,16 @@ if(isset($_POST['switch']))
                         </li>
                     <?php 
                 } 
+                else{
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard_user.php">
+                            <span class="menu-title">Dashboard</span>
+                            <i class="mdi mdi-home menu-icon"></i>
+                        </a>
+                    </li>
+                <?php 
+                }
             }
         } ?>
 
@@ -49,9 +61,9 @@ if(isset($_POST['switch']))
             <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="category.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Manage Category</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="weight.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Weight Record</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="weight.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Weight Recording</a></li>
                     <?php if($_SESSION['Layer']==1) {?>
-                    <li class="nav-item"> <a class="nav-link" href="product.php">Egg Record</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="product.php">Egg Recording</a></li>
                     <?php } ?>
                 </ul>
             </div>
@@ -85,20 +97,22 @@ if(isset($_POST['switch']))
             <div class="collapse" id="vui-basics">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="vaccination.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Manage Vaccination</a></li>
+                    <?php
+                    if($_SESSION['admin']=='true') { ?>
                     <li class="nav-item"> <a class="nav-link" href="vaccinationplan.php?cate_id=<?php echo $_SESSION['Inite'] ?>">Manage Vaccination Plan</a></li>
+                    <?php } ?>
                 </ul>
             </div>
         </li>
 
-        <?php
-        if($_SESSION['admin']=='true') { ?>
-            <li class="nav-item">
-                <a class="nav-link" href="report.php">
-                    <span class="menu-title">Report</span>
-                    <i class="mdi mdi-file-document menu-icon"></i>
-                </a>
-            </li>
-        <?php } ?>
+   
+        <li class="nav-item">
+            <a class="nav-link" href="report.php">
+                <span class="menu-title">Reports</span>
+                <i class="mdi mdi-file-document menu-icon"></i>
+            </a>
+        </li>
+      
        
         <?php
             if($_SESSION['admin']=='true')
@@ -113,8 +127,8 @@ if(isset($_POST['switch']))
                     <div class="collapse" id="general-pages">
 
                         <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="userregister.php">Register user </a></li> 
-                            <li class="nav-item"> <a class="nav-link" href="#" data-toggle="modal" data-target="#switch">Switch user </a></li> 
+                            <li class="nav-item"> <a class="nav-link" href="userregister.php">Manage Users</a></li> 
+                            <li class="nav-item"> <a class="nav-link" href="#" data-toggle="modal" data-target="#switch">Switch user</a></li> 
                         </ul>
 
                     </div>
@@ -153,7 +167,7 @@ if(isset($_POST['switch']))
                                     {
                                     foreach($results as $rows)
                                     {
-                                        if($rows->FarmName=='xxx') continue;
+                                        if($rows->FarmName==' ') continue;
                                         ?> 
                                         <option value="<?php  echo $rows->FarmName;?>"><?php  echo $rows->FarmName;?></option>
                                         <?php 

@@ -29,7 +29,7 @@ function Header()
     $this->SetFont('Times', 'B', 48);
     $this->SetTextColor(140, 180, 205);
     $watermarkText = 'Huku - Vaccination Report';
-    $this->addWatermark(35, 190, $watermarkText, 45);
+    $this->addWatermark(70, 170, $watermarkText, 37);
 
 }
 
@@ -179,13 +179,13 @@ if(isset($_GET['download']))
       $filename = "Broiler_Vaccination(".$today.").pdf";		 
       
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+      $display_heading = array('No', 'Fowl Run', 'Age(Weeks)', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
 
-      $pdf = new PDF();;
+      $pdf = new PDF('L', 'mm', 'A4');
       $pdf->setHeaderText('Publish Date : '.$today);
       //header
-      $pdf->AddPage();
+      $pdf->AddPage('L', 'A4');
       //foter page
       $pdf->AliasNbPages();
       $pdf->SetFont('Arial','B',12);
@@ -249,8 +249,9 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
+           $age=$age.' / '.(intval(($age-1)/7)+1);
            $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+           $cellWidths =  array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {
@@ -419,22 +420,22 @@ if(isset($_GET['download']))
     }
     if($did=='layer_vaccination'){
       $today = date("Y-m-d");
-      $filename = "Layer_Vaccination(".$today.").pdf";		 
+      $filename = "Broiler_Vaccination(".$today.").pdf";		 
       
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+      $display_heading = array('No', 'Fowl Run', 'Age(Weeks)', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
 
-      $pdf = new PDF();
-      $pdf->setHeaderText($today);
+      $pdf = new PDF('L', 'mm', 'A4');
+      $pdf->setHeaderText('Publish Date : '.$today);
       //header
-      $pdf->AddPage();
+      $pdf->AddPage('L', 'A4');
       //foter page
       $pdf->AliasNbPages();
       $pdf->SetFont('Arial','B',12);
       // Set the header
       foreach ($display_heading as $key => $heading) {
-        $pdf->Cell($cellWidths[$key], 8, $heading, 1, 0, 'C');
+        $pdf->Cell($cellWidths[$key], 10, $heading, 1, 0, 'C');
       }
 
 
@@ -492,12 +493,13 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
+           $age=$age.'/'.(intval(($age-1)/7)+1);
            $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+           $cellWidths =  array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {
-             $pdf->Cell($cellWidths[$key], 8, $cell, 1, 0, 'C');
+             $pdf->Cell($cellWidths[$key], 10, $cell, 1, 0, 'C');
             }
            $cnt=$cnt+1;
           }
@@ -627,21 +629,22 @@ if(isset($_GET['download']))
     }
     if($did=='freerange_vaccination'){
       $today = date("Y-m-d");
-      $filename = "FreeRange_Vaccination(".$today.").pdf";		 
+      $filename = "Broiler_Vaccination(".$today.").pdf";		 
+      
 
-      $display_heading = array('No', 'Fowl Run', 'Age', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
-      $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+      $display_heading = array('No', 'Fowl Run', 'Age(Weeks)', 'Quantity', 'Date', 'Disease', 'Vaccination', 'Dose','Method');
+      $cellWidths = array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
 
-      $pdf = new PDF();
-      $pdf->setHeaderText($today);
+      $pdf = new PDF('L', 'mm', 'A4');
+      $pdf->setHeaderText('Publish Date : '.$today);
       //header
-      $pdf->AddPage();
+      $pdf->AddPage('L', 'A4');
       //foter page
       $pdf->AliasNbPages();
       $pdf->SetFont('Arial','B',12);
       // Set the header
       foreach ($display_heading as $key => $heading) {
-        $pdf->Cell($cellWidths[$key], 8, $heading, 1, 0, 'C');
+        $pdf->Cell($cellWidths[$key], 10, $heading, 1, 0, 'C');
       }
 
 
@@ -699,34 +702,42 @@ if(isset($_GET['download']))
                $vaccination = $rowc['vaccination'];
              }
            }
+           $age=$age.'/'.(intval(($age-1)/7)+1);
            $cells = array($cnt, $fowl, $age, $quantity, $date, $disease, $vaccination, $dose, $method);
-           $cellWidths = array(10, 30, 10, 20, 20 , 20, 45, 20, 20);
+           $cellWidths =  array(10, 30, 25, 25, 20 , 40, 55, 35, 40);
            $pdf->Ln();
            $pdf->SetFont('Arial','',10);
            foreach ($cells as $key => $cell) {
-             $pdf->Cell($cellWidths[$key], 8, $cell, 1, 0, 'C');
+             $pdf->Cell($cellWidths[$key], 10, $cell, 1, 0, 'C');
             }
            $cnt=$cnt+1;
           }
       }
 
+      // foreach($result as $row) {
+      // $pdf->Ln();
+      // foreach($row as $column)
+      // $pdf->Cell(20,12,$column,1);
+      // }
+
       $pdf->Output('D', $filename);
     }
 }
 
-$query_broiler=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Broiler' GROUP BY (tblweight.age-1) DIV 7");
+$fname=$_SESSION['fname'];
+$query_broiler=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Broiler' and tblweight.fname='$fname' GROUP BY (tblweight.age-1) DIV 7");
 $avg_broiler=mysqli_fetch_all($query_broiler, MYSQLI_ASSOC);
 $xBroiler = array_map(function ($item) {
   return $item['avg_weight'];
 }, $avg_broiler);
 
-$query_layer=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Layer' GROUP BY (tblweight.age-1) DIV 7");
+$query_layer=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Layer'  and tblweight.fname='$fname' GROUP BY (tblweight.age-1) DIV 7");
 $avg_layer=mysqli_fetch_all($query_layer, MYSQLI_ASSOC);
 $xLayer = array_map(function ($item) {
   return $item['avg_weight'];
 }, $avg_layer);
 
-$query_freerange=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Free_Range' GROUP BY (tblweight.age-1) DIV 7");
+$query_freerange=mysqli_query($con,"SELECT ROUND(AVG(tblweight.weight*1000),1) AS avg_weight FROM tblweight WHERE tblweight.category='Free_Range'  and tblweight.fname='$fname' GROUP BY (tblweight.age-1) DIV 7");
 $avg_freerange=mysqli_fetch_all($query_freerange, MYSQLI_ASSOC);
 $xFreerange = array_map(function ($item) {
   return $item['avg_weight'];
@@ -976,6 +987,7 @@ $xBase = array_map(function ($item) {
                                 <th class="text-center">Fowl Run</th>
                                 <th class="text-center">Age</th>
                                 <th class="text-center">Quantity</th>
+                                <th class="text-center">Date</th>
                                 <th class="text-center">Disease</th>
                                 <th class="text-center">Vaccination</th>
                                 <th class="text-center">Dose</th>
@@ -1001,6 +1013,7 @@ $xBase = array_map(function ($item) {
                                   foreach($resulta as $rowa)
                                   { 
                                     $fowl = $rowa['fowlrun'];
+                                    $vdate = $rowa['date'];
                                     $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
                                     $query = $dbh -> prepare($sql);
                                     $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
@@ -1044,6 +1057,7 @@ $xBase = array_map(function ($item) {
                                     <td class="text-center"><?php  echo htmlentities($fowl);?></td>
                                     <td class="text-center"><?php  echo htmlentities($age);?></td>
                                     <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vdate);?></td>
                                     <td class="text-center"><?php  echo htmlentities($disease);?></td>
                                     <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
                                     <td class="text-center"><?php  echo htmlentities($dose);?></td> 
@@ -1065,6 +1079,25 @@ $xBase = array_map(function ($item) {
             </div>
           </div>
           <!-- Layer -->
+          <div class="row">
+            <div class="modal fade" id="layer_weightChart">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Weight</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <canvas id="layer_myChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
           <div class="row">
             <div class="modal fade" id="layer_viewLog">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -1325,6 +1358,7 @@ $xBase = array_map(function ($item) {
                                 <th class="text-center">Fowl Run</th>
                                 <th class="text-center">Age</th>
                                 <th class="text-center">Quantity</th>
+                                <th class="text-center">Date</th>
                                 <th class="text-center">Disease</th>
                                 <th class="text-center">Vaccination</th>
                                 <th class="text-center">Dose</th>
@@ -1350,6 +1384,7 @@ $xBase = array_map(function ($item) {
                                   foreach($resulta as $rowa)
                                   { 
                                     $fowl = $rowa['fowlrun'];
+                                    $vdate = $rowa['date'];
                                     $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
                                     $query = $dbh -> prepare($sql);
                                     $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
@@ -1393,6 +1428,7 @@ $xBase = array_map(function ($item) {
                                     <td class="text-center"><?php  echo htmlentities($fowl);?></td>
                                     <td class="text-center"><?php  echo htmlentities($age);?></td>
                                     <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vdate);?></td>
                                     <td class="text-center"><?php  echo htmlentities($disease);?></td>
                                     <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
                                     <td class="text-center"><?php  echo htmlentities($dose);?></td> 
@@ -1415,6 +1451,25 @@ $xBase = array_map(function ($item) {
           </div>
 
           <!-- Free Range -->
+          <div class="row">
+            <div class="modal fade" id="freerange_weightChart">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Weight</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <canvas id="freerange_myChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+          </div>
           <div class="row">
             <div class="modal fade" id="freerange_viewLog">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
@@ -1724,6 +1779,7 @@ $xBase = array_map(function ($item) {
                                 <th class="text-center">Fowl Run</th>
                                 <th class="text-center">Age</th>
                                 <th class="text-center">Quantity</th>
+                                <th class="text-center">Date</th>
                                 <th class="text-center">Disease</th>
                                 <th class="text-center">Vaccination</th>
                                 <th class="text-center">Dose</th>
@@ -1749,6 +1805,8 @@ $xBase = array_map(function ($item) {
                                   foreach($resulta as $rowa)
                                   { 
                                     $fowl = $rowa['fowlrun'];
+                                    $vdate = $rowa['date'];
+
                                     $sql="SELECT * from tblcategory where tblcategory.CategoryFowlRun=:fowl";
                                     $query = $dbh -> prepare($sql);
                                     $query-> bindParam(':fowl', $fowl, PDO::PARAM_STR);
@@ -1792,6 +1850,7 @@ $xBase = array_map(function ($item) {
                                     <td class="text-center"><?php  echo htmlentities($fowl);?></td>
                                     <td class="text-center"><?php  echo htmlentities($age);?></td>
                                     <td class="text-center"><?php  echo htmlentities($quantity);?></td>
+                                    <td class="text-center"><?php  echo htmlentities($vdate);?></td>
                                     <td class="text-center"><?php  echo htmlentities($disease);?></td>
                                     <td class="text-center"><?php  echo htmlentities($vaccination);?></td>
                                     <td class="text-center"><?php  echo htmlentities($dose);?></td> 
@@ -1875,7 +1934,7 @@ $xBase = array_map(function ($item) {
             <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
                 <div class="card-body" style="background-color: #339966; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightChart"></i></h5>
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#layer_weightChart"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <a href="report.php?download=layer_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
@@ -1944,7 +2003,7 @@ $xBase = array_map(function ($item) {
             <div class="col-xxl-4 col-md-3">
               <div class="card info-card sales-card" style="min-height: 160px;">
                 <div class="card-body" style="background-color:#3366ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#weightChart"></i></h5>
+                  <h5 class="card-title" style="color:white">Weights<i class="mdi mdi-dots-vertical-circle-outline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_weightLog"></i><i class="mdi mdi-chart-areaspline mdi-24px ml-4 float-right" style="color:white;" data-toggle="modal" data-target="#freerange_weightChart"></i></h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <a href="report.php?download=freerange_weight" title="Download"><i class="mdi mdi-download mdi-36px float-center" style="color:white;"></i></a>
@@ -2008,19 +2067,19 @@ $xBase = array_map(function ($item) {
   
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const ctx = document.getElementById("myChart").getContext("2d");
+  let ctx = document.getElementById("myChart").getContext("2d");
 
-  const broiler = <?php echo json_encode($xBroiler) ?>;
-  const layer = <?php echo json_encode($xLayer) ?>;
-  const freerange = <?php echo json_encode($xFreerange) ?>;
-  const base = <?php echo json_encode($xBase) ?>;
+  let broiler = <?php echo json_encode($xBroiler) ?>;
+  // let layer = <?php echo json_encode($xLayer) ?>;
+  // let freerange = <?php echo json_encode($xFreerange) ?>;
+  let base = <?php echo json_encode($xBase) ?>;
 
-  const len = Math.max(broiler.length, layer.length, freerange.length);
-  // const xValues = broiler.map((_, i) => ({ date: `Week ${i + 1}` }));
-  const xValues = Array.from({ length: len }, (_, i) => ({ date: `Week ${i + 1}` }));
-  const x = xValues.map(item => item.date);
-  const maxVal = Math.max(...broiler, ...layer, ...freerange);
-  ;
+  // let len = Math.max(broiler.length, layer.length, freerange.length);
+  let xValues = broiler.map((_, i) => ({ date: `Week ${i + 1}` }));
+  // let xValues = Array.from({ length: len }, (_, i) => ({ date: `Week ${i + 1}` }));
+  let x = xValues.map(item => item.date);
+  let maxVal = Math.max(...broiler);
+  
   new Chart(ctx, {
       type: "line",
       data: {
@@ -2029,22 +2088,8 @@ $xBase = array_map(function ($item) {
               {
                   label: "Broiler",
                   backgroundColor: "rgba(0,0,255,1.0)",
-                  borderColor: "rgba(0,0,255,0.5)",
+                  borderColor: "rgba(0,0,255,0.8)",
                   data: broiler,
-                  tension: 0.25,
-              },
-              {
-                  label: "Layer",
-                  backgroundColor: "rgba(0,255,0,1.0)",
-                  borderColor: "rgba(0,255,0,0.5)",
-                  data: layer,
-                  tension: 0.25,
-              },
-              {
-                  label: "Free Range",
-                  backgroundColor: "rgba(0,255,255,1.0)",
-                  borderColor: "rgba(0,255,255,0.5)",
-                  data: freerange,
                   tension: 0.25,
               },
               {
@@ -2066,6 +2111,104 @@ $xBase = array_map(function ($item) {
           scales: {
             y: {
                 max: maxVal, // Set the maximum value on the y-axis
+            },
+        },
+      },
+  });
+</script>
+
+<script>
+  let ctx_layer = document.getElementById("layer_myChart").getContext("2d");
+
+  let layer = <?php echo json_encode($xLayer) ?>;
+  let base_layer = <?php echo json_encode($xBase) ?>;
+
+  let xValues_layer = layer.map((_, i) => ({ date: `Week ${i + 1}` }));
+  let x_layer = xValues_layer.map(item => item.date);
+  let maxVal_layer = Math.max(...layer);
+  
+  new Chart(ctx_layer, {
+      type: "line",
+      data: {
+          labels: x_layer,
+          datasets: [
+            
+              {
+                  label: "Layer",
+                  backgroundColor: "rgba(0,255,0,1.0)",
+                  borderColor: "rgba(0,255,0,0.5)",
+                  data: layer,
+                  tension: 0.25,
+              },
+          
+              {
+                  label: "Baseline",
+                  backgroundColor: "rgba(255,0,0,1.0)",
+                  borderColor: "rgba(255,0,0,1.0)",
+                  data: base_layer,
+                  tension: 0.25,
+              },
+          ],
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: "top",
+              },
+          },
+          scales: {
+            y: {
+                max: maxVal_layer, // Set the maximum value on the y-axis
+            },
+        },
+      },
+  });
+</script>
+
+<script>
+  let ctx_freerange = document.getElementById("freerange_myChart").getContext("2d");
+
+  let freerange = <?php echo json_encode($xFreerange) ?>;
+  let base_freerange = <?php echo json_encode($xBase) ?>;
+
+  let xValues_freerange = freerange.map((_, i) => ({ date: `Week ${i + 1}` }));
+  let x_freerange = xValues_freerange.map(item => item.date);
+  let maxVal_freerange = Math.max(...freerange);
+  
+  new Chart(ctx_freerange, {
+      type: "line",
+      data: {
+          labels: x_freerange,
+          datasets: [
+            
+              {
+                  label: "freerange",
+                  backgroundColor: "rgba(0,255,255,1.0)",
+                  borderColor: "rgba(0,255,255,0.8)",
+                  data: freerange,
+                  tension: 0.25,
+              },
+          
+              {
+                  label: "Baseline",
+                  backgroundColor: "rgba(255,0,0,1.0)",
+                  borderColor: "rgba(255,0,0,1.0)",
+                  data: base_freerange,
+                  tension: 0.25,
+              },
+          ],
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  position: "top",
+              },
+          },
+          scales: {
+            y: {
+                max: maxVal_freerange, // Set the maximum value on the y-axis
             },
         },
       },

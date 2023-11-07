@@ -123,7 +123,7 @@ if(isset($_GET['del'])){
 
                     $fdays = $diff->format('%a');
                   
-                    $sql1="SELECT * from tblvaccination where tblvaccination.category=:cate order by tblvaccination.age ASC";
+                    $sql1="SELECT * from tblvaccination where tblvaccination.category=:cate";
                     $query1=$dbh->prepare($sql1);
                     $query1->bindParam(':cate',$cate,PDO::PARAM_STR);
                     $query1->execute();
@@ -135,8 +135,10 @@ if(isset($_GET['del'])){
                       foreach ($results1 as $row1) {
                         $left = $row1['age'] - $fdays;
                         $vacid = $row1['id'];
+                        if(-4<$left && $left<0) $cnt++;
                         if($left<-3) continue;
-                        if($left>-4) $cnt++;
+                        if($left>0) $cnt++;
+                        
                     ?>
                     
                         <div class="col-md-12 stretch-card grid-margin card2" style="margin-left:18px; margin-bottom:10px;">
@@ -146,15 +148,15 @@ if(isset($_GET['del'])){
                           <?php } ?>
                             <div class="card-header">
                                 <?php if($left<0) { ?>
-                                  <h4 class="text-center"><span class="float-left"><?php  echo htmlentities(abs($left));?>Day(s) passed</span><span class="text-center header" style="color: #00008b;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
+                                  <h4 class="text-center"><span class="float-left"><?php  echo htmlentities(abs($left));?>DAY(S) PASSED</span><span class="text-center header" style="color: #00008b;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
                                 <?php } else {
                                   if($cnt == 1) {
                                   ?> 
                                   <span class="upcoming">upcoming</span>
-                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?> Day(s) left [ Within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?> week(s) ]</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
+                                  <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>
                                   <?php }
                                   else { ?>
-                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?> Day(s) left [ Within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?> week(s) ]</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
+                                   <h4 class="text-center"><span class="float-left animate-charcter" style="color:red;"><?php  echo htmlentities(abs($left));?>DAYS LEFT(within <?php  echo htmlentities(intval(abs($left-1)/7)+1);?>weeks)</span><span class="text-center header" style="color: red;" id="title"><?php  echo htmlentities($row->CategoryFowlRun);?></span><i  style="color: #0DCEF0;" class="mdi mdi-pin mdi-24px float-right"></i></h4>   
                                   <?php 
                                   }
                                 }
@@ -186,7 +188,7 @@ if(isset($_GET['del'])){
                                     <form method="post" action="vaccination.php?cate_id=<?php echo $category?>">
                                       <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
                                       <input type="" class="text-center" name='vaccination_id' readonly="readonly" value="<?php  echo htmlentities($row1['id']);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                      <label>Administered?</label>
+                                      <label>Check</label>
                                       <?php 
                                         $fname=$_SESSION['fname'];
                                         $sql="SELECT * from tblvaccination_log where tblvaccination_log.fowlrun=:currentfowl and tblvaccination_log.vacid=:vacid and tblvaccination_log.fname=:fname";
@@ -204,23 +206,14 @@ if(isset($_GET['del'])){
                                         {  
                                           ?>
                                         <div class="text-center">
-                                          <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return alert('Vaccination is already taken.');">
+                                          <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Vaccination is already taken.');">
                                             <input type="checkbox" name="taken" style="width: 1.8em; height:1.8em;" class="taken" value=<?php  echo htmlentities($row1['id']);?> checked onclick='return false'/>&nbsp;
-                                          </a>
-                                        </div>
-                                          <?php
-                                        } else if($left > 0)
-                                        {  
-                                          ?>
-                                        <div class="text-center">
-                                          <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return alert('Vaccination can only be administered on Scheduled Date.');">
-                                            <input type="checkbox" name="taken" style="width: 1.8em; height:1.8em;" class="taken" value=<?php  echo htmlentities($row1['id']);?> onclick='return false'/>&nbsp;
                                           </a>
                                         </div>
                                           <?php
                                         } else { ?>
                                             <div class="text-center">
-                                              <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm(' Vaccine Administered?');">
+                                              <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you took vaccination?');">
                                                 <input type="checkbox" name="taken" style="width: 1.8em; height:1.8em;" class="taken align-items-center" value=<?php  echo htmlentities($row1['id']);?> onchange="this.form.submit()"/>&nbsp;
                                               </a>
                                             </div>
@@ -387,7 +380,7 @@ if(isset($_GET['del'])){
 <style>
 .animate-charcter
 {
-  /*text-transform: lowercase;*/
+  text-transform: uppercase;
   background-image: linear-gradient(
     -225deg,
     #000000 0%,

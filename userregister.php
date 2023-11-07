@@ -190,7 +190,7 @@ if(isset($_GET['modal_block'])) { ?>
                                         {
                                             foreach($results as $row)
                                             {    
-                                                if($row->FarmName=='xxx') continue;
+                                                if($row->FarmName==' ') continue;
                                                 ?>
                                                 <tr>
                                                     <td class="text-center"><?php echo htmlentities($cnt);?></td>

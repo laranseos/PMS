@@ -1,7 +1,10 @@
 <?php 
 include('includes/checklogin.php');
 check_login();
-
+error_reporting(0);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,35 +20,133 @@ check_login();
 
       <div class="main-panel">
         <div class="content-wrapper">
+          
+          <div class="row">
+            <div class="modal fade" id="farm_view">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title" style="color: #0DCEF0;">Farms Info</h2>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="table-responsive p-3">
+                            <table class="table align-items-center table-flush table-hover" id="dataTableHover">
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th>Farm Name</th>
+                                  <th class="text-center">Users</th>
+                                  <th class="text-center">Broilers</th>
+                                  <th class="text-center">Layers</th>
+                                  <th class="text-center">Free Ranges</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                  
+                                <?php
+                                $sql="SELECT tbladmin.FarmName as fname, COUNT(*) as count from tbladmin GROUP BY tbladmin.FarmName";
+                                $query = $dbh -> prepare($sql);
+                                $query->execute();
+                                $results=$query->fetchAll(PDO::FETCH_OBJ);
+                                $cnt=1;
+                                
+                                if($query->rowCount() > 0)
+                                {
+                                  foreach($results as $row)
+                                  { 
+                                    $broilers = $layers = $freeranges =0;
+                                    $fname = $row->fname;
+                                    if($fname==" ") continue;
 
+                                    $query2=mysqli_query($con,"select sum(tblcategory.CategoryCode) as broilers from tblcategory where tblcategory.fname='$fname' and tblcategory.CategoryName='Broiler' ");
+                                    $cnt_broiler=mysqli_fetch_array($query2);
+                                    if($cnt_broiler['broilers']!='') $broilers = $cnt_broiler['broilers'];
+
+                                    $query3=mysqli_query($con,"select sum(tblcategory.CategoryCode) as layers from tblcategory where tblcategory.fname='$fname' and tblcategory.CategoryName='Layer' ");
+                                    $cnt_layer=mysqli_fetch_array($query3);
+                                    if($cnt_layer['layers']!='') $layers = $cnt_layer['layers'];
+
+                                    $query4=mysqli_query($con,"select sum(tblcategory.hews)+sum(tblcategory.cocks) as freeranges from tblcategory where tblcategory.fname='$fname' and tblcategory.CategoryName='Free_Range' ");
+                                    $cnt_freerange=mysqli_fetch_array($query4);
+                                    if($cnt_freerange['freeranges']!='') $freeranges = $cnt_freerange['freeranges'];
+                                    
+                                    ?>
+                                    <tr>
+                                      <td class="text-center"><?php echo htmlentities($cnt);?></td>
+                                      <td class="text-cente"><?php  echo htmlentities($row->fname);?></td>
+                                      <td class="text-center"><?php  echo htmlentities($row->count);?></td>
+                                      <td class="text-center"><?php  echo htmlentities($broilers);?></td>
+                                      <td class="text-center"><?php  echo htmlentities($layers);?></td>
+                                      <td class="text-center"><?php  echo htmlentities($freeranges);?></td>
+                                    </tr>
+                                    <?php 
+                                    $cnt=$cnt+1;
+                                  }
+                                
+                                } ?>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
           <div class="row" style="margin-bottom: 50px;">
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 150px;">
+            <div class="col-xxl-4 col-md-4">
+              <a href="userregister.php" style="text-decoration:none;">
+                <div class="card info-card card1" style="min-height: 150px;">
 
-                <div class="card-body" style="background-color: #0DCEF0; color:antiquewhite">
-                  <h5 class="card-title">Users</h5>
-                  <hr>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php 
-                      $sql ="SELECT ID from tbladmin where Status='1'";
-                      $query = $dbh -> prepare($sql);
-                      $query->execute();
-                      $results=$query->fetchAll(PDO::FETCH_OBJ);
-                      $totalunreadquery=$query->rowCount();
-                      ?>
-                      <h2><?php echo htmlentities($totalunreadquery);?></h2>
+                  <div class="card-body" style="background-color: #0DCEF0; color:antiquewhite">
+                    <h5 class="card-title">Users</h5>
+                    <hr>
+                    <div class="d-flex align-items-center">
+                      <div class="ps-3">
+                        <?php 
+                        $sql ="SELECT ID from tbladmin where Status='1'";
+                        $query = $dbh -> prepare($sql);
+                        $query->execute();
+                        $results=$query->fetchAll(PDO::FETCH_OBJ);
+                        $totalunreadquery=$query->rowCount();
+                        ?>
+                        
+                        <h2><?php echo htmlentities($totalunreadquery);?></h2>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </a>
+            </div>
+            <div class="col-xxl-4 col-md-4">
+              <a href="#" style="text-decoration:none; " data-toggle="modal" data-target="#farm_view">
+                <div class="card info-card card1" style="min-height: 150px;">
+                  <div class="card-body" style="background-color: #00FA9A; color:antiquewhite">
+                    <h5 class="card-title">Farms</h5>
+                    <hr>
+                    <div class="d-flex align-items-center">
+                      <div class="ps-3">
+                        <?php
+                        $sql=mysqli_query($con,"SELECT DISTINCT FarmName FROM tbladmin");
+                        $farms=mysqli_num_rows($sql) - 1;
+                        // $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
+                        // $row=mysqli_fetch_array($query);
+                        ?>
+                        <h2><?php echo $farms?></h2>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-              </div>
+              </a>
             </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 150px;">
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card card1" style="min-height: 150px; cursor : default">
 
-                <div class="card-body" style="background-color: #FF1493; color:antiquewhite">
-                  <h5 class="card-title">Fowls</h5>
+                <div class="card-body" style="background-color: #0099ff; color:antiquewhite">
+                  <h5 class="card-title">Fowl Runs</h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
@@ -60,54 +161,16 @@ check_login();
 
               </div>
             </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 150px;">
-
-                <div class="card-body" style="background-color: #00FA9A; color:antiquewhite">
-                  <h5 class="card-title">Chickens</h5>
-                  <hr>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php
-                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory");
-                      $row=mysqli_fetch_array($query);
-                      ?>
-                      <h2><?php echo $row['total']?></h2>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 150px;">
-
-                <div class="card-body" style="background-color: #FF0000; color:antiquewhite">
-                  <h5 class="card-title">Layers</h5>
-                  <hr>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php
-                      $query=mysqli_query($con,"select sum(tblcategory.CategoryCode) as total from tblcategory where tblcategory.CategoryName='Layer'");
-                      $row=mysqli_fetch_array($query);
-                      ?>
-                      <h2><?php echo $row['total']?></h2>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
           </div>
 
           <div class="text-left ml-4"><h2 style="color:#FF1493">Today is <?php echo date('Y-m-d');?></h2></div>
           <hr>
           <div class="row" style="margin-bottom: 20px;">
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 160px;">
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card card1" style="min-height: 160px; cursor : default">
 
-                <div class="card-body" style="background-color:#009999; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">Feed Need(Kg)</h5>
+                <div class="card-body" style="background-color:#FF1493; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Feed Needed Today</h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
@@ -118,12 +181,14 @@ check_login();
                       $query->execute();
                       $results=$query->fetchAll(PDO::FETCH_OBJ);
                       $cnt=1;
+                      $c_feed = 0;
                       if($query->rowCount() > 0)
                       {
                         foreach($results as $row)
                         { 
 
                           $c_code = $row->CategoryCode; 
+                          if($c_code==0) $c_code = $row->hews + $row->cocks;
                           $c_date = $row->PostingDate;
                           $c_fowl = $row->CategoryName;
 
@@ -139,7 +204,7 @@ check_login();
                           $query1->bindParam(':fowl',$c_fowl,PDO::PARAM_STR);
                           $query1->execute();
                           $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
+
                           if($query1->rowCount() > 0)
                           {  
                             foreach ($results1 as $row1) {
@@ -149,53 +214,18 @@ check_login();
                         }
                       }
                       ?>
-                      <h2><?php echo number_format($c_feed, 2, '.', '');?></h2>
+                      <h2><?php echo number_format($c_feed, 2, '.', '');?> Kg</h2>
                     </div>
                   </div>
                 </div>
 
               </div>
             </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 160px;">
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card card1" style="min-height: 160px; cursor : default">
 
-                <div class="card-body" style="background-color:#33cccc; color:antiquewhite" >
-                  <h5 class="card-title" style="color:white">Eggs</h5>
-                  <hr>
-                  <div class="d-flex align-items-center">
-                    <div class="ps-3">
-                      <?php
-                      $date = date('Y-m-d');
-                      
-                      $sql1="SELECT sum(tblproducts.Eggcount) as total from tblproducts where tblproducts.Eggdate=:date";
-                      
-                      $query1=$dbh->prepare($sql1);
-                      $query1->bindParam('date',$date,PDO::PARAM_STR);
-                      $query1->execute();
-                      $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
-                          if($query1->rowCount() > 0)
-                          {  
-                            foreach ($results1 as $row1) { 
-                              if($row1['total']==""){?>
-                              <h2>0</h2> <?php } else {?>
-                              <h2><?php echo $row1['total']?></h2><?php
-                            }
-                            }
-                          } 
-                      ?>
-                      
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 160px;">
-
-                <div class="card-body" style="background-color: #0099ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white">FCR<i class="mdi mdi-dots-vertical-circle-outline mdi-24px float-right" style="color:aqua;" data-toggle="modal" data-target="#viewLog"></i></h5>
+                <div class="card-body" style="background-color: #ff9900; color:antiquewhite">
+                  <h5 class="card-title" style="color:white">Mortality</h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
@@ -210,50 +240,33 @@ check_login();
                       
                       $m_rate=($deaths*100)/($deaths+$total);
                       ?>
-                      <h2><?php echo number_format($m_rate, 2, '.', '');?>%</h2>
+                      <h2><?php echo number_format($m_rate, 2, '.', '');?> %</h2>
                     </div>
                   </div>
                 </div>
 
               </div>
             </div>
-            <div class="col-xxl-4 col-md-3">
-              <div class="card info-card sales-card" style="min-height: 160px;">
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card card1" style="min-height: 160px; cursor : default">
 
                 <div class="card-body" style="background-color:#3366ff; color:antiquewhite">
-                  <h5 class="card-title" style="color:white;">Laying Percentage</h5>
+                  <h5 class="card-title" style="color:white;">Eggs Collected</h5>
                   <hr>
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
                       <?php 
-                          $sql1="SELECT * from tblvaccination_log";
-                          $query1=$dbh->prepare($sql1);
-                          $query1->execute();
-                          $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
-                          
-                          $cnt = $query1->rowCount();
+                           $eggs = 0;
+                           $date = date('Y-m-d');
+                           $query=mysqli_query($con,"select sum(tblproducts.Eggcount) as total from tblproducts where tblproducts.Eggdate = '$date'");
+                           $cnt=mysqli_fetch_array($query);
+                           if( $cnt['total']!='') $eggs = $cnt['total'];
                       ?>
-                      <h2><?php echo $cnt?></h2>
+                      <h2><?php echo $eggs?></h2>
                     </div>
                   </div>
                 </div>
 
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-6 grid-margin stretch-card">
-              <div class="card">
-                <div class="modal-header">
-                  <h5 class="modal-title" style="float: left;">Add Plan</h5>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 grid-margin stretch-card">
-              <div class="card">
-                <div class="modal-header">
-                  <h5 class="modal-title" style="float: left;">Add Plan</h5>
-                </div>
               </div>
             </div>
           </div>
@@ -271,594 +284,7 @@ check_login();
   </div>
   <!-- container-scroller -->
   <?php @include("includes/foot.php");?>
-  <script >
-    $(function () {
-    /* ChartJS
-     * -------
-     * Here we will create a few charts using ChartJS
-     */
 
-    //--------------
-    //- AREA CHART -
-    //--------------
-
-    // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
-
-    var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-      datasets: [
-      {
-        label               : 'Digital Goods',
-        backgroundColor     : 'rgba(60,141,188,0.9)',
-        borderColor         : 'rgba(60,141,188,0.8)',
-        pointRadius          : false,
-        pointColor          : '#3b8bba',
-        pointStrokeColor    : 'rgba(60,141,188,1)',
-        pointHighlightFill  : '#fff',
-        pointHighlightStroke: 'rgba(60,141,188,1)',
-        data                : [28, 48, 40, 19, 86, 27, 90]
-      },
-      {
-        label               : 'Electronics',
-        backgroundColor     : 'rgba(200, 150, 30, 1)',
-        borderColor         : 'rgba(210, 214, 222, 1)',
-        pointRadius         : false,
-        pointColor          : 'rgba(210, 214, 222, 1)',
-        pointStrokeColor    : '#c1c7d1',
-        pointHighlightFill  : '#fff',
-        pointHighlightStroke: 'rgba(220,220,220,1)',
-        data                : [66, 59, 80, 81, 56, 55, 41]
-      },
-      ]
-    }
-
-    var areaChartOptions = {
-      maintainAspectRatio : false,
-      responsive : true,
-      legend: {
-        display: false
-      },
-      scales: {
-        xAxes: [{
-          gridLines : {
-            display : false,
-          }
-        }],
-        yAxes: [{
-          gridLines : {
-            display : false,
-          }
-        }]
-      }
-    }
-
-    // This will get the first returned node in the jQuery collection.
-    var areaChart       = new Chart(areaChartCanvas, { 
-      type: 'bar',
-      data: areaChartData, 
-      options: areaChartOptions
-    })
-
-    //-------------
-    //- LINE CHART -
-    //--------------
-    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
-    var lineChartOptions = jQuery.extend(true, {}, areaChartOptions)
-    var lineChartData = jQuery.extend(true, {}, areaChartData)
-    lineChartData.datasets[0].fill = false;
-    lineChartData.datasets[1].fill = false;
-    lineChartOptions.datasetFill = false
-
-    var lineChart = new Chart(lineChartCanvas, { 
-      type: 'line',
-      data: lineChartData, 
-      options: lineChartOptions
-    })
-
-    //-------------
-    //- DONUT CHART -
-    //-------------
-    // Get context with jQuery - using jQuery's .get() method.
-    var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-    
-    var donutData        = {
-      labels: [
-      'Chrome', 
-      'IE',
-      'FireFox', 
-      'Safari', 
-      'Opera', 
-      'Navigator', 
-      ],
-      datasets: [
-      {
-        data: [700,500,400,600,300,100],
-        backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-      }
-      ]
-    }
-    var donutOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var donutChart = new Chart(donutChartCanvas, {
-      type: 'doughnut',
-      data: donutData,
-      options: donutOptions      
-    })
-
-    //-------------
-    //- PIE CHART -
-    //-------------
-    // Get context with jQuery - using jQuery's .get() method.
-    var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-    var pieData        = donutData;
-    var pieOptions     = {
-      maintainAspectRatio : false,
-      responsive : true,
-    }
-    //Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    var pieChart = new Chart(pieChartCanvas, {
-      type: 'pie',
-      data: pieData,
-      options: pieOptions      
-    })
-
-    //-------------
-    //- BAR CHART -
-    //-------------
-    var barChartCanvas = $('#barChart').get(0).getContext('2d')
-    var barChartData = jQuery.extend(true, {}, areaChartData)
-    var temp0 = areaChartData.datasets[0]
-    var temp1 = areaChartData.datasets[1]
-    barChartData.datasets[0] = temp1
-    barChartData.datasets[1] = temp0
-
-    var barChartOptions = {
-      responsive              : true,
-      maintainAspectRatio     : false,
-      datasetFill             : false
-    }
-
-    var barChart = new Chart(barChartCanvas, {
-      type: 'bar', 
-      data: barChartData,
-      options: barChartOptions
-    })
-
-    //---------------------
-    //- STACKED BAR CHART -
-    //---------------------
-    var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
-    var stackedBarChartData = jQuery.extend(true, {}, barChartData)
-
-    var stackedBarChartOptions = {
-      responsive              : true,
-      maintainAspectRatio     : false,
-      scales: {
-        xAxes: [{
-          stacked: true,
-        }],
-        yAxes: [{
-          stacked: true
-        }]
-      }
-    }
-
-    var stackedBarChart = new Chart(stackedBarChartCanvas, {
-      type: 'bar', 
-      data: stackedBarChartData,
-      options: stackedBarChartOptions
-    })
-  })
-// $(document).ready(function () {
-//   showGraph();
-// });
-
-
-// function showGraph()
-// {
-//   {
-//     $.post("data.php",
-//       function (data)
-//       {
-//         console.log(data);
-//         var name = [];
-//         var marks = [];
-
-//         for (var i in data) {
-//           name.push(data[i].ServiceName);
-//           marks.push(data[i].population);
-//         }
-//         var barChartOptions = {
-//           responsive              : true,
-//           maintainAspectRatio     : false,
-//           datasetFill             : false,
-//           scales:{
-//             yAxes:[{
-//                 ticks:{
-//                     beginAtZero: true
-//                 }
-//             }]
-//           }
-//         }
-
-//           var chartdata = {
-//             labels: name,
-//             datasets: [
-//             {
-//               label: 'Student Marks',
-//               backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-//               borderColor: '#46d5f1',
-//               hoverBackgroundColor: '#CCCCCC',
-//               hoverBorderColor: '#666666',
-//               data: marks
-//             }
-//             ]
-//           };
-
-
-//           var graphTarget = $("#graphCanvas");
-
-//           var barGraph = new Chart(graphTarget, {
-//             type: 'bar',
-//             data: chartdata,
-//             options: barChartOptions
-//           });
-//         });
-//   }
-// }
-
-
-$(document).ready(function(){
-  $.ajax({
-    url: "data.php",
-    method: "GET",
-    success: function(data){
-      console.log(data);
-      var name = [];
-      var marks = [];
-
-      for (var i in data){
-        name.push(data[i].Sector);
-
-        marks.push(data[i].total);
-      }
-      var chartdata = {
-        labels: name,
-        datasets: [{
-          label: 'student marks',
-          backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-          borderColor: 'rgba(134, 159, 152, 1)',
-          hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-          hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-          data: marks
-
-        }]
-      };
-      var graphTarget = $("#graphCanvas");
-      var barGraph = new Chart(graphTarget, {
-        type: 'bar',
-        data: chartdata,
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
-    },
-    error: function(data) {
-      console.log(data);
-    }
-
-  });
-});
-
-$(document).ready(function () {
-  showGraph2();
-});
-function showGraph2()
-{
-  {
-    $.post("data.php",
-      function (data)
-      {
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data) {
-          name.push(data[i].Sector);
-          marks.push(data[i].total);
-        }
-
-        var chartdata = {
-          labels: name,
-          datasets: [
-          {
-            label: 'Student Marks',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            // borderColor: '#46d5f1',
-            hoverBackgroundColor: '#CCCCCC',
-            hoverBorderColor: '#666666',
-            data: marks
-          }
-          ]
-        };
-
-        var graphTarget = $("#graphCanvas2");
-
-        var pieChart = new Chart(graphTarget, {
-          type: 'pie',
-          data: chartdata
-        });
-      });
-  }
-}
-
-</script>
-
-<script >
-  $(document).ready(function(){
-    $.ajax({
-      url: "data.php",
-      method: "GET",
-      success: function(data){
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data){
-          name.push(data[i].Sector);
-
-          marks.push(data[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'student marks',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data.php",
-      method: "GET",
-      success: function(data){
-        console.log(data);
-        var name = [];
-        var marks = [];
-
-        for (var i in data){
-          name.push(data[i].Sector);
-
-          marks.push(data[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of Bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas3");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data1.php",
-      method: "GET",
-      success: function(data1){
-        console.log(data1);
-        var name = [];
-        var marks = [];
-
-        for (var i in data1){
-          name.push(data1[i].Status);
-
-          marks.push(data1[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas4");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data2.php",
-      method: "GET",
-      success: function(data2){
-        console.log(data2);
-        var name = [];
-        var marks = [];
-
-        for (var i in data2){
-          name.push(data2[i].Source);
-
-          marks.push(data2[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas5");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-
-
-  $(document).ready(function(){
-    $.ajax({
-      url: "data3.php",
-      method: "GET",
-      success: function(data3){
-        console.log(data3);
-        var name = [];
-        var marks = [];
-
-        for (var i in data3){
-          name.push(data3[i].Newspaper);
-
-          marks.push(data3[i].total);
-        }
-        var chartdata = {
-          labels: name,
-          datasets: [{
-            label: 'No of Bids',
-            backgroundColor : ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-            borderColor: 'rgba(134, 159, 152, 1)',
-            hoverBackgroundColor: 'rgba(230, 236, 235, 0.75)',
-            hoverBorderColor: 'rgba(230, 236, 235, 0.75)',
-            data: marks
-
-          }]
-        };
-        var graphTarget = $("#graphCanvas6");
-        var barGraph = new Chart(graphTarget, {
-          type: 'bar',
-          data: chartdata,
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: true
-                }
-              }]
-            }
-          }
-        });
-      },
-      error: function(data) {
-        console.log(data);
-      }
-
-    });
-  });
-
-</script>
 </body>
 </html>
 

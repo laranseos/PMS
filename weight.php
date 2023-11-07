@@ -34,7 +34,7 @@ if(isset($_POST['recordWeight']))
   $LastInsertId=$dbh->lastInsertId();
   if ($LastInsertId>0) 
   {
-    echo '<script>alert("Chicken weight Successfully Loged!")</script>';
+    echo '<script>alert("Chicken weight Successfully Logged!")</script>';
     echo "<script>window.location.href ='weight.php?cate_id=$category'</script>";
   }
   else
@@ -104,7 +104,7 @@ if(isset($_GET['del'])){
                     $today = new DateTime('today');
                     $diff = $postingDate->diff($today);
                     $fdays = $diff->format('%a');
-
+                    $fdays_string = $fdays.'/'.(intval(($fdays-1)/7+1));
                     $fr=$row->CategoryFowlRun;
                     $dt=date("Y-m-d");
 
@@ -141,7 +141,8 @@ if(isset($_GET['del'])){
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
                                 <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='count' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Age(Days/Weeks)</label><input type="" class="text-center" name='ages' readonly="readonly" value="<?php  echo htmlentities($fdays_string);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <input type="" style="display:none;" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                                 <?php 
                                 if($checkweight==1){  ?>
                                 <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($weight);?>" id="ecount" name='ecount' placeholder="Enter Chicken weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
@@ -150,7 +151,7 @@ if(isset($_GET['del'])){
                                 else { ?>
                                   <label for="tfeed" style="color: #aaaaaa;">Weight(Kg)</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Chicken Weight" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
                                   <div class="text-center">
-                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record weight?');">
+                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Record weight?');">
                                       <button type="submit" name="recordWeight" class="btn btn-info btn-fw mr-2" style="border-radius: 8px;">Record</button>
                                     </a>
                                   </div>

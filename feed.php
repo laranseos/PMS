@@ -4,6 +4,9 @@ check_login();
 $category=$_GET['cate_id'];
 $_SESSION['cate']=$category;
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
 if(isset($_POST['taken']))
 {
@@ -50,129 +53,244 @@ if(isset($_POST['notaken'])){
         <div class="content-wrapper">
             <div>
               <div class="row" style="margin-bottom: -20px;" >
-                <?php
+              <?php
                 $cate=$_SESSION['cate'];
                 $fname=$_SESSION['fname'];
-                $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun ASC";
-                
-                $query = $dbh -> prepare($sql);
-                $query-> bindParam(':cate', $cate, PDO::PARAM_STR);
-                $query-> bindParam(':fname', $fname, PDO::PARAM_STR);
-                $query->execute();
-                $results=$query->fetchAll(PDO::FETCH_OBJ);
-                $cnt=1;
-                if($query->rowCount() > 0)
-                {
-                  foreach($results as $row)
-                  { 
-                    if($cate=='Free_Range') $c_code = $row->cocks + $row->hews;
-                    else $c_code = $row->CategoryCode; 
-                    $c_date = $row->PostingDate;
 
-                    $postingDate = new DateTime($c_date);
-                    $today = new DateTime('today');
-                    $diff = $postingDate->diff($today);
+                $query_date=mysqli_query($con,"SELECT MAX(tblfeed_log.posting) AS last_date FROM tblfeed_log WHERE tblfeed_log.category='$cate' AND tblfeed_log.fname='$fname' ");
+                $row_date=mysqli_fetch_array($query_date);
+                $last_date = $row_date['last_date'];
+                $todays = date('Y-m-d');
+                if($last_date==NULL) $current_date = $todays;
+                else $current_date = $last_date;
 
-                    $fdays = $diff->format('%a')+1;
+                while ($current_date < $todays) {
                   
-                    $sql1="SELECT tblfeed.fpd from tblfeed where tblfeed.category=:cate and tblfeed.start<=:fdays and tblfeed.end>=:fdays";
-                    $query1=$dbh->prepare($sql1);
-                    $query1->bindParam(':fdays',$fdays,PDO::PARAM_STR);
-                    $query1->bindParam(':cate',$cate,PDO::PARAM_STR);
-                    $query1->execute();
-                    $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+                  // $current_date = date('Y-m-d');
+                  $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun ASC";
                   
-                    if($query1->rowCount() > 0)
-                    {  
-                      foreach ($results1 as $row1) {
-                        $c_feed =  $row1['fpd'];
-                      }
-                    }
-
-                    $fr=$row->CategoryFowlRun;
-                    $dt=date("Y-m-d");
-
-                    $sql="SELECT * from tblfeed_log where tblfeed_log.fowlRun=:fr and tblfeed_log.posting=:dt";
-                    
-                    $query = $dbh -> prepare($sql);
-                    $query-> bindParam(':fr', $fr, PDO::PARAM_STR);
-                    $query-> bindParam(':dt', $dt, PDO::PARAM_STR);
-                    $query->execute();
-                    $result = $query->fetchAll(PDO::FETCH_ASSOC);
-                    $feedcheck=0;
-                    if($query->rowCount() > 0)
+                  $query = $dbh -> prepare($sql);
+                  $query->bindParam(':cate', $cate, PDO::PARAM_STR);
+                  $query->bindParam(':fname', $fname, PDO::PARAM_STR);
+                  $query->execute();
+                  $results=$query->fetchAll(PDO::FETCH_OBJ);
+                  $cnt=1;
+                  $c_feed = 0;
+                  if($query->rowCount() > 0)
+                  {
+                    foreach($results as $row)
                     { 
-                      foreach ($result as $row2) {
-                        $feedcheck=$row2['state'];
-                        $logid =  $row2['id'];
-                      }
-                    } else {
-                      $total = $c_feed*$c_code;
-                      $fname=$_SESSION['fname'];
+                        if($cate=='Free_Range') $c_code = $row->cocks + $row->hews;
+                        else $c_code = $row->CategoryCode; 
+                        $c_date = $row->PostingDate;
+
+                        $postingDate = new DateTime($c_date);
+                        $today = new DateTime($current_date);
+
+                        $diff = $postingDate->diff($today);
+
+                        $fdays = $diff->format('%a');
+                        $fdays_string = $fdays.'/'.(intval(($fdays-1)/7+1));
+                        $sql1="SELECT tblfeed.fpd from tblfeed where tblfeed.category=:cate and tblfeed.start<=:fdays and tblfeed.end>=:fdays";
+                        $query1=$dbh->prepare($sql1);
+                        $query1->bindParam(':fdays',$fdays,PDO::PARAM_STR);
+                        $query1->bindParam(':cate',$cate,PDO::PARAM_STR);
+                        $query1->execute();
+                        $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
                       
-                      $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname,tblfeed_log.age) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname,:age)";
-                      $query2=$dbh->prepare($sql2);
-                      $query2-> bindParam(':fname', $fname, PDO::PARAM_STR);
-                      $query2->bindParam(':category',$cate,PDO::PARAM_STR);
-                      $query2->bindParam(':fowlrun',$fr,PDO::PARAM_STR);
-                      $query2->bindParam(':code',$c_code,PDO::PARAM_STR);
-                      $query2->bindParam(':fpd',$c_feed,PDO::PARAM_STR);
-                      $query2->bindParam(':tfeed',$total,PDO::PARAM_STR);
-                      $query2->bindParam(':tdate',$dt,PDO::PARAM_STR);
-                      $query2->bindParam(':age',$fdays,PDO::PARAM_STR);
-                      $query2->execute();
-                      $LastInsertId=$dbh->lastInsertId();
+                        if($query1->rowCount() > 0)
+                        {  
+                          foreach ($results1 as $row1) {
+                            $c_feed =  $row1['fpd'];
+                          }
+                        }
+
+                        $fr=$row->CategoryFowlRun;
+                        $dt=$current_date;
+
+                        $sql="SELECT * from tblfeed_log where tblfeed_log.fowlRun=:fr and tblfeed_log.posting=:dt";
+                        
+                        $query = $dbh -> prepare($sql);
+                        $query->bindParam(':fr', $fr, PDO::PARAM_STR);
+                        $query->bindParam(':dt', $dt, PDO::PARAM_STR);
+                        $query->execute();
+                        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+                        $feedcheck=0;
+                        $total=0;
+                        if($query->rowCount() > 0)
+                        { 
+                          foreach ($result as $row2) {
+                            $feedcheck=$row2['state'];
+                            $logid =  $row2['id'];
+                          }
+                        } else {
+                          $total = $c_feed*$c_code;
+                          $fname=$_SESSION['fname'];
+                                        
+                          $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname,tblfeed_log.age) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname,:age)";
+                          $query2=$dbh->prepare($sql2);
+                          $query2->bindParam(':fname', $fname, PDO::PARAM_STR);
+                          $query2->bindParam(':category',$cate,PDO::PARAM_STR);
+                          $query2->bindParam(':fowlrun',$fr,PDO::PARAM_STR);
+                          $query2->bindParam(':code',$c_code,PDO::PARAM_STR);
+                          $query2->bindParam(':fpd',$c_feed,PDO::PARAM_STR);
+                          $query2->bindParam(':tfeed',$total,PDO::PARAM_STR);
+                          $query2->bindParam(':tdate',$dt,PDO::PARAM_STR);
+                          $query2->bindParam(':age',$fdays,PDO::PARAM_STR);
+                          $query2->execute();
+                          $LastInsertId=$dbh->lastInsertId();
+                        }
+                        
                     }
-                    
-
-                    ?>
-                        <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
-                          <div class="card card1" style="min-height: 35vh;">
-                            <div class="card-header">
-                              <h4><?php  echo htmlentities(date("Y-m-d"));?><i class="mdi mdi-pin mdi-24px float-right"></i></h4>
-                              <?php if($feedcheck==1){ ?>
-                              <h3 class="font-weight-normal mb-3 text-center" style="color: #00008B;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3> <?php } else{?> 
-                              <h3 class="font-weight-normal mb-3 text-center" style="color:crimson;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3><?php } ?>
-                            </div>
-                            <div class="card-body">
-                              <form method="post" action="feed.php?cate_id=<?php echo $category?>">
-                                <input type="text" class="text-center" name='logid' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
-                                <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
-                                <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="tfeed" style="color: #aaaaaa;">Age</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php echo $fdays;?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <input type="" class="text-center" name='fpd'readonly="readonly" value="<?php echo number_format($c_feed, 3, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="tfeed" style="color: #aaaaaa;">Feed per day(Kg)</label><input type="" class="text-center" name='tfeed' readonly="readonly" value="<?php echo number_format($c_feed*$c_code, 2, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-
-
-                                <?php if($feedcheck==1){
-                                  ?>
-                                  <input type="text" class="text-center" name='notaken' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
-                                  <label for="fpd" style="color: #aaaaaa;">Feed Given</label>
-                                  <div class="text-center">
-                                    <a href="#" data-toggle="tooltip" data-original-title="Notaken" onclick="return confirm('Do you want to cancel it?');">
-                                      <input type="checkbox" name="notaken" style="width: 1.8em; height:1.8em;" class="taken" value="<?php  echo $logid;?>" checked onchange='this.form.submit()'/>&nbsp;
-                                    </a>
-                                  </div>
-                                  <?php
-                                } else { ?>
-                                    <label for="fpd" style="color: #aaaaaa;">Feed Given</label>
-                                    <div class="text-center">
-                                      <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Did you give feed?');">
-                                        <input type="checkbox" name="taken" style="width: 1.8em; height:1.8em;" class="taken align-items-center" value=<?php  echo htmlentities($row->CategoryFowlRun);?> onchange="this.form.submit()"/>&nbsp;
-                                      </a>
-                                    </div>
-                                      <?php
-                                }
-                                ?>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                    <?php 
-                    $cnt=$cnt+1;
                   }
-                } ?>
+
+                  $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+                }
+
+                ?>
+
+                <?php
+
+                $cate=$_SESSION['cate'];
+                $fname=$_SESSION['fname'];
+
+                $query_date=mysqli_query($con,"SELECT MAX(tblfeed_log.posting) AS last_date FROM tblfeed_log WHERE tblfeed_log.category='$cate' AND tblfeed_log.fname='$fname' ");
+                $row_date=mysqli_fetch_array($query_date);
+                $last_date = $row_date['last_date'];
+                $todays = date('Y-m-d');
+                if($last_date==NULL) $current_date = $todays;
+                else $current_date = $last_date;
+                
+                while ($current_date <= $todays) {
+                  
+                  // $current_date = date('Y-m-d');
+                  $sql="SELECT * from tblcategory where tblcategory.CategoryName=:cate and tblcategory.fname=:fname order by tblcategory.CategoryFowlRun ASC";
+                  
+                  $query = $dbh -> prepare($sql);
+                  $query->bindParam(':cate', $cate, PDO::PARAM_STR);
+                  $query->bindParam(':fname', $fname, PDO::PARAM_STR);
+                  $query->execute();
+                  $results=$query->fetchAll(PDO::FETCH_OBJ);
+                  $cnt=1;
+                  $c_feed = 0;
+                  if($query->rowCount() > 0)
+                  {
+                    foreach($results as $row)
+                    { 
+                        if($cate=='Free_Range') $c_code = $row->cocks + $row->hews;
+                        else $c_code = $row->CategoryCode; 
+                        $c_date = $row->PostingDate;
+
+                        $postingDate = new DateTime($c_date);
+                        $today = new DateTime($current_date);
+
+                        $diff = $postingDate->diff($today);
+
+                        $fdays = $diff->format('%a');
+                        $fdays_string = $fdays.'/'.(intval(($fdays-1)/7+1));
+                        $sql1="SELECT tblfeed.fpd from tblfeed where tblfeed.category=:cate and tblfeed.start<=:fdays and tblfeed.end>=:fdays";
+                        $query1=$dbh->prepare($sql1);
+                        $query1->bindParam(':fdays',$fdays,PDO::PARAM_STR);
+                        $query1->bindParam(':cate',$cate,PDO::PARAM_STR);
+                        $query1->execute();
+                        $results1 = $query1->fetchAll(PDO::FETCH_ASSOC);
+                      
+                        if($query1->rowCount() > 0)
+                        {  
+                          foreach ($results1 as $row1) {
+                            $c_feed =  $row1['fpd'];
+                          }
+                        }
+
+                        $fr=$row->CategoryFowlRun;
+                        $dt=$current_date;
+
+                        $sql="SELECT * from tblfeed_log where tblfeed_log.fowlRun=:fr and tblfeed_log.posting=:dt";
+                        
+                        $query = $dbh -> prepare($sql);
+                        $query->bindParam(':fr', $fr, PDO::PARAM_STR);
+                        $query->bindParam(':dt', $dt, PDO::PARAM_STR);
+                        $query->execute();
+                        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+                        $feedcheck=0;
+                        $total=0;
+                        if($query->rowCount() > 0)
+                        { 
+                          foreach ($result as $row2) {
+                            $feedcheck=$row2['state'];
+                            $logid =  $row2['id'];
+                          }
+                        } else {
+                          $total = $c_feed*$c_code;
+                          $fname=$_SESSION['fname'];
+                                        
+                          $sql2="insert into tblfeed_log(tblfeed_log.category,tblfeed_log.fowlRun,tblfeed_log.count,tblfeed_log.fpd,tblfeed_log.total,tblfeed_log.posting,tblfeed_log.fname,tblfeed_log.age) values(:category,:fowlrun,:code,:fpd,:tfeed,:tdate,:fname,:age)";
+                          $query2=$dbh->prepare($sql2);
+                          $query2->bindParam(':fname', $fname, PDO::PARAM_STR);
+                          $query2->bindParam(':category',$cate,PDO::PARAM_STR);
+                          $query2->bindParam(':fowlrun',$fr,PDO::PARAM_STR);
+                          $query2->bindParam(':code',$c_code,PDO::PARAM_STR);
+                          $query2->bindParam(':fpd',$c_feed,PDO::PARAM_STR);
+                          $query2->bindParam(':tfeed',$total,PDO::PARAM_STR);
+                          $query2->bindParam(':tdate',$dt,PDO::PARAM_STR);
+                          $query2->bindParam(':age',$fdays,PDO::PARAM_STR);
+                          $query2->execute();
+                          $LastInsertId=$dbh->lastInsertId();
+                        }
+                        
+
+                        ?>
+                            <div class="col-md-3 stretch-card grid-margin" style="padding-right: 2px;">
+                              <div class="card card1" style="min-height: 35vh;">
+                                <div class="card-header">
+                                  <h4><?php  echo htmlentities(date("Y-m-d"));?><i class="mdi mdi-pin mdi-24px float-right"></i></h4>
+                                  <?php if($feedcheck==1){ ?>
+                                  <h3 class="font-weight-normal mb-3 text-center" style="color: #00008B;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3> <?php } else{?> 
+                                  <h3 class="font-weight-normal mb-3 text-center" style="color:crimson;"><?php  echo htmlentities($row->CategoryFowlRun);?></h3><?php } ?>
+                                </div>
+                                <div class="card-body">
+                                  <form method="post" action="feed.php?cate_id=<?php echo $category?>">
+                                    <input type="text" class="text-center" name='logid' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
+                                    <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
+                                    <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
+                                    <label for="tfeed" style="color: #aaaaaa;">Age(Days/Weeks)</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php echo $fdays_string;?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                    <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='code' readonly="readonly" value="<?php  echo htmlentities($c_code);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                    <input type="" class="text-center" name='fpd'readonly="readonly" value="<?php echo number_format($c_feed, 3, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
+                                    <label for="tfeed" style="color: #aaaaaa;">Feed per day(Kg)</label><input type="" class="text-center" name='tfeed' readonly="readonly" value="<?php echo number_format($c_feed*$c_code, 2, '.', '');?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+
+
+                                    <?php if($feedcheck==1){
+                                      ?>
+                                      <input type="text" class="text-center" name='notaken' readonly="readonly"  value="<?php  echo htmlentities($logid);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
+                                      <label for="fpd" style="color: #aaaaaa;">Feed Given</label>
+                                      <div class="text-center">
+                                        <a href="#" data-toggle="tooltip" data-original-title="Notaken" onclick="return confirm('Do you want to cancel it?');">
+                                          <input type="checkbox" name="notaken" style="width: 1.8em; height:1.8em;" class="taken" value="<?php  echo $logid;?>" checked onchange='this.form.submit()'/>&nbsp;
+                                        </a>
+                                      </div>
+                                      <?php
+                                    } else { ?>
+                                        <label for="fpd" style="color: #aaaaaa;">Feed Given</label>
+                                        <div class="text-center">
+                                          <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Did you give feed?');">
+                                            <input type="checkbox" name="taken" style="width: 1.8em; height:1.8em;" class="taken align-items-center" value=<?php  echo htmlentities($row->CategoryFowlRun);?> onchange="this.form.submit()"/>&nbsp;
+                                          </a>
+                                        </div>
+                                          <?php
+                                    }
+                                    ?>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                        <?php 
+                        $cnt=$cnt+1;
+                    }
+                  }
+
+                  $current_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+                }
+                ?>
               </div>
             </div>
 
@@ -188,7 +306,8 @@ if(isset($_POST['notaken'])){
                           <option value="">All</option>
                           <?php
                           $cate=$_SESSION['cate'];
-                          $sql="SELECT * from  tblcategory where tblcategory.CategoryName='$cate' order by tblcategory.CategoryFowlRun";
+                          $fname=$_SESSION['fname'];
+                          $sql="SELECT * from  tblcategory where tblcategory.CategoryName='$cate' and tblcategory.fname='$fname' order by tblcategory.CategoryFowlRun";
                           $query = $dbh -> prepare($sql);
                           $query->execute();
                           $results=$query->fetchAll(PDO::FETCH_OBJ);
@@ -219,7 +338,7 @@ if(isset($_POST['notaken'])){
                           <!-- <th class="text-center">Feed per day(Kg)</th> -->
                           <th class="text-center">Total Feed</th>
                           <th class="text-center">Feed Date</th>
-                          <th class="text-center" style="width: 15%;">Feed State</th>
+                          <th class="text-center" style="width: 15%;">Feed Given?</th>
                         </tr>
                       </thead>
                       <tbody>

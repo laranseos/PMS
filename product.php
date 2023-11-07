@@ -28,7 +28,7 @@ if(isset($_POST['getEgg']))
   $LastInsertId=$dbh->lastInsertId();
   if ($LastInsertId>0) 
   {
-    echo '<script>alert("Egg Count Successfully Loged!")</script>';
+    echo '<script>alert("Egg Count Successfully Logged!")</script>';
     echo "<script>window.location.href ='product.php'</script>";
   }
   else
@@ -80,7 +80,7 @@ if(isset($_GET['del'])){
                     $today = new DateTime('today');
                     $diff = $postingDate->diff($today);
                     $fdays = $diff->format('%a');
-
+                    $fdays_string = $fdays.'/'.(intval(($fdays-1)/7+1));
                     $fr=$row->CategoryFowlRun;
                     $dt=date("Y-m-d");
 
@@ -115,17 +115,18 @@ if(isset($_GET['del'])){
                               <form method="post" action="product.php">
                                 <input type="text" class="text-center" name='tdate' readonly="readonly"  value="<?php  echo htmlentities(date("d-m-Y"));?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;   display: none;"></input>
                                 <input type="" class="text-center" name='fowlrun' readonly="readonly" value="<?php  echo htmlentities($row->CategoryFowlRun);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent; display: none;"></input>
-                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="" class="text-center" name='quantity' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
-                                <label for="fpd" style="color: #aaaaaa;">Age(Days)</label><input type="" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays+1);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="code" style="color: #aaaaaa;">Chicken Count</label><input type="text" class="text-center" name='quantity' readonly="readonly" value="<?php  echo htmlentities($row->CategoryCode);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <label for="fpd" style="color: #aaaaaa;">Age(Days/Weeks)</label><input type="text" class="text-center" name='ages' readonly="readonly" value="<?php  echo htmlentities($fdays_string);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input><hr>
+                                <input type="text" style="display:none;" class="text-center" name='age' readonly="readonly" value="<?php  echo htmlentities($fdays);?>" style="resize: vertical; width: 100%; border: none; border-color: transparent;"></input>
                                 <?php 
                                 if($checkegg==1){  ?>
-                                <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" readonly="readonly" value="<?php  echo htmlentities($cnt);?>" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
+                                <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="text" class="text-center" readonly="readonly" value="<?php  echo htmlentities($cnt);?>" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
                                 <?php
                                 }
                                 else { ?>
-                                  <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="" class="text-center" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
+                                  <label for="tfeed" style="color: #aaaaaa;">Egg Count</label><input type="text" class="text-center" id="ecount" name='ecount' placeholder="Enter Egg Count" style="resize: vertical; width: 100%; border: none; border-color: transparent;" required></input><hr>
                                   <div class="text-center">
-                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Do you record egg count?');">
+                                    <a href="#" data-toggle="tooltip" data-original-title="Taken" onclick="return confirm('Record Egg Count?');">
                                       <!-- <input type="checkbox" name="getEgg" style="width: 1.8em; height:1.8em;" class="getEgg align-items-center" onchange="this.form.submit()"/>&nbsp; -->
                                       <button type="submit" name="getEgg" class="btn btn-info btn-fw mr-2" style="border-radius: 8px;">Record</button>
                                     </a>
